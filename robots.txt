@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /_preview/
+Disallow: /_content/
+
+Sitemap: https://launchpaddigitalfl.com/sitemap.xml
