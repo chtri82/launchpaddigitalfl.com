@@ -1,6 +1,10 @@
 // Launchpad Digital — small progressive enhancements. No tracking, no third-party scripts.
+// ONE PLACE TO CHANGE: Launchpad Digital's own newsletter signup URL.
+// Until it's set, every [data-lp-subscribe] link falls back to its /subscribe/ href.
+var LAUNCHPAD_SUBSCRIBE_URL = ''; // e.g. 'https://YOUR-SIGNUP-URL'
 (function(){
   document.documentElement.classList.remove('no-js');
+  if(LAUNCHPAD_SUBSCRIBE_URL){document.querySelectorAll('[data-lp-subscribe]').forEach(function(a){a.href=LAUNCHPAD_SUBSCRIBE_URL;});}
   // Mobile nav
   var t=document.querySelector('.menu-toggle'), m=document.getElementById('primary-nav');
   if(t&&m){
