@@ -26,6 +26,28 @@ var LAUNCHPAD_NEWSLETTER_API = (location.hostname==='localhost'||location.hostna
         .then(function(){b.disabled=false;});
     });
   }
+  // ZIP -> county -> cities (Census 2020 data bundled at /assets/data/fl-geo.json)
+  var loc=document.querySelector('[data-lp-loc]');
+  if(loc){
+    var zip=loc.querySelector('[name=zip]'),cw=loc.querySelector('[data-lp-loc-county]'),cs=cw.querySelector('select'),cities=loc.querySelector('[data-lp-loc-cities]'),geo=null;
+    var esc=function(t){return String(t).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});};
+    var showCities=function(c){
+      if(!c){cities.hidden=true;cities.innerHTML='';return;}
+      cities.innerHTML='<label class="lp-check"><input type="checkbox" name="cities" value="all" checked> All of '+esc(c)+' County</label><p style="margin:.5rem 0 .25rem">Or only these cities and towns:</p><div class="lp-grid">'+(geo.places[c]||[]).map(function(p){return '<label class="lp-check"><input type="checkbox" name="cities" value="'+esc(p.name)+'"> '+esc(p.name)+(p.incorporated?'':' <small>(unincorporated)</small>')+'</label>';}).join('')+'</div>';
+      cities.hidden=false;
+      var all=cities.querySelector('[value=all]');
+      cities.addEventListener('change',function(e){if(e.target===all){if(all.checked)[].forEach.call(cities.querySelectorAll('[name=cities]:not([value=all])'),function(b){b.checked=false;});}else if(e.target.checked){all.checked=false;}else if(!cities.querySelector('[name=cities]:not([value=all]):checked')){all.checked=true;}});
+    };
+    var lookup=function(){
+      var z=zip.value.trim();
+      if(!/^\d{5}$/.test(z)){cw.hidden=true;cs.innerHTML='';showCities(null);return;}
+      var go=function(){var cs_=geo.zips[z]||[];
+        if(!cs_.length){cw.hidden=true;cs.innerHTML='';cities.innerHTML='<p>We couldn\'t find that ZIP in Florida. You\'ll get statewide local news.</p>';cities.hidden=false;return;}
+        cs.innerHTML=cs_.map(function(c){return '<option>'+esc(c)+'</option>';}).join('');cw.hidden=cs_.length<2;showCities(cs_[0]);};
+      if(geo)go();else fetch('/assets/data/fl-geo.json').then(function(r){return r.json();}).then(function(d){geo=d;go();});
+    };
+    zip.addEventListener('input',lookup);cs.addEventListener('change',function(){showCities(cs.value);});
+  }
   // Mobile nav
   var t=document.querySelector('.menu-toggle'), m=document.getElementById('primary-nav');
   if(t&&m){

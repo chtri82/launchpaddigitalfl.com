@@ -1,6 +1,23 @@
 import { SECTIONS, FREQUENCIES } from './config.js';
 import { sendEmail } from './providers.js';
 import { sendIssue, scheduledRun } from './sender.js';
+import { countiesForZip, placesIn, resolveLocation, GEO } from './counties.js';
+
+const COUNTY_NOTE = 'Optional. We use your ZIP only to find your county and put local stories for your area first in the Local section. Skip it and you get statewide local news. We never sell your data.';
+function locationFields(s) {
+  const cities = s.cities ? JSON.parse(s.cities) : [];
+  const opts = s.zip ? countiesForZip(s.zip) : [];
+  const types = Object.fromEntries((GEO.places[s.county] || []).map((p) => [p.name, p.incorporated]));
+  let h = `<fieldset id="county"><legend>Local news area (optional)</legend><label>ZIP code <input name="zip" inputmode="numeric" pattern="\\d{5}" maxlength="5" value="${esc(s.zip || '')}"></label><small>${COUNTY_NOTE}</small>`;
+  if (opts.length > 1) h += `<label>Your ZIP is in more than one county. Which one? <select name="county">${opts.map((c) => `<option${c === s.county ? ' selected' : ''}>${esc(c)}</option>`).join('')}</select></label>`;
+  else if (s.county) h += `<input type="hidden" name="county" value="${esc(s.county)}"><p>County: <strong>${esc(s.county)}</strong></p>`;
+  if (s.county) {
+    h += `<label><input type="checkbox" name="cities" value="all"${cities.length ? '' : ' checked'}> All of ${esc(s.county)} County</label><p>Or only these cities and towns:</p>`;
+    h += placesIn(s.county).map((n) => `<label><input type="checkbox" name="cities" value="${esc(n)}"${cities.includes(n) ? ' checked' : ''}> ${esc(n)}${types[n] ? '' : ' (unincorporated)'}</label>`).join('');
+    h += '<small>Changed your ZIP? Save, then pick your cities.</small>';
+  }
+  return h + '</fieldset>';
+}
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const EMAIL_RE = /^[^\s@<>()]{1,64}@[^\s@<>()]{1,253}\.[a-z]{2,}$/i;
@@ -49,6 +66,7 @@ async function subscribe(req, env) {
   if (!EMAIL_RE.test(email) || email.length > 254) return reply(false, 'Please enter a valid email address.', 400);
   if (await rateLimited(env, 'email:' + email, 3, 3600)) return reply(false, 'Too many attempts for this address. Try again later.', 429);
   const name = String(f.get('name') || '').trim().slice(0, 100) || null;
+  const loc = resolveLocation(f.get('zip'), f.get('county'), f.all('cities'));
   let sections = pick(f.all('sections'), SECTIONS), freqs = pick(f.all('frequency'), FREQUENCIES);
   if (!sections.length) sections = Object.keys(SECTIONS);
   if (!freqs.length) freqs = ['daily'];
@@ -61,11 +79,11 @@ async function subscribe(req, env) {
   }
   tok = token();
   if (existing) {
-    await env.DB.prepare("UPDATE subscribers SET name=?, sections=?, frequencies=?, status='pending', token=?, consent_ip=?, updated_at=datetime('now') WHERE id=?")
-      .bind(name, JSON.stringify(sections), JSON.stringify(freqs), tok, ip, existing.id).run();
+    await env.DB.prepare("UPDATE subscribers SET name=?, zip=?, county=?, cities=?, sections=?, frequencies=?, status='pending', token=?, consent_ip=?, updated_at=datetime('now') WHERE id=?")
+      .bind(name, loc.zip, loc.county, loc.cities && JSON.stringify(loc.cities), JSON.stringify(sections), JSON.stringify(freqs), tok, ip, existing.id).run();
   } else {
-    await env.DB.prepare('INSERT INTO subscribers(email,name,sections,frequencies,token,source,consent_ip) VALUES(?,?,?,?,?,?,?)')
-      .bind(email, name, JSON.stringify(sections), JSON.stringify(freqs), tok, String(f.get('source') || 'site').slice(0, 50), ip).run();
+    await env.DB.prepare('INSERT INTO subscribers(email,name,zip,county,cities,sections,frequencies,token,source,consent_ip) VALUES(?,?,?,?,?,?,?,?,?,?)')
+      .bind(email, name, loc.zip, loc.county, loc.cities && JSON.stringify(loc.cities), JSON.stringify(sections), JSON.stringify(freqs), tok, String(f.get('source') || 'site').slice(0, 50), ip).run();
   }
   const r = await sendEmail(confirmEmail(env, email, name, tok), env);
   if (!r.ok) { console.error(r.error); return reply(false, 'We could not send the confirmation email. Please try again later.', 502); }
@@ -120,8 +138,11 @@ async function preferences(req, env, url) {
     const f = await req.formData();
     const sec = pick(f.getAll('sections'), SECTIONS), fr = pick(f.getAll('frequency'), FREQUENCIES);
     const name = String(f.get('name') || '').trim().slice(0, 100) || null;
-    await env.DB.prepare("UPDATE subscribers SET name=?, sections=?, frequencies=?, status=CASE WHEN status='unsubscribed' THEN 'active' ELSE status END, updated_at=datetime('now') WHERE id=?")
-      .bind(name, JSON.stringify(sec.length ? sec : Object.keys(SECTIONS)), JSON.stringify(fr.length ? fr : ['daily']), s.id).run();
+    // County/cities only count if the ZIP didn't change; a new ZIP resets to "all of" its county.
+    const zipSame = String(f.get('zip') || '').trim() === (s.zip || '');
+    const loc = resolveLocation(f.get('zip'), zipSame ? f.get('county') : null, zipSame ? f.getAll('cities') : ['all']);
+    await env.DB.prepare("UPDATE subscribers SET name=?, zip=?, county=?, cities=?, sections=?, frequencies=?, status=CASE WHEN status='unsubscribed' THEN 'active' ELSE status END, updated_at=datetime('now') WHERE id=?")
+      .bind(name, loc.zip, loc.county, loc.cities && JSON.stringify(loc.cities), JSON.stringify(sec.length ? sec : Object.keys(SECTIONS)), JSON.stringify(fr.length ? fr : ['daily']), s.id).run();
     Object.assign(s, await env.DB.prepare('SELECT * FROM subscribers WHERE id=?').bind(s.id).first());
     note = '<p style="background:#e7f7ec;padding:.6rem;border-radius:6px">Saved.</p>';
   }
@@ -129,6 +150,7 @@ async function preferences(req, env, url) {
   const boxes = (obj, name, chosen) => Object.entries(obj).map(([k, v]) => `<label><input type="checkbox" name="${name}" value="${k}"${chosen.includes(k) ? ' checked' : ''}> ${esc(v)}</label>`).join('');
   return page(env, 'Your preferences', `${note}<p>${esc(s.email)} · status: <strong>${esc(s.status)}</strong> · plan: ${esc(s.tier)}</p>
 <form method="post"><label>Name (optional) <input name="name" value="${esc(s.name || '')}"></label>
+${locationFields(s)}
 <fieldset><legend>How often</legend>${boxes(FREQUENCIES, 'frequency', fr)}</fieldset>
 <fieldset><legend>Sections</legend>${boxes(SECTIONS, 'sections', sec)}</fieldset>
 <button class="btn" type="submit">Save preferences</button></form>
@@ -143,8 +165,8 @@ const csvCell = (v) => { let s = String(v ?? ''); if (/^[=+\-@]/.test(s)) s = "'
 
 async function exportCsv(req, env) {
   if (!authed(req, env)) return new Response('Unauthorized', { status: 401 });
-  const { results } = await env.DB.prepare('SELECT id,email,name,sections,frequencies,status,tier,source,created_at,confirmed_at,unsubscribed_at,consent_ip FROM subscribers ORDER BY id').all();
-  const cols = ['id', 'email', 'name', 'sections', 'frequencies', 'status', 'tier', 'source', 'created_at', 'confirmed_at', 'unsubscribed_at', 'consent_ip'];
+  const { results } = await env.DB.prepare('SELECT id,email,name,zip,county,cities,sections,frequencies,status,tier,source,created_at,confirmed_at,unsubscribed_at,consent_ip FROM subscribers ORDER BY id').all();
+  const cols = ['id', 'email', 'name', 'zip', 'county', 'cities', 'sections', 'frequencies', 'status', 'tier', 'source', 'created_at', 'confirmed_at', 'unsubscribed_at', 'consent_ip'];
   const body = [cols.join(','), ...results.map((r) => cols.map((c) => csvCell(c === 'sections' || c === 'frequencies' ? JSON.parse(r[c]).join(';') : r[c])).join(','))].join('\n') + '\n';
   return new Response(body, { headers: { 'content-type': 'text/csv; charset=utf-8', 'content-disposition': `attachment; filename="launchpad-subscribers-${new Date().toISOString().slice(0, 10)}.csv"`, 'cache-control': 'no-store' } });
 }

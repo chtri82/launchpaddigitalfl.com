@@ -13,3 +13,9 @@ Local: `npm i && npx wrangler d1 migrations apply lp-newsletter --local && npx w
 Send an issue: `curl -X POST -H "authorization: Bearer $ADMIN_TOKEN" -H 'content-type: application/json' $URL/admin/send -d @issue.json` (add `"dryRun":true` to preview).
 
 Go live: `wrangler login`; `wrangler d1 create lp-newsletter` (paste id into wrangler.toml); `wrangler d1 migrations apply lp-newsletter --remote`; `wrangler secret put ADMIN_TOKEN` (+ BREVO_API_KEY or AWS_*); set POSTAL_ADDRESS, EMAIL_PROVIDER, PUBLIC_URL; `wrangler deploy`; add custom domain news-api.launchpaddigitalfl.com.
+
+## Local news by ZIP (optional)
+- Signup/preferences take an optional ZIP. `data/fl-geo.json` (also served at `/assets/data/fl-geo.json`) bundles free U.S. Census 2020 files: ZCTA5-to-county relationship (1,013 FL ZIPs, 137 span 2+ counties → subscriber picks) and National Place by County (970 FL place-county rows: incorporated places + CDPs, CDPs marked unincorporated). Subscriber then picks "All of <County>" or specific cities.
+- D1: `zip`, `county`, `cities` (JSON; `[]` = all of county) via migrations 0002/0003. Invalid input is dropped server-side.
+- Local stories take `"cities": [...]` and/or `"counties": [...]` (`"region:Central"`, `"statewide"`; none = statewide). Order per subscriber: their cities → county → elsewhere in county → region → statewide → everything else (never empty). Regions in `src/counties.js` are our own editorial grouping.
+- Tests: `npm test` (unit) and `scripts/test-local.sh` (end-to-end against `wrangler dev`).

@@ -1,13 +1,17 @@
 import { SECTIONS } from './config.js';
 import { sendEmail } from './providers.js';
+import { localGroups } from './counties.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 /* Issue JSON:
  { "id": "2026-10-26-daily", "frequency": "daily|weekly|monthly|breaking", "subject": "...", "intro": "...",
    "tier": "free|paid" (optional; paid = only paid subscribers — Stripe hook),
-   "sections": { "local": [{ "title": "...", "url": "https://...", "source": "...", "summary": "..." }], ... },
+   "sections": { "local": [{ "title": "...", "url": "https://...", "source": "...", "summary": "...",
+                "counties": ["Brevard"] | ["region:Central"] | ["statewide"] }], ... },
+   Local is ordered per subscriber county: their county, then same region, then statewide, then the rest (never empty).
    "dryRun": false, "limit": 300 } */
+const localLabel = (s) => { const c = s.cities ? JSON.parse(s.cities) : []; return c.length ? `${c.join(', ')} (${s.county} County)` : `all of ${s.county} County`; };
 export function buildIssue(env, issue, sub) {
   const chosen = JSON.parse(sub.sections);
   const keys = Object.keys(SECTIONS).filter((k) => chosen.includes(k) && issue.sections?.[k]?.length);
@@ -18,14 +22,18 @@ export function buildIssue(env, issue, sub) {
   for (const k of keys) {
     html += `<h2 style="font-family:system-ui;border-bottom:2px solid #00102A">${esc(SECTIONS[k])}</h2>`;
     text += `== ${SECTIONS[k]} ==\n`;
-    for (const s of issue.sections[k]) {
+    const groups = k === 'local' ? localGroups(issue.sections[k], { county: sub.county, cities: sub.cities }) : [{ items: issue.sections[k] }];
+    for (const g of groups) {
+    if (g.label && k === 'local') { html += `<h3 style="font-family:system-ui;font-size:13px;text-transform:uppercase;color:#666">${esc(g.label)}</h3>`; text += `-- ${g.label} --\n`; }
+    for (const s of g.items) {
       html += `<p><a href="${esc(s.url)}"><strong>${esc(s.title)}</strong></a>${s.source ? ` <em>(${esc(s.source)})</em>` : ''}<br>${esc(s.summary || '')}</p>`;
       text += `- ${s.title}${s.source ? ` (${s.source})` : ''}\n  ${s.url}\n${s.summary ? '  ' + s.summary + '\n' : ''}`;
     }
+    }
     text += '\n';
   }
-  html += `<hr><p style="font-size:12px;color:#666">You're getting this because you subscribed at launchpaddigitalfl.com.<br>Launchpad Digital L.L.C. · ${esc(env.POSTAL_ADDRESS)}<br>Sponsorship and advertising: <a href="mailto:advertise@launchpaddigitalfl.com">advertise@launchpaddigitalfl.com</a><br><a href="${pref}">Manage preferences</a> · <a href="${unsub}">Unsubscribe</a></p></div>`;
-  text += `--\nLaunchpad Digital L.L.C. · ${env.POSTAL_ADDRESS}\nAdvertising: advertise@launchpaddigitalfl.com\nManage preferences: ${pref}\nUnsubscribe: ${unsub}\n`;
+  html += `<hr><p style="font-size:12px;color:#666">You're getting this because you subscribed at launchpaddigitalfl.com.<br>Launchpad Digital L.L.C. · ${esc(env.POSTAL_ADDRESS)}<br>Sponsorship and advertising: <a href="mailto:advertise@launchpaddigitalfl.com">advertise@launchpaddigitalfl.com</a><br><a href="${pref}">Manage preferences</a> · <a href="${pref}#county">${sub.county ? `Local news set to ${esc(localLabel(sub))}. Change` : 'Add your ZIP for local news'}</a> · <a href="${unsub}">Unsubscribe</a></p></div>`;
+  text += `--\nLaunchpad Digital L.L.C. · ${env.POSTAL_ADDRESS}\nAdvertising: advertise@launchpaddigitalfl.com\nManage preferences: ${pref}\n${sub.county ? `Local news set to ${localLabel(sub)}. Change` : 'Add your ZIP for local news'}: ${pref}#county\nUnsubscribe: ${unsub}\n`;
   return { to: sub.email, subject: issue.subject, html, text,
     headers: { 'List-Unsubscribe': `<${unsub}>, <mailto:${env.REPLY_TO || env.FROM_EMAIL}?subject=unsubscribe>`, 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click' } };
 }
@@ -37,7 +45,7 @@ export async function sendIssue(env, issue) {
   const sentToday = (await env.DB.prepare("SELECT COUNT(*) n FROM sends WHERE status='sent' AND sent_at >= date('now')").first()).n;
   let budget = cap - sentToday;
   const tierSql = issue.tier === 'paid' ? "AND tier='paid'" : '';
-  const { results } = await env.DB.prepare(`SELECT s.* FROM subscribers s WHERE status='active' ${tierSql} AND EXISTS (SELECT 1 FROM json_each(s.frequencies) WHERE value=?) AND NOT EXISTS (SELECT 1 FROM sends x WHERE x.issue_id=? AND x.subscriber_id=s.id AND x.status='sent') ORDER BY id`).bind(issue.frequency, issue.id).all();
+  const { results } = await env.DB.prepare(`SELECT s.* FROM subscribers s WHERE status='active' ${tierSql} AND EXISTS (SELECT 1 FROM json_each(s.frequencies) WHERE value=?) AND NOT EXISTS (SELECT 1 FROM sends x WHERE x.issue_id=? AND x.subscriber_id=s.id AND x.status='sent') ORDER BY county, id`).bind(issue.frequency, issue.id).all();
   const out = { ok: true, matched: results.length, sent: 0, skipped_no_content: 0, failed: 0, deferred_by_cap: 0, previews: [] };
   for (const sub of results) {
     const msg = buildIssue(env, issue, sub);

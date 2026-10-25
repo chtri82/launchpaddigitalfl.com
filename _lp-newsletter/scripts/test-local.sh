@@ -5,11 +5,16 @@ DB="npx wrangler d1 execute lp-newsletter --local --json --command"
 pass=0; fail=0; ok(){ if eval "$2"; then echo "PASS $1"; pass=$((pass+1)); else echo "FAIL $1"; fail=$((fail+1)); fi; }
 $DB "DELETE FROM rate_limits" >/dev/null 2>&1
 E="tester$RANDOM@example.com"
-r=$(curl -s -H 'accept: application/json' -H 'origin: http://localhost:8080' -X POST $B/api/subscribe -d "email=$E&name=Test&sections=local&sections=weather&frequency=daily&frequency=breaking")
+r=$(curl -s -H 'accept: application/json' -H 'origin: http://localhost:8080' -X POST $B/api/subscribe -d "email=$E&name=Test&sections=local&sections=weather&frequency=daily&frequency=breaking&zip=32931&cities=Cocoa%20Beach&cities=Atlantis")
 ok "subscribe returns ok" '[[ $r == *"\"ok\":true"* ]]'
 row=$($DB "SELECT status,token,sections,frequencies FROM subscribers WHERE email='$E'" 2>/dev/null)
 TOK=$(echo "$row" | grep -o '"token": *"[a-f0-9]*"' | grep -o '[a-f0-9]\{48\}')
 ok "row pending with prefs" '[[ $row == *pending* && $row == *weather* && $row == *breaking* ]]'
+ok "zip/county/cities stored on signup" 'r2=$($DB "SELECT zip,county,cities FROM subscribers WHERE email=\"$E\"" 2>/dev/null); [[ $r2 == *32931* && $r2 == *Brevard* && $r2 == *Cocoa\ Beach* && $r2 != *Atlantis* ]]'
+E2="nocounty$RANDOM@example.com"; curl -s -H 'accept: application/json' -X POST $B/api/subscribe -d "email=$E2&zip=" >/dev/null
+ok "no county -> NULL" '[[ $($DB "SELECT typeof(county) t FROM subscribers WHERE email=\"$E2\"" 2>/dev/null) == *"\"t\": \"null\""* ]]'
+E3="badcounty$RANDOM@example.com"; curl -s -H 'accept: application/json' -X POST $B/api/subscribe -d "email=$E3&zip=10001&county=Orange" >/dev/null
+ok "non-Florida ZIP -> NULL county" '[[ $($DB "SELECT typeof(county) t FROM subscribers WHERE email=\"$E3\"" 2>/dev/null) == *"\"t\": \"null\""* ]]'
 ok "confirm email logged" 'grep -q "Confirm your Launchpad" /tmp/wdev.log'
 r=$(curl -s -H 'accept: application/json' -X POST $B/api/subscribe -d "email=bot@example.com&website=spam")
 ok "honeypot fakes success" '[[ $r == *"\"ok\":true"* ]]'
@@ -20,12 +25,15 @@ ok "bad token rejected" '[[ $(curl -s "$B/confirm?token=abc") == *"not valid"* ]
 ok "confirm page" '[[ $(curl -s "$B/confirm?token=$TOK") == *"subscribed"* ]]'
 ok "status active" '[[ $($DB "SELECT status FROM subscribers WHERE email=\"$E\"" 2>/dev/null) == *active* ]]'
 ok "prefs page" '[[ $(curl -s "$B/preferences?token=$TOK") == *"value=\"weather\" checked"* ]]'
+ok "prefs page shows zip, cities + purpose" 'p=$(curl -s "$B/preferences?token=$TOK"); [[ $p == *"value=\"32931\""* && $p == *"value=\"Cocoa Beach\" checked"* && $p == *"All of Brevard County"* && $p == *"only to find your county"* ]]'
 curl -s -X POST "$B/preferences?token=$TOK" -d "sections=money&sections=sports&frequency=weekly" >/dev/null
 ok "prefs saved" '[[ $($DB "SELECT sections FROM subscribers WHERE email=\"$E\"" 2>/dev/null) == *money* ]]'
-curl -s -X POST "$B/preferences?token=$TOK" -d "sections=local&sections=weather&frequency=daily" >/dev/null
-s=$(curl -s -X POST -H 'authorization: Bearer '$ADMIN -H 'content-type: application/json' $B/admin/send -d "{\"id\":\"test-$RANDOM\",\"frequency\":\"daily\",\"subject\":\"Launchpad Daily (TEST)\",\"sections\":{\"weather\":[{\"title\":\"Sample weather item\",\"url\":\"https://www.weather.gov/mlb/\",\"source\":\"NWS Melbourne\",\"summary\":\"Test item.\"}],\"sports\":[{\"title\":\"Not chosen\",\"url\":\"https://example.com\"}]}}")
+curl -s -X POST "$B/preferences?token=$TOK" -d "sections=local&sections=weather&frequency=daily&zip=32801" >/dev/null
+ok "new ZIP via prefs -> Orange, all of county" 'r2=$($DB "SELECT county,cities FROM subscribers WHERE email=\"$E\"" 2>/dev/null); [[ $r2 == *Orange* && $r2 == *"[]"* ]]'
+s=$(curl -s -X POST -H 'authorization: Bearer '$ADMIN -H 'content-type: application/json' $B/admin/send -d "{\"id\":\"test-$RANDOM\",\"frequency\":\"daily\",\"subject\":\"Launchpad Daily (TEST)\",\"sections\":{\"weather\":[{\"title\":\"Sample weather item\",\"url\":\"https://www.weather.gov/mlb/\",\"source\":\"NWS Melbourne\",\"summary\":\"Test item.\"}],\"local\":[{\"title\":\"BREVARD-ITEM\",\"url\":\"https://x/b\",\"counties\":[\"Brevard\"]},{\"title\":\"ORANGE-ITEM\",\"url\":\"https://x/o\",\"counties\":[\"Orange\"]}],\"sports\":[{\"title\":\"Not chosen\",\"url\":\"https://example.com\"}]}}")
 echo "  send result: $s"
 sleep 1; ok "issue sent" '[[ $s == *"\"sent\":"[1-9]* ]]'
+ok "sent email: Orange local first + change-county link" 'grep -q "Local news set to all of Orange County" /tmp/wdev.log && [[ $(grep -o "ORANGE-ITEM\|BREVARD-ITEM" /tmp/wdev.log | tail -2 | head -1) == ORANGE-ITEM ]]'
 ok "List-Unsubscribe header" 'grep -q "List-Unsubscribe-Post" /tmp/wdev.log'
 ok "send requires auth" '[[ $(curl -s -o /dev/null -w %{http_code} -X POST $B/admin/send -d {}) == 401 ]]'
 ok "export requires auth" '[[ $(curl -s -o /dev/null -w %{http_code} $B/admin/export.csv) == 401 ]]'
