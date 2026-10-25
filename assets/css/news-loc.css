@@ -1,0 +1,14 @@
+.lp-loc{margin-top:1.5rem}
+.lp-loc h2{font-size:1.25rem;margin:0 0 .5rem}
+.lp-loc .row{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.5rem 0}
+.lp-loc input[type=text],.lp-loc select{font:inherit;font-size:16px;padding:.6rem .7rem;border:1px solid #9aa7b8;border-radius:10px;min-height:44px;background:#fff;color:#00102A;flex:1 1 9rem;max-width:100%}
+.lp-loc button{font:inherit;min-height:44px;padding:.5rem .9rem;border-radius:10px;border:1px solid #00102A;background:#00102A;color:#fff;cursor:pointer}
+.lp-loc button.ghost{background:transparent;color:inherit}
+.lp-loc fieldset{border:1px solid #c9d2de;border-radius:10px;padding:.6rem .8rem;margin:.6rem 0}
+.lp-loc fieldset label{display:flex;gap:.5rem;align-items:center;min-height:36px}
+.lp-loc .cities{display:grid;grid-template-columns:repeat(auto-fill,minmax(9.5rem,1fr));gap:0 .6rem;max-height:16rem;overflow:auto}
+.lp-loc .chips{list-style:none;padding:0;margin:.5rem 0;display:flex;flex-direction:column;gap:.4rem}
+.lp-loc .chips li{display:flex;justify-content:space-between;align-items:center;gap:.5rem;border:1px solid #c9d2de;border-radius:10px;padding:.35rem .35rem .35rem .7rem}
+.lp-loc .msg{font-size:.95rem;margin:.3rem 0}
+.lp-group-h{grid-column:1/-1;margin:1.5rem 0 0;font-size:1.3rem}
+.lp-group-h.sub{font-size:1.05rem;margin-top:1rem;opacity:.85}
