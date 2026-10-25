@@ -55,3 +55,12 @@ export function localGroups(items, who) {
   add('Around Florida', take(() => true));
   return g;
 }
+
+// TOP LOCAL STORIES: the first n stories for this subscriber, in localGroups order
+// (cities -> county -> elsewhere in county -> region -> statewide -> rest). Always n when the pool has n.
+export const TOP_LOCAL = 3;
+export function topLocal(items, who, n = TOP_LOCAL) {
+  const out = [];
+  for (const g of localGroups(items || [], who)) for (const s of g.items) if (out.length < n) out.push({ ...s, group: g.label });
+  return out;
+}

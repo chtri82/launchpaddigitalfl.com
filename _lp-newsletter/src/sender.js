@@ -1,6 +1,22 @@
 import { SECTIONS } from './config.js';
 import { sendEmail } from './providers.js';
-import { localGroups } from './counties.js';
+import { topLocal, TOP_LOCAL } from './counties.js';
+
+// Format: 3 TOP LOCAL STORIES per subscriber, then each section with 2-5 stories.
+export const SECTION_MIN = 2, SECTION_MAX = 5;
+// Build-time check: trims sections to 5, drops empty ones, warns (never fails) when a section has fewer than 2.
+export function checkSections(issue) {
+  const warnings = [], sections = {};
+  for (const [k, arr] of Object.entries(issue.sections || {})) {
+    if (k === 'local') { sections[k] = arr || []; if ((arr || []).length < TOP_LOCAL) warnings.push(`local: ${(arr || []).length} stories in pool, top block needs ${TOP_LOCAL}`); continue; }
+    const n = (arr || []).length;
+    if (!n) { warnings.push(`${k}: 0 stories, section omitted`); continue; }
+    if (n < SECTION_MIN) warnings.push(`${k}: ${n} story, below minimum ${SECTION_MIN}`);
+    if (n > SECTION_MAX) warnings.push(`${k}: ${n} stories, trimmed to ${SECTION_MAX}`);
+    sections[k] = arr.slice(0, SECTION_MAX);
+  }
+  return { issue: { ...issue, sections }, warnings };
+}
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
@@ -9,27 +25,28 @@ const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '
    "tier": "free|paid" (optional; paid = only paid subscribers — Stripe hook),
    "sections": { "local": [{ "title": "...", "url": "https://...", "source": "...", "summary": "...",
                 "counties": ["Brevard"] | ["region:Central"] | ["statewide"] }], ... },
-   Local is ordered per subscriber county: their county, then same region, then statewide, then the rest (never empty).
+   "local" is the pool for the 3 TOP LOCAL STORIES block (always first), picked per subscriber: cities, county, rest of county, region, statewide, rest.
+   Every other section: 2-5 stories (checkSections warns under 2, trims over 5, omits empty).
    "dryRun": false, "limit": 300 } */
 const localLabel = (s) => { const c = s.cities ? JSON.parse(s.cities) : []; return c.length ? `${c.join(', ')} (${s.county} County)` : `all of ${s.county} County`; };
-export function buildIssue(env, issue, sub) {
+export function buildIssue(env, issueIn, sub) {
+  const issue = checkSections(issueIn).issue;
   const chosen = JSON.parse(sub.sections);
   const keys = Object.keys(SECTIONS).filter((k) => chosen.includes(k) && issue.sections?.[k]?.length);
   if (!keys.length) return null;
   const pref = `${env.PUBLIC_URL}/preferences?token=${sub.token}`, unsub = `${env.PUBLIC_URL}/unsubscribe?token=${sub.token}`;
   let html = `<div style="font-family:Georgia,serif;max-width:640px;margin:auto;color:#00102A"><h1 style="font-family:system-ui">${esc(issue.subject)}</h1>${issue.intro ? `<p>${esc(issue.intro)}</p>` : ''}`;
   let text = `${issue.subject}\n\n${issue.intro ? issue.intro + '\n\n' : ''}`;
+  const item = (s) => {
+    html += `<p>${s.group ? `<span style="font-family:system-ui;font-size:11px;text-transform:uppercase;color:#666">${esc(s.group)}</span><br>` : ''}<a href="${esc(s.url)}"><strong>${esc(s.title)}</strong></a>${s.source ? ` <em>(${esc(s.source)})</em>` : ''}<br>${esc(s.summary || '')}</p>`;
+    text += `- ${s.group ? `[${s.group}] ` : ''}${s.title}${s.source ? ` (${s.source})` : ''}\n  ${s.url}\n${s.summary ? '  ' + s.summary + '\n' : ''}`;
+  };
   for (const k of keys) {
-    html += `<h2 style="font-family:system-ui;border-bottom:2px solid #00102A">${esc(SECTIONS[k])}</h2>`;
-    text += `== ${SECTIONS[k]} ==\n`;
-    const groups = k === 'local' ? localGroups(issue.sections[k], { county: sub.county, cities: sub.cities }) : [{ items: issue.sections[k] }];
-    for (const g of groups) {
-    if (g.label && k === 'local') { html += `<h3 style="font-family:system-ui;font-size:13px;text-transform:uppercase;color:#666">${esc(g.label)}</h3>`; text += `-- ${g.label} --\n`; }
-    for (const s of g.items) {
-      html += `<p><a href="${esc(s.url)}"><strong>${esc(s.title)}</strong></a>${s.source ? ` <em>(${esc(s.source)})</em>` : ''}<br>${esc(s.summary || '')}</p>`;
-      text += `- ${s.title}${s.source ? ` (${s.source})` : ''}\n  ${s.url}\n${s.summary ? '  ' + s.summary + '\n' : ''}`;
-    }
-    }
+    const title = k === 'local' ? 'Top Local Stories' : SECTIONS[k];
+    html += `<h2 style="font-family:system-ui;border-bottom:2px solid #00102A">${esc(title)}</h2>`;
+    text += `== ${title} ==\n`;
+    const items = k === 'local' ? topLocal(issue.sections.local, { county: sub.county, cities: sub.cities }) : issue.sections[k];
+    items.forEach(item);
     text += '\n';
   }
   html += `<hr><p style="font-size:12px;color:#666">You're getting this because you subscribed at launchpaddigitalfl.com.<br>Launchpad Digital L.L.C. · ${esc(env.POSTAL_ADDRESS)}<br>Sponsorship and advertising: <a href="mailto:advertise@launchpaddigitalfl.com">advertise@launchpaddigitalfl.com</a><br><a href="${pref}">Manage preferences</a> · <a href="${pref}#county">${sub.county ? `Local news set to ${esc(localLabel(sub))}. Change` : 'Add your ZIP for local news'}</a> · <a href="${unsub}">Unsubscribe</a></p></div>`;

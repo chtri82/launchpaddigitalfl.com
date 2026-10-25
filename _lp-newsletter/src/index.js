@@ -3,7 +3,7 @@ import { sendEmail } from './providers.js';
 import { sendIssue, scheduledRun } from './sender.js';
 import { countiesForZip, placesIn, resolveLocation, GEO } from './counties.js';
 
-const COUNTY_NOTE = 'Optional. We use your ZIP only to find your county and put local stories for your area first in the Local section. Skip it and you get statewide local news. We never sell your data.';
+const COUNTY_NOTE = 'Optional. We use your ZIP only to find your county and pick the 3 Top Local Stories at the top of each issue. Skip it and you get statewide stories there. We never sell your data.';
 function locationFields(s) {
   const cities = s.cities ? JSON.parse(s.cities) : [];
   const opts = s.zip ? countiesForZip(s.zip) : [];
