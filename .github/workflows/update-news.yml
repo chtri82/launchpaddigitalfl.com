@@ -1,7 +1,7 @@
 name: Update news headlines
 on:
   schedule:
-    - cron: "17 */2 * * *"   # about every 2 hours (GitHub may delay scheduled runs)
+    - cron: '*/15 * * * *'   # about every 2 hours (GitHub may delay scheduled runs)
   workflow_dispatch: {}
 permissions:
   contents: write
