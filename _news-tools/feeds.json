@@ -1,0 +1,676 @@
+{
+ "statewide": [
+  {
+   "id": "wusf",
+   "name": "WUSF Public Media (Florida news)",
+   "url": "https://www.wusf.org/local-state.rss",
+   "home": "https://www.wusf.org"
+  },
+  {
+   "id": "wmnf",
+   "name": "WMNF Community Radio",
+   "url": "https://www.wmnf.org/feed/",
+   "home": "https://www.wmnf.org"
+  }
+ ],
+ "politics": [
+  {
+   "id": "phoenix",
+   "name": "Florida Phoenix",
+   "url": "https://floridaphoenix.com/feed/",
+   "home": "https://floridaphoenix.com"
+  },
+  {
+   "id": "flpol",
+   "name": "Florida Politics",
+   "url": "https://floridapolitics.com/feed/",
+   "home": "https://floridapolitics.com"
+  },
+  {
+   "id": "capitolist",
+   "name": "The Capitolist",
+   "url": "https://thecapitolist.com/feed/",
+   "home": "https://thecapitolist.com"
+  },
+  {
+   "id": "wusfpol",
+   "name": "WUSF Politics & Issues",
+   "url": "https://www.wusf.org/politics-issues.rss",
+   "home": "https://www.wusf.org"
+  },
+  {
+   "id": "wmfepol",
+   "name": "Central Florida Public Media Politics",
+   "url": "https://www.wmfe.org/politics.rss",
+   "home": "https://www.wmfe.org"
+  }
+ ],
+ "budgeting": [
+  {
+   "id": "taxwatch",
+   "name": "Florida TaxWatch",
+   "url": "https://floridataxwatch.org/feed",
+   "home": "https://floridataxwatch.org"
+  }
+ ],
+ "weather": [
+  {
+   "id": "nhc",
+   "name": "National Hurricane Center (Atlantic)",
+   "url": "https://www.nhc.noaa.gov/index-at.xml",
+   "home": "https://www.nhc.noaa.gov"
+  },
+  {
+   "id": "wusfwx",
+   "name": "WUSF Weather",
+   "url": "https://www.wusf.org/weather.rss",
+   "home": "https://www.wusf.org"
+  }
+ ],
+ "local": [
+  {
+   "id": "local10",
+   "name": "WPLG Local 10",
+   "url": "https://www.local10.com/arc/outboundfeeds/rss/?outputType=xml",
+   "home": "https://www.local10.com",
+   "counties": [
+    "Miami-Dade",
+    "Broward",
+    "Monroe"
+   ]
+  },
+  {
+   "id": "wsvn",
+   "name": "WSVN 7News",
+   "url": "https://www.wsvn.com/feed/",
+   "home": "https://wsvn.com",
+   "counties": [
+    "Miami-Dade",
+    "Broward"
+   ]
+  },
+  {
+   "id": "miamitoday",
+   "name": "Miami Today",
+   "url": "https://www.miamitodaynews.com/feed/",
+   "home": "https://www.miamitodaynews.com",
+   "counties": [
+    "Miami-Dade"
+   ]
+  },
+  {
+   "id": "keysweekly",
+   "name": "Keys Weekly",
+   "url": "https://keysweekly.com/feed/",
+   "home": "https://keysweekly.com",
+   "counties": [
+    "Monroe"
+   ]
+  },
+  {
+   "id": "wptv",
+   "name": "WPTV NewsChannel 5",
+   "url": "https://www.wptv.com/news.rss",
+   "home": "https://www.wptv.com",
+   "counties": [
+    "Palm Beach",
+    "Martin",
+    "St. Lucie",
+    "Indian River",
+    "Okeechobee"
+   ]
+  },
+  {
+   "id": "wpbf",
+   "name": "WPBF 25 News",
+   "url": "https://www.wpbf.com/topstories-rss",
+   "home": "https://www.wpbf.com",
+   "counties": [
+    "Palm Beach",
+    "Martin",
+    "St. Lucie",
+    "Indian River",
+    "Okeechobee"
+   ]
+  },
+  {
+   "id": "cbs12",
+   "name": "CBS12 News",
+   "url": "https://www.cbs12.com/news/local.rss",
+   "home": "https://cbs12.com",
+   "counties": [
+    "Palm Beach",
+    "Martin",
+    "St. Lucie",
+    "Indian River",
+    "Okeechobee"
+   ]
+  },
+  {
+   "id": "bocanewsnow",
+   "name": "BocaNewsNow",
+   "url": "https://bocanewsnow.com/feed/",
+   "home": "https://bocanewsnow.com",
+   "counties": [
+    "Palm Beach"
+   ]
+  },
+  {
+   "id": "bocatrib",
+   "name": "Boca Raton Tribune",
+   "url": "https://www.bocaratontribune.com/feed/",
+   "home": "https://www.bocaratontribune.com",
+   "counties": [
+    "Palm Beach"
+   ]
+  },
+  {
+   "id": "spacecoastdaily",
+   "name": "Space Coast Daily",
+   "url": "https://spacecoastdaily.com/feed/",
+   "home": "https://spacecoastdaily.com",
+   "counties": [
+    "Brevard"
+   ]
+  },
+  {
+   "id": "wesh",
+   "name": "WESH 2 News",
+   "url": "https://www.wesh.com/local-news-rss",
+   "home": "https://www.wesh.com",
+   "counties": [
+    "Orange",
+    "Seminole",
+    "Osceola",
+    "Lake",
+    "Volusia",
+    "Brevard",
+    "Flagler",
+    "Sumter",
+    "Marion"
+   ]
+  },
+  {
+   "id": "wkmg",
+   "name": "WKMG News 6 (ClickOrlando)",
+   "url": "https://www.clickorlando.com/arc/outboundfeeds/rss/?outputType=xml",
+   "home": "https://www.clickorlando.com",
+   "counties": [
+    "Orange",
+    "Seminole",
+    "Osceola",
+    "Lake",
+    "Volusia",
+    "Brevard",
+    "Flagler",
+    "Sumter",
+    "Marion"
+   ]
+  },
+  {
+   "id": "wftv",
+   "name": "WFTV Channel 9",
+   "url": "https://www.wftv.com/arc/outboundfeeds/rss/?outputType=xml",
+   "home": "https://www.wftv.com",
+   "counties": [
+    "Orange",
+    "Seminole",
+    "Osceola",
+    "Lake",
+    "Volusia",
+    "Brevard",
+    "Flagler"
+   ]
+  },
+  {
+   "id": "fox35",
+   "name": "FOX 35 Orlando",
+   "url": "https://www.fox35orlando.com/rss/category/news",
+   "home": "https://www.fox35orlando.com",
+   "counties": [
+    "Orange",
+    "Seminole",
+    "Osceola",
+    "Lake",
+    "Volusia",
+    "Brevard"
+   ]
+  },
+  {
+   "id": "orlandoweekly",
+   "name": "Orlando Weekly",
+   "url": "https://www.orlandoweekly.com/feed",
+   "home": "https://www.orlandoweekly.com",
+   "counties": [
+    "Orange",
+    "Seminole",
+    "Osceola"
+   ]
+  },
+  {
+   "id": "ocso",
+   "name": "Orange County Sheriff's Office (press releases)",
+   "url": "https://www.ocso.com/rss",
+   "home": "https://www.ocso.com",
+   "counties": [
+    "Orange"
+   ],
+   "official": true
+  },
+  {
+   "id": "flaglerlive",
+   "name": "FlaglerLive",
+   "url": "https://flaglerlive.com/feed/",
+   "home": "https://flaglerlive.com",
+   "counties": [
+    "Flagler",
+    "Volusia"
+   ]
+  },
+  {
+   "id": "villages",
+   "name": "Villages-News",
+   "url": "https://www.villages-news.com/feed/",
+   "home": "https://www.villages-news.com",
+   "counties": [
+    "Sumter",
+    "Lake",
+    "Marion"
+   ]
+  },
+  {
+   "id": "ocalanews",
+   "name": "Ocala-News.com",
+   "url": "https://www.ocala-news.com/feed",
+   "home": "https://www.ocala-news.com",
+   "counties": [
+    "Marion"
+   ]
+  },
+  {
+   "id": "wcjb",
+   "name": "WCJB TV20",
+   "url": "https://www.wcjb.com/arc/outboundfeeds/rss/?outputType=xml",
+   "home": "https://www.wcjb.com",
+   "counties": [
+    "Alachua",
+    "Marion",
+    "Levy",
+    "Gilchrist",
+    "Columbia",
+    "Bradford",
+    "Union",
+    "Dixie",
+    "Suwannee",
+    "Putnam"
+   ]
+  },
+  {
+   "id": "wuft",
+   "name": "WUFT News",
+   "url": "https://www.wuft.org/news/feed/",
+   "home": "https://www.wuft.org",
+   "counties": [
+    "Alachua",
+    "Marion",
+    "Levy",
+    "Gilchrist",
+    "Columbia",
+    "Bradford",
+    "Union"
+   ]
+  },
+  {
+   "id": "news4jax",
+   "name": "News4JAX (WJXT)",
+   "url": "https://www.news4jax.com/arc/outboundfeeds/rss/?outputType=xml",
+   "home": "https://www.news4jax.com",
+   "counties": [
+    "Duval",
+    "Clay",
+    "St. Johns",
+    "Nassau",
+    "Baker",
+    "Putnam",
+    "Flagler"
+   ]
+  },
+  {
+   "id": "firstcoast",
+   "name": "First Coast News",
+   "url": "https://www.firstcoastnews.com/feeds/syndication/rss/news",
+   "home": "https://www.firstcoastnews.com",
+   "counties": [
+    "Duval",
+    "Clay",
+    "St. Johns",
+    "Nassau",
+    "Baker",
+    "Putnam"
+   ]
+  },
+  {
+   "id": "jaxtoday",
+   "name": "Jacksonville Today",
+   "url": "https://jaxtoday.org/feed/",
+   "home": "https://jaxtoday.org",
+   "counties": [
+    "Duval"
+   ]
+  },
+  {
+   "id": "tbt",
+   "name": "Tampa Bay Times",
+   "url": "https://www.tampabay.com/arc/outboundfeeds/rss/?outputType=xml",
+   "home": "https://www.tampabay.com",
+   "counties": [
+    "Hillsborough",
+    "Pinellas",
+    "Pasco",
+    "Hernando",
+    "Citrus",
+    "Polk"
+   ]
+  },
+  {
+   "id": "wfla",
+   "name": "WFLA News Channel 8",
+   "url": "https://www.wfla.com/feed/",
+   "home": "https://www.wfla.com",
+   "counties": [
+    "Hillsborough",
+    "Pinellas",
+    "Pasco",
+    "Hernando",
+    "Citrus",
+    "Polk",
+    "Manatee",
+    "Sarasota",
+    "Highlands",
+    "Hardee"
+   ]
+  },
+  {
+   "id": "wtsp",
+   "name": "WTSP 10 Tampa Bay",
+   "url": "https://www.wtsp.com/feeds/syndication/rss/news",
+   "home": "https://www.wtsp.com",
+   "counties": [
+    "Hillsborough",
+    "Pinellas",
+    "Pasco",
+    "Hernando",
+    "Citrus",
+    "Polk",
+    "Manatee",
+    "Sarasota",
+    "Highlands",
+    "Hardee"
+   ]
+  },
+  {
+   "id": "fox13",
+   "name": "FOX 13 Tampa Bay",
+   "url": "https://www.fox13news.com/rss/category/news",
+   "home": "https://www.fox13news.com",
+   "counties": [
+    "Hillsborough",
+    "Pinellas",
+    "Pasco",
+    "Hernando",
+    "Citrus",
+    "Polk",
+    "Manatee",
+    "Sarasota"
+   ]
+  },
+  {
+   "id": "abcaction",
+   "name": "ABC Action News (WFTS)",
+   "url": "https://www.abcactionnews.com/news.rss",
+   "home": "https://www.abcactionnews.com",
+   "counties": [
+    "Hillsborough",
+    "Pinellas",
+    "Pasco",
+    "Hernando",
+    "Citrus",
+    "Polk",
+    "Manatee",
+    "Sarasota"
+   ]
+  },
+  {
+   "id": "stpetecatalyst",
+   "name": "St. Pete Catalyst",
+   "url": "https://www.stpetecatalyst.com/feed/",
+   "home": "https://stpetecatalyst.com",
+   "counties": [
+    "Pinellas"
+   ]
+  },
+  {
+   "id": "hernandosun",
+   "name": "Hernando Sun",
+   "url": "https://www.hernandosun.com/feed",
+   "home": "https://www.hernandosun.com",
+   "counties": [
+    "Hernando"
+   ]
+  },
+  {
+   "id": "lkldnow",
+   "name": "LkldNow",
+   "url": "https://www.lkldnow.com/feed/",
+   "home": "https://www.lkldnow.com",
+   "counties": [
+    "Polk"
+   ]
+  },
+  {
+   "id": "mysuncoast",
+   "name": "ABC7 Sarasota (MySuncoast)",
+   "url": "https://www.mysuncoast.com/arc/outboundfeeds/rss/?outputType=xml",
+   "home": "https://www.mysuncoast.com",
+   "counties": [
+    "Sarasota",
+    "Manatee",
+    "Charlotte",
+    "DeSoto"
+   ]
+  },
+  {
+   "id": "islander",
+   "name": "The Islander (Anna Maria Island)",
+   "url": "https://www.islander.org/feed/",
+   "home": "https://www.islander.org",
+   "counties": [
+    "Manatee"
+   ]
+  },
+  {
+   "id": "gulfcoastnews",
+   "name": "Gulf Coast News (WBBH)",
+   "url": "https://www.gulfcoastnewsnow.com/topstories-rss",
+   "home": "https://www.gulfcoastnewsnow.com",
+   "counties": [
+    "Lee",
+    "Collier",
+    "Charlotte",
+    "Hendry",
+    "Glades",
+    "DeSoto"
+   ]
+  },
+  {
+   "id": "capecoralbreeze",
+   "name": "Cape Coral Breeze",
+   "url": "https://www.capecoralbreeze.com/feed/",
+   "home": "https://www.capecoralbreeze.com",
+   "counties": [
+    "Lee"
+   ]
+  },
+  {
+   "id": "wctv",
+   "name": "WCTV Eyewitness News",
+   "url": "https://www.wctv.tv/arc/outboundfeeds/rss/?outputType=xml",
+   "home": "https://www.wctv.tv",
+   "counties": [
+    "Leon",
+    "Gadsden",
+    "Wakulla",
+    "Jefferson",
+    "Madison",
+    "Taylor",
+    "Liberty",
+    "Franklin",
+    "Hamilton",
+    "Lafayette",
+    "Suwannee"
+   ]
+  },
+  {
+   "id": "wtxl",
+   "name": "WTXL ABC 27",
+   "url": "https://www.wtxl.com/news.rss",
+   "home": "https://www.wtxl.com",
+   "counties": [
+    "Leon",
+    "Gadsden",
+    "Wakulla",
+    "Jefferson",
+    "Madison",
+    "Taylor",
+    "Liberty",
+    "Franklin"
+   ]
+  },
+  {
+   "id": "tallyreports",
+   "name": "Tallahassee Reports",
+   "url": "https://tallahasseereports.com/feed/",
+   "home": "https://tallahasseereports.com",
+   "counties": [
+    "Leon"
+   ]
+  },
+  {
+   "id": "ecb",
+   "name": "ECB Publishing (Madison/Jefferson/Taylor)",
+   "url": "https://www.ecbpublishing.com/feed/",
+   "home": "https://www.ecbpublishing.com",
+   "counties": [
+    "Madison",
+    "Jefferson",
+    "Taylor"
+   ]
+  },
+  {
+   "id": "apalachtimes",
+   "name": "The Apalachicola Times",
+   "url": "https://www.franklincounty.news/feed",
+   "home": "https://www.franklincounty.news",
+   "counties": [
+    "Franklin"
+   ]
+  },
+  {
+   "id": "wear",
+   "name": "WEAR ABC 3",
+   "url": "https://weartv.com/news/local.rss",
+   "home": "https://weartv.com",
+   "counties": [
+    "Escambia",
+    "Santa Rosa",
+    "Okaloosa",
+    "Walton"
+   ]
+  },
+  {
+   "id": "wkrg",
+   "name": "WKRG News 5",
+   "url": "https://www.wkrg.com/feed/",
+   "home": "https://www.wkrg.com",
+   "counties": [
+    "Escambia",
+    "Santa Rosa",
+    "Okaloosa"
+   ]
+  },
+  {
+   "id": "wuwf",
+   "name": "WUWF Public Media",
+   "url": "https://www.wuwf.org/local-news.rss",
+   "home": "https://www.wuwf.org",
+   "counties": [
+    "Escambia",
+    "Santa Rosa",
+    "Okaloosa",
+    "Walton"
+   ]
+  },
+  {
+   "id": "ricksblog",
+   "name": "Rick's Blog (Pensacola)",
+   "url": "https://www.ricksblog.biz/feed/",
+   "home": "https://www.ricksblog.biz",
+   "counties": [
+    "Escambia"
+   ]
+  },
+  {
+   "id": "northescambia",
+   "name": "NorthEscambia.com",
+   "url": "https://www.northescambia.com/feed",
+   "home": "https://www.northescambia.com",
+   "counties": [
+    "Escambia",
+    "Santa Rosa"
+   ]
+  },
+  {
+   "id": "wmbb",
+   "name": "WMBB News 13 (MyPanhandle)",
+   "url": "https://www.mypanhandle.com/feed/",
+   "home": "https://www.mypanhandle.com",
+   "counties": [
+    "Bay",
+    "Gulf",
+    "Walton",
+    "Washington",
+    "Holmes",
+    "Jackson",
+    "Calhoun",
+    "Okaloosa"
+   ]
+  },
+  {
+   "id": "wjhg",
+   "name": "WJHG NewsChannel 7",
+   "url": "https://www.wjhg.com/arc/outboundfeeds/rss/?outputType=xml",
+   "home": "https://www.wjhg.com",
+   "counties": [
+    "Bay",
+    "Gulf",
+    "Walton",
+    "Washington",
+    "Holmes",
+    "Jackson",
+    "Calhoun",
+    "Liberty",
+    "Franklin"
+   ]
+  },
+  {
+   "id": "wtvy",
+   "name": "WTVY News 4 (Dothan, covers Wiregrass FL)",
+   "url": "https://www.wtvy.com/arc/outboundfeeds/rss/?outputType=xml",
+   "home": "https://www.wtvy.com",
+   "counties": [
+    "Jackson",
+    "Holmes"
+   ]
+  }
+ ]
+}

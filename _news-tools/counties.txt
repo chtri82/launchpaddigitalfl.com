@@ -1,0 +1,67 @@
+Alachua|Gainesville
+Baker|Macclenny
+Bay|Panama City
+Bradford|Starke
+Brevard|Melbourne,Palm Bay,Titusville,Cocoa
+Broward|Fort Lauderdale,Hollywood
+Calhoun|Blountstown
+Charlotte|Punta Gorda,Port Charlotte
+Citrus|Inverness,Crystal River
+Clay|Green Cove Springs,Orange Park
+Collier|Naples,Immokalee
+Columbia|Lake City
+DeSoto|Arcadia
+Dixie|Cross City
+Duval|Jacksonville
+Escambia|Pensacola
+Flagler|Palm Coast,Bunnell
+Franklin|Apalachicola
+Gadsden|Quincy
+Gilchrist|Trenton
+Glades|Moore Haven
+Gulf|Port St. Joe,Wewahitchka
+Hamilton|Jasper
+Hardee|Wauchula
+Hendry|LaBelle,Clewiston
+Hernando|Brooksville,Spring Hill
+Highlands|Sebring,Avon Park
+Hillsborough|Tampa,Brandon,Plant City
+Holmes|Bonifay
+Indian River|Vero Beach,Sebastian
+Jackson|Marianna
+Jefferson|Monticello
+Lafayette|Mayo
+Lake|Tavares,Clermont,Leesburg
+Lee|Fort Myers,Cape Coral
+Leon|Tallahassee
+Levy|Bronson,Chiefland
+Liberty|Bristol
+Madison|Madison
+Manatee|Bradenton
+Marion|Ocala
+Martin|Stuart
+Miami-Dade|Miami,Hialeah,Homestead
+Monroe|Key West,Marathon,Key Largo
+Nassau|Fernandina Beach,Yulee
+Okaloosa|Fort Walton Beach,Crestview,Destin
+Okeechobee|Okeechobee
+Orange|Orlando,Winter Park,Apopka
+Osceola|Kissimmee,St. Cloud
+Palm Beach|West Palm Beach,Boca Raton,Delray Beach
+Pasco|New Port Richey,Dade City,Wesley Chapel
+Pinellas|St. Petersburg,Clearwater,Largo
+Polk|Lakeland,Winter Haven,Bartow
+Putnam|Palatka
+St. Johns|St. Augustine
+St. Lucie|Port St. Lucie,Fort Pierce
+Santa Rosa|Milton,Navarre,Gulf Breeze
+Sarasota|Sarasota,Venice,North Port
+Seminole|Sanford,Altamonte Springs,Oviedo
+Sumter|Bushnell,The Villages,Wildwood
+Suwannee|Live Oak
+Taylor|Perry
+Union|Lake Butler
+Volusia|Daytona Beach,DeLand,Deltona
+Wakulla|Crawfordville
+Walton|DeFuniak Springs,Santa Rosa Beach
+Washington|Chipley
