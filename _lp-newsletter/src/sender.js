@@ -1,6 +1,6 @@
 import { SECTIONS } from './config.js';
 import { sendEmail } from './providers.js';
-import { topLocal, TOP_LOCAL } from './counties.js';
+import { topLocal, TOP_LOCAL, subLocations, locationsLabel, aroundFlorida } from './counties.js';
 
 // Format: 3 TOP LOCAL STORIES per subscriber, then each section with 2-5 stories.
 export const SECTION_MIN = 2, SECTION_MAX = 5;
@@ -27,13 +27,14 @@ const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '
                 "counties": ["Brevard"] | ["region:Central"] | ["statewide"] }], ... },
    "local" is the pool for the 3 TOP LOCAL STORIES block (always first), picked per subscriber: cities, county, rest of county, region, statewide, rest.
    Every other section: 2-5 stories (checkSections warns under 2, trims over 5, omits empty).
+   After the sections, AROUND FLORIDA lists every other local story (not in the reader's top 3) by region, then Statewide.
    "dryRun": false, "limit": 300 } */
-const localLabel = (s) => { const c = s.cities ? JSON.parse(s.cities) : []; return c.length ? `${c.join(', ')} (${s.county} County)` : `all of ${s.county} County`; };
 export function buildIssue(env, issueIn, sub) {
   const issue = checkSections(issueIn).issue;
   const chosen = JSON.parse(sub.sections);
   const keys = Object.keys(SECTIONS).filter((k) => chosen.includes(k) && issue.sections?.[k]?.length);
   if (!keys.length) return null;
+  const locs = subLocations(sub), locLabel = locs.length ? locationsLabel(locs) : '';
   const pref = `${env.PUBLIC_URL}/preferences?token=${sub.token}`, unsub = `${env.PUBLIC_URL}/unsubscribe?token=${sub.token}`;
   let html = `<div style="font-family:Georgia,serif;max-width:640px;margin:auto;color:#00102A"><h1 style="font-family:system-ui">${esc(issue.subject)}</h1>${issue.intro ? `<p>${esc(issue.intro)}</p>` : ''}`;
   let text = `${issue.subject}\n\n${issue.intro ? issue.intro + '\n\n' : ''}`;
@@ -41,16 +42,33 @@ export function buildIssue(env, issueIn, sub) {
     html += `<p>${s.group ? `<span style="font-family:system-ui;font-size:11px;text-transform:uppercase;color:#666">${esc(s.group)}</span><br>` : ''}<a href="${esc(s.url)}"><strong>${esc(s.title)}</strong></a>${s.source ? ` <em>(${esc(s.source)})</em>` : ''}<br>${esc(s.summary || '')}</p>`;
     text += `- ${s.group ? `[${s.group}] ` : ''}${s.title}${s.source ? ` (${s.source})` : ''}\n  ${s.url}\n${s.summary ? '  ' + s.summary + '\n' : ''}`;
   };
+  let top = [];
   for (const k of keys) {
     const title = k === 'local' ? 'Top Local Stories' : SECTIONS[k];
     html += `<h2 style="font-family:system-ui;border-bottom:2px solid #00102A">${esc(title)}</h2>`;
     text += `== ${title} ==\n`;
-    const items = k === 'local' ? topLocal(issue.sections.local, { county: sub.county, cities: sub.cities }) : issue.sections[k];
+    const items = k === 'local' ? (top = topLocal(issue.sections.local, sub)) : issue.sections[k];
     items.forEach(item);
     text += '\n';
   }
-  html += `<hr><p style="font-size:12px;color:#666">You're getting this because you subscribed at launchpaddigitalfl.com.<br>Launchpad Digital L.L.C. · ${esc(env.POSTAL_ADDRESS)}<br>Sponsorship and advertising: <a href="mailto:advertise@launchpaddigitalfl.com">advertise@launchpaddigitalfl.com</a><br><a href="${pref}">Manage preferences</a> · <a href="${pref}#county">${sub.county ? `Local news set to ${esc(localLabel(sub))}. Change` : 'Add your ZIP for local news'}</a> · <a href="${unsub}">Unsubscribe</a></p></div>`;
-  text += `--\nLaunchpad Digital L.L.C. · ${env.POSTAL_ADDRESS}\nAdvertising: advertise@launchpaddigitalfl.com\nManage preferences: ${pref}\n${sub.county ? `Local news set to ${localLabel(sub)}. Change` : 'Add your ZIP for local news'}: ${pref}#county\nUnsubscribe: ${unsub}\n`;
+  if (keys.includes('local')) {
+    const around = aroundFlorida(issue.sections.local, top);
+    if (around.length) {
+      html += `<h2 style="font-family:system-ui;border-bottom:2px solid #00102A">Around Florida</h2><p style="font-family:system-ui;font-size:13px;color:#666">More local stories from this issue, by region.</p>`;
+      text += '== Around Florida ==\n';
+      for (const g of around) {
+        html += `<h3 style="font-family:system-ui;font-size:14px;text-transform:uppercase;color:#00102A;margin:18px 0 4px">${esc(g.region)}</h3>`;
+        text += `-- ${g.region} --\n`;
+        for (const s of g.items) {
+          html += `<p><span style="font-family:system-ui;font-size:11px;text-transform:uppercase;color:#666">${esc(s.place)}</span><br><strong>${esc(s.title)}</strong><br>${esc(s.summary || '')} <a href="${esc(s.url)}">Read more</a></p>`;
+          text += `- [${s.place}] ${s.title}\n${s.summary ? '  ' + s.summary + '\n' : ''}  Read more: ${s.url}\n`;
+        }
+      }
+      text += '\n';
+    }
+  }
+  html += `<hr><p style="font-size:12px;color:#666">You're getting this because you subscribed at launchpaddigitalfl.com.<br>Launchpad Digital L.L.C. · ${esc(env.POSTAL_ADDRESS)}<br>Sponsorship and advertising: <a href="mailto:advertise@launchpaddigitalfl.com">advertise@launchpaddigitalfl.com</a><br><a href="${pref}">Manage preferences</a> · <a href="${pref}#county">${locs.length ? `Local news set to ${esc(locLabel)}. Change` : 'Add your ZIP for local news'}</a> · <a href="${unsub}">Unsubscribe</a></p></div>`;
+  text += `--\nLaunchpad Digital L.L.C. · ${env.POSTAL_ADDRESS}\nAdvertising: advertise@launchpaddigitalfl.com\nManage preferences: ${pref}\n${locs.length ? `Local news set to ${locLabel}. Change` : 'Add your ZIP for local news'}: ${pref}#county\nUnsubscribe: ${unsub}\n`;
   return { to: sub.email, subject: issue.subject, html, text,
     headers: { 'List-Unsubscribe': `<${unsub}>, <mailto:${env.REPLY_TO || env.FROM_EMAIL}?subject=unsubscribe>`, 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click' } };
 }

@@ -19,3 +19,9 @@ Go live: `wrangler login`; `wrangler d1 create lp-newsletter` (paste id into wra
 - D1: `zip`, `county`, `cities` (JSON; `[]` = all of county) via migrations 0002/0003. Invalid input is dropped server-side.
 - Local stories take `"cities": [...]` and/or `"counties": [...]` (`"region:Central"`, `"statewide"`; none = statewide). Order per subscriber: their cities → county → elsewhere in county → region → statewide → everything else (never empty). Regions in `src/counties.js` are our own editorial grouping.
 - Tests: `npm test` (unit) and `scripts/test-local.sh` (end-to-end against `wrangler dev`).
+
+## Multiple locations + Around Florida
+- Subscribers can save several locations: any number of ZIPs (county looked up; multi-county ZIPs pick one) and/or counties picked from the list of all 67. Each location is "All of <County>" or specific cities. Signup page sends a JSON `locations` field; `/preferences` edits each location, removes it, or adds another (ZIP or county list).
+- D1: `locations` JSON list `[{zip, county, cities}]` (migration 0004 migrates the old single zip/county/cities; those columns now mirror the first location). Everything is validated against `data/fl-geo.json` (`resolveLocations`; duplicate counties merge).
+- Top 3 Local Stories are picked across all locations: cities → counties → elsewhere in those counties → regions → statewide → rest.
+- After the regular sections, **Around Florida** lists every other local story (not in the reader's top 3) by region (Panhandle, North, Central, Space Coast, Tampa Bay, South), then Statewide: headline, one-line summary, county label, Read more. Nothing is dropped, only reordered.

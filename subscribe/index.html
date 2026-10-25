@@ -64,9 +64,12 @@
     <fieldset class="lp-fs" data-lp-loc><legend><strong>Local news area</strong> <span style="color:var(--text-muted)">(optional)</span></legend>
     <label for="lp-zip">ZIP code</label>
     <input id="lp-zip" name="zip" inputmode="numeric" pattern="\d{5}" maxlength="5" autocomplete="postal-code" class="lp-input" aria-describedby="lp-zip-note">
-    <p id="lp-zip-note" style="color:var(--text-muted);font-size:.9em;margin:.25rem 0 .75rem">We use your ZIP only to find your county and put stories from your area first in the Local section. Skip it and you get statewide local news. You can change it from any email.</p>
+    <p id="lp-zip-note" style="color:var(--text-muted);font-size:.9em;margin:.25rem 0 .75rem">We use your ZIP codes or counties only to put stories from your areas first in the Local section; every other local story is still in the issue. Skip it and you get statewide local news. You can change it from any email.</p>
     <div data-lp-loc-county hidden><label for="lp-county">Your ZIP is in more than one county. Which one?</label><select id="lp-county" name="county" class="lp-input"></select></div>
     <div data-lp-loc-cities hidden></div>
+    <div data-lp-loc-extra hidden><label for="lp-add-county">Or pick a county</label><select id="lp-add-county" class="lp-input" data-lp-add-county><option value="">(choose a county)</option></select>
+    <button type="button" class="lp-all" data-lp-add-loc>+ Add this location</button> <small style="color:var(--text-muted)">Add as many ZIP codes or counties as you like.</small>
+    <ul data-lp-loc-list style="margin:.5rem 0;padding-left:1.1rem"></ul></div>
     </fieldset>
     <div class="lp-hp" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
     <input type="hidden" name="source" value="site-subscribe">

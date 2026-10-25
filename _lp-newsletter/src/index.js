@@ -1,23 +1,48 @@
 import { SECTIONS, FREQUENCIES } from './config.js';
 import { sendEmail } from './providers.js';
 import { sendIssue, scheduledRun } from './sender.js';
-import { countiesForZip, placesIn, resolveLocation, GEO } from './counties.js';
+import { countiesForZip, placesIn, resolveLocations, subLocations, COUNTIES, GEO } from './counties.js';
 
-const COUNTY_NOTE = 'Optional. We use your ZIP only to find your county and pick the 3 Top Local Stories at the top of each issue. Skip it and you get statewide stories there. We never sell your data.';
+const COUNTY_NOTE = 'Optional. We use your ZIP codes or counties only to pick the 3 Top Local Stories at the top of each issue; every other local story is still listed under Around Florida. Skip it and you get statewide stories there. We never sell your data.';
+// Server-rendered location editor for /preferences: one block per saved location, plus "add another" (ZIP or county list).
 function locationFields(s) {
-  const cities = s.cities ? JSON.parse(s.cities) : [];
-  const opts = s.zip ? countiesForZip(s.zip) : [];
-  const types = Object.fromEntries((GEO.places[s.county] || []).map((p) => [p.name, p.incorporated]));
-  let h = `<fieldset id="county"><legend>Local news area (optional)</legend><label>ZIP code <input name="zip" inputmode="numeric" pattern="\\d{5}" maxlength="5" value="${esc(s.zip || '')}"></label><small>${COUNTY_NOTE}</small>`;
-  if (opts.length > 1) h += `<label>Your ZIP is in more than one county. Which one? <select name="county">${opts.map((c) => `<option${c === s.county ? ' selected' : ''}>${esc(c)}</option>`).join('')}</select></label>`;
-  else if (s.county) h += `<input type="hidden" name="county" value="${esc(s.county)}"><p>County: <strong>${esc(s.county)}</strong></p>`;
-  if (s.county) {
-    h += `<label><input type="checkbox" name="cities" value="all"${cities.length ? '' : ' checked'}> All of ${esc(s.county)} County</label><p>Or only these cities and towns:</p>`;
-    h += placesIn(s.county).map((n) => `<label><input type="checkbox" name="cities" value="${esc(n)}"${cities.includes(n) ? ' checked' : ''}> ${esc(n)}${types[n] ? '' : ' (unincorporated)'}</label>`).join('');
-    h += '<small>Changed your ZIP? Save, then pick your cities.</small>';
-  }
+  const locs = subLocations(s);
+  let h = `<fieldset id="county"><legend>Local news areas (optional)</legend><small>${COUNTY_NOTE}</small>`;
+  locs.forEach((l, i) => {
+    const opts = l.zip ? countiesForZip(l.zip) : [];
+    const types = Object.fromEntries((GEO.places[l.county] || []).map((p) => [p.name, p.incorporated]));
+    h += `<fieldset class="loc" data-loc="${i}"><legend>${esc(l.county)} County${l.zip ? ` (ZIP ${esc(l.zip)})` : ''}</legend><input type="hidden" name="loc${i}_zip" value="${esc(l.zip || '')}"><input type="hidden" name="loc${i}_prev" value="${esc(l.county)}">`;
+    if (opts.length > 1) h += `<label>ZIP ${esc(l.zip)} is in more than one county. Which one? <select name="loc${i}_county">${opts.map((c) => `<option${c === l.county ? ' selected' : ''}>${esc(c)}</option>`).join('')}</select></label>`;
+    else h += `<input type="hidden" name="loc${i}_county" value="${esc(l.county)}">`;
+    h += `<label><input type="checkbox" name="loc${i}_cities" value="all"${l.cities.length ? '' : ' checked'}> All of ${esc(l.county)} County</label><p>Or only these cities and towns:</p>`;
+    h += placesIn(l.county).map((n) => `<label><input type="checkbox" name="loc${i}_cities" value="${esc(n)}"${l.cities.includes(n) ? ' checked' : ''}> ${esc(n)}${types[n] ? '' : ' (unincorporated)'}</label>`).join('');
+    h += `<label><input type="checkbox" name="loc${i}_remove" value="1"> Remove this location</label></fieldset>`;
+  });
+  h += `<input type="hidden" name="loc_count" value="${locs.length}"><fieldset><legend>${locs.length ? 'Add another location' : 'Add a location'}</legend>`;
+  h += `<label>ZIP code <input name="add_zip" inputmode="numeric" pattern="\\d{5}" maxlength="5"></label>`;
+  h += `<label>or pick a county <select name="add_county"><option value="">(choose a county)</option>${COUNTIES.map((c) => `<option>${esc(c)}</option>`).join('')}</select></label>`;
+  h += '<small>Save to add it, then pick "All of" the county or specific cities.</small></fieldset>';
   return h + '</fieldset>';
 }
+// Locations from a submitted form: JSON "locations" (signup page JS), indexed loc{i}_* blocks (preferences),
+// add_zip/add_county (preferences "add another"), and legacy single zip/county/cities. All validated by resolveLocations.
+function formLocations(f) {
+  const list = [];
+  const j = f.get('locations');
+  if (j) { try { const v = typeof j === 'string' ? JSON.parse(j) : j; if (Array.isArray(v)) list.push(...v); } catch { /* ignore */ } }
+  const n = Math.min(Number(f.get('loc_count')) || 0, 100);
+  for (let i = 0; i < n; i++) {
+    if (f.get(`loc${i}_remove`)) continue;
+    const county = f.get(`loc${i}_county`), prev = f.get(`loc${i}_prev`);
+    list.push({ zip: f.get(`loc${i}_zip`), county, cities: county && prev && String(county) !== String(prev) ? ['all'] : f.all(`loc${i}_cities`) });
+  }
+  if (f.get('zip')) list.push({ zip: f.get('zip'), county: f.get('county'), cities: f.all('cities') });
+  if (f.get('add_zip')) list.push({ zip: f.get('add_zip'), cities: ['all'] });
+  if (f.get('add_county')) list.push({ county: f.get('add_county'), cities: ['all'] });
+  return resolveLocations(list);
+}
+// DB columns: locations (JSON list) + legacy zip/county/cities mirroring the first location.
+const locCols = (locs) => [JSON.stringify(locs), locs[0]?.zip ?? null, locs[0]?.county ?? null, locs[0] ? JSON.stringify(locs[0].cities) : null];
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const EMAIL_RE = /^[^\s@<>()]{1,64}@[^\s@<>()]{1,253}\.[a-z]{2,}$/i;
@@ -66,7 +91,7 @@ async function subscribe(req, env) {
   if (!EMAIL_RE.test(email) || email.length > 254) return reply(false, 'Please enter a valid email address.', 400);
   if (await rateLimited(env, 'email:' + email, 3, 3600)) return reply(false, 'Too many attempts for this address. Try again later.', 429);
   const name = String(f.get('name') || '').trim().slice(0, 100) || null;
-  const loc = resolveLocation(f.get('zip'), f.get('county'), f.all('cities'));
+  const locs = formLocations(f);
   let sections = pick(f.all('sections'), SECTIONS), freqs = pick(f.all('frequency'), FREQUENCIES);
   if (!sections.length) sections = Object.keys(SECTIONS);
   if (!freqs.length) freqs = ['daily'];
@@ -79,11 +104,11 @@ async function subscribe(req, env) {
   }
   tok = token();
   if (existing) {
-    await env.DB.prepare("UPDATE subscribers SET name=?, zip=?, county=?, cities=?, sections=?, frequencies=?, status='pending', token=?, consent_ip=?, updated_at=datetime('now') WHERE id=?")
-      .bind(name, loc.zip, loc.county, loc.cities && JSON.stringify(loc.cities), JSON.stringify(sections), JSON.stringify(freqs), tok, ip, existing.id).run();
+    await env.DB.prepare("UPDATE subscribers SET name=?, locations=?, zip=?, county=?, cities=?, sections=?, frequencies=?, status='pending', token=?, consent_ip=?, updated_at=datetime('now') WHERE id=?")
+      .bind(name, ...locCols(locs), JSON.stringify(sections), JSON.stringify(freqs), tok, ip, existing.id).run();
   } else {
-    await env.DB.prepare('INSERT INTO subscribers(email,name,zip,county,cities,sections,frequencies,token,source,consent_ip) VALUES(?,?,?,?,?,?,?,?,?,?)')
-      .bind(email, name, loc.zip, loc.county, loc.cities && JSON.stringify(loc.cities), JSON.stringify(sections), JSON.stringify(freqs), tok, String(f.get('source') || 'site').slice(0, 50), ip).run();
+    await env.DB.prepare('INSERT INTO subscribers(email,name,locations,zip,county,cities,sections,frequencies,token,source,consent_ip) VALUES(?,?,?,?,?,?,?,?,?,?,?)')
+      .bind(email, name, ...locCols(locs), JSON.stringify(sections), JSON.stringify(freqs), tok, String(f.get('source') || 'site').slice(0, 50), ip).run();
   }
   const r = await sendEmail(confirmEmail(env, email, name, tok), env);
   if (!r.ok) { console.error(r.error); return reply(false, 'We could not send the confirmation email. Please try again later.', 502); }
@@ -138,11 +163,9 @@ async function preferences(req, env, url) {
     const f = await req.formData();
     const sec = pick(f.getAll('sections'), SECTIONS), fr = pick(f.getAll('frequency'), FREQUENCIES);
     const name = String(f.get('name') || '').trim().slice(0, 100) || null;
-    // County/cities only count if the ZIP didn't change; a new ZIP resets to "all of" its county.
-    const zipSame = String(f.get('zip') || '').trim() === (s.zip || '');
-    const loc = resolveLocation(f.get('zip'), zipSame ? f.get('county') : null, zipSame ? f.getAll('cities') : ['all']);
-    await env.DB.prepare("UPDATE subscribers SET name=?, zip=?, county=?, cities=?, sections=?, frequencies=?, status=CASE WHEN status='unsubscribed' THEN 'active' ELSE status END, updated_at=datetime('now') WHERE id=?")
-      .bind(name, loc.zip, loc.county, loc.cities && JSON.stringify(loc.cities), JSON.stringify(sec.length ? sec : Object.keys(SECTIONS)), JSON.stringify(fr.length ? fr : ['daily']), s.id).run();
+    const locs = formLocations({ get: (k) => f.get(k), all: (k) => f.getAll(k) });
+    await env.DB.prepare("UPDATE subscribers SET name=?, locations=?, zip=?, county=?, cities=?, sections=?, frequencies=?, status=CASE WHEN status='unsubscribed' THEN 'active' ELSE status END, updated_at=datetime('now') WHERE id=?")
+      .bind(name, ...locCols(locs), JSON.stringify(sec.length ? sec : Object.keys(SECTIONS)), JSON.stringify(fr.length ? fr : ['daily']), s.id).run();
     Object.assign(s, await env.DB.prepare('SELECT * FROM subscribers WHERE id=?').bind(s.id).first());
     note = '<p style="background:#e7f7ec;padding:.6rem;border-radius:6px">Saved.</p>';
   }
@@ -165,9 +188,9 @@ const csvCell = (v) => { let s = String(v ?? ''); if (/^[=+\-@]/.test(s)) s = "'
 
 async function exportCsv(req, env) {
   if (!authed(req, env)) return new Response('Unauthorized', { status: 401 });
-  const { results } = await env.DB.prepare('SELECT id,email,name,zip,county,cities,sections,frequencies,status,tier,source,created_at,confirmed_at,unsubscribed_at,consent_ip FROM subscribers ORDER BY id').all();
-  const cols = ['id', 'email', 'name', 'zip', 'county', 'cities', 'sections', 'frequencies', 'status', 'tier', 'source', 'created_at', 'confirmed_at', 'unsubscribed_at', 'consent_ip'];
-  const body = [cols.join(','), ...results.map((r) => cols.map((c) => csvCell(c === 'sections' || c === 'frequencies' ? JSON.parse(r[c]).join(';') : r[c])).join(','))].join('\n') + '\n';
+  const { results } = await env.DB.prepare('SELECT id,email,name,locations,zip,county,cities,sections,frequencies,status,tier,source,created_at,confirmed_at,unsubscribed_at,consent_ip FROM subscribers ORDER BY id').all();
+  const cols = ['id', 'email', 'name', 'locations', 'zip', 'county', 'cities', 'sections', 'frequencies', 'status', 'tier', 'source', 'created_at', 'confirmed_at', 'unsubscribed_at', 'consent_ip'];
+  const body = [cols.join(','), ...results.map((r) => cols.map((c) => csvCell(c === 'sections' || c === 'frequencies' ? JSON.parse(r[c]).join(';') : c === 'locations' ? subLocations(r).map((l) => `${l.county}${l.cities.length ? ':' + l.cities.join('|') : ''}`).join(';') : r[c])).join(','))].join('\n') + '\n';
   return new Response(body, { headers: { 'content-type': 'text/csv; charset=utf-8', 'content-disposition': `attachment; filename="launchpad-subscribers-${new Date().toISOString().slice(0, 10)}.csv"`, 'cache-control': 'no-store' } });
 }
 
