@@ -1,10 +1,31 @@
 // Launchpad Digital — small progressive enhancements. No tracking, no third-party scripts.
 // ONE PLACE TO CHANGE: Launchpad Digital's own newsletter signup URL.
 // Until it's set, every [data-lp-subscribe] link falls back to its /subscribe/ href.
-var LAUNCHPAD_SUBSCRIBE_URL = ''; // e.g. 'https://YOUR-SIGNUP-URL'
+var LAUNCHPAD_SUBSCRIBE_URL = '/subscribe/#launchpad'; // our own signup form (self-hosted newsletter)
+// Self-owned newsletter backend (Cloudflare Worker in lp-newsletter). Set to the Worker's public URL at go-live.
+var LAUNCHPAD_NEWSLETTER_API = (location.hostname==='localhost'||location.hostname==='127.0.0.1') ? 'http://localhost:8787' : 'https://news-api.launchpaddigitalfl.com';
 (function(){
   document.documentElement.classList.remove('no-js');
   if(LAUNCHPAD_SUBSCRIBE_URL){document.querySelectorAll('[data-lp-subscribe]').forEach(function(a){a.href=LAUNCHPAD_SUBSCRIBE_URL;});}
+  // Newsletter signup form
+  var nf=document.querySelector('[data-lp-newsletter-form]');
+  if(nf){
+    nf.action=LAUNCHPAD_NEWSLETTER_API+'/api/subscribe';
+    var msg=nf.querySelector('.lp-msg'), all=nf.querySelector('[data-lp-all]');
+    if(all)all.addEventListener('click',function(){var bs=nf.querySelectorAll('input[name=sections]'),on=[].some.call(bs,function(b){return !b.checked;});[].forEach.call(bs,function(b){b.checked=on;});all.textContent=on?'Clear all':'Select all';});
+    var st=new URLSearchParams(location.search).get('status');
+    if(st&&msg)msg.textContent=st==='check-email'?'Almost done! Check your email and click the link to confirm.':'Something went wrong. Please try again.';
+    nf.addEventListener('submit',function(e){
+      e.preventDefault();
+      if(!nf.email.value||!nf.email.checkValidity()){msg.textContent='Please enter a valid email address.';nf.email.focus();return;}
+      var b=nf.querySelector('[type=submit]');b.disabled=true;msg.textContent='Sending…';
+      fetch(nf.action,{method:'POST',body:new FormData(nf),headers:{'Accept':'application/json'}})
+        .then(function(r){return r.json();})
+        .then(function(d){msg.textContent=d.message||(d.ok?'Check your email to confirm.':'Something went wrong.');if(d.ok)nf.reset();})
+        .catch(function(){msg.textContent='Could not reach the signup service. Please try again later.';})
+        .then(function(){b.disabled=false;});
+    });
+  }
   // Mobile nav
   var t=document.querySelector('.menu-toggle'), m=document.getElementById('primary-nav');
   if(t&&m){
