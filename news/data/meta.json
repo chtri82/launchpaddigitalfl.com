@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-25T19:15:06Z",
+ "generated": "2026-10-25T21:48:53Z",
  "feeds": [
   {
    "id": "wusf",
@@ -150,7 +150,7 @@
     "Monroe"
    ],
    "status": "ok",
-   "items": 40
+   "items": 37
   },
   {
    "id": "wptv",
@@ -431,7 +431,7 @@
     "Flagler"
    ],
    "status": "ok",
-   "items": 20
+   "items": 19
   },
   {
    "id": "firstcoast",
@@ -460,7 +460,7 @@
     "Duval"
    ],
    "status": "ok",
-   "items": 26
+   "items": 25
   },
   {
    "id": "tbt",
@@ -477,7 +477,7 @@
     "Polk"
    ],
    "status": "ok",
-   "items": 23
+   "items": 19
   },
   {
    "id": "wfla",
@@ -998,7 +998,7 @@
    "dedicated": [
     "jaxtoday"
    ],
-   "items": 31
+   "items": 30
   },
   "Escambia": {
    "slug": "escambia",
@@ -1137,7 +1137,7 @@
     "abcaction"
    ],
    "dedicated": [],
-   "items": 39
+   "items": 37
   },
   "Holmes": {
    "slug": "holmes",
@@ -1403,7 +1403,7 @@
     "bocanewsnow",
     "bocatrib"
    ],
-   "items": 31
+   "items": 30
   },
   "Pasco": {
    "slug": "pasco",
@@ -1547,7 +1547,7 @@
    "dedicated": [
     "ecb"
    ],
-   "items": 25
+   "items": 26
   },
   "Union": {
    "slug": "union",
