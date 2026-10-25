@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-25T21:48:53Z",
+ "generated": "2026-10-25T23:41:00Z",
  "feeds": [
   {
    "id": "wusf",
@@ -431,7 +431,7 @@
     "Flagler"
    ],
    "status": "ok",
-   "items": 19
+   "items": 20
   },
   {
    "id": "firstcoast",
@@ -757,7 +757,7 @@
     "Okaloosa"
    ],
    "status": "ok",
-   "items": 13
+   "items": 14
   },
   {
    "id": "wuwf",
@@ -998,7 +998,7 @@
    "dedicated": [
     "jaxtoday"
    ],
-   "items": 30
+   "items": 29
   },
   "Escambia": {
    "slug": "escambia",
@@ -1137,7 +1137,7 @@
     "abcaction"
    ],
    "dedicated": [],
-   "items": 37
+   "items": 36
   },
   "Holmes": {
    "slug": "holmes",
@@ -1205,7 +1205,7 @@
    "dedicated": [
     "villages"
    ],
-   "items": 27
+   "items": 26
   },
   "Lee": {
    "slug": "lee",
@@ -1547,7 +1547,7 @@
    "dedicated": [
     "ecb"
    ],
-   "items": 26
+   "items": 27
   },
   "Union": {
    "slug": "union",
