@@ -1,0 +1,10 @@
+# GitHub Pages (legacy build). Jekyll already skips _underscore folders and dotfiles;
+# these excludes are belt-and-braces so backend/tooling is never published.
+# No file in this site has front matter, so Jekyll copies every page verbatim (no Liquid processing).
+exclude:
+  - _lp-newsletter
+  - _news-tools
+  - node_modules
+  - README.md
+  - package.json
+  - package-lock.json

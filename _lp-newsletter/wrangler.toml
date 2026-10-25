@@ -1,0 +1,28 @@
+name = "lp-newsletter"
+main = "src/index.js"
+compatibility_date = "2025-06-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "lp-newsletter"
+database_id = "REPLACE_AFTER_wrangler_d1_create"
+migrations_dir = "migrations"
+
+[vars]
+SITE_URL = "https://launchpaddigitalfl.com"
+PUBLIC_URL = "https://news-api.launchpaddigitalfl.com"   # Worker's public URL (custom domain or *.workers.dev)
+ALLOWED_ORIGINS = "https://launchpaddigitalfl.com,https://www.launchpaddigitalfl.com,http://localhost:8080"
+FROM_EMAIL = "editor@launchpaddigitalfl.com"
+FROM_NAME = "Launchpad Digital"
+REPLY_TO = "editor@launchpaddigitalfl.com"
+POSTAL_ADDRESS = "[POSTAL ADDRESS REQUIRED BY CAN-SPAM — set before sending]"
+EMAIL_PROVIDER = "log"          # log | brevo | ses
+DAILY_SEND_CAP = "300"          # Brevo free = 300/day
+ISSUE_FEED_URL = ""             # optional JSON feed of stories for cron-built issues
+
+# Secrets (set with `wrangler secret put NAME`, never committed):
+# ADMIN_TOKEN, BREVO_API_KEY, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION, STRIPE_WEBHOOK_SECRET
+
+[triggers]
+# 11:00 UTC daily (7 AM EDT / 6 AM EST). Weekly = Mondays, monthly = 1st; decided in code.
+crons = ["0 11 * * *"]
