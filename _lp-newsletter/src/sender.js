@@ -23,14 +23,43 @@ const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '
 /* Issue JSON:
  { "id": "2026-10-26-daily", "frequency": "daily|weekly|monthly|breaking", "subject": "...", "intro": "...",
    "tier": "free|paid" (optional; paid = only paid subscribers — Stripe hook),
-   "sections": { "local": [{ "title": "...", "url": "https://...", "source": "...", "summary": "...",
+   "sections": { "local": [{ "title": "...", "url": "https://...", "source": "...", "summary": "...", "published_at": "2026-10-26T14:00:00Z" (optional; filters per reader since last send),
                 "counties": ["Brevard"] | ["region:Central"] | ["statewide"] }], ... },
    "local" is the pool for the 3 TOP LOCAL STORIES block (always first), picked per subscriber: cities, county, rest of county, region, statewide, rest.
    Every other section: 2-5 stories (checkSections warns under 2, trims over 5, omits empty).
    After the sections, AROUND FLORIDA lists every other local story (not in the reader's top 3) by region, then Statewide.
    "dryRun": false, "limit": 300 } */
-export function buildIssue(env, issueIn, sub) {
-  const issue = checkSections(issueIn).issue;
+// Frequency windows (fallback when a reader has never been sent this frequency).
+export const WINDOW_DAYS = { daily: 1, weekly: 7, monthly: 31, breaking: 1 };
+export const CONDENSED = { perSection: 2, moreMax: 25 };
+export const MONEY_NOTE = 'We are not financial advisors; this is general information, not financial advice.';
+const toMs = (t) => { if (!t) return NaN; const v = String(t); return Date.parse(/[zZ]|[+-]\d\d:?\d\d$/.test(v) ? v : v.replace(' ', 'T') + 'Z'); };
+const sqlTime = (ms) => new Date(ms).toISOString().slice(0, 19).replace('T', ' ');
+// Start of the "since" window for this reader+frequency: last send of that frequency, else (never sent) the frequency window.
+// Signup time is not used as a lower bound so a new reader's first issue isn't empty.
+export function sinceFor(sub, frequency, now = Date.now()) {
+  let last = {}; try { last = JSON.parse(sub.last_sent || '{}') || {}; } catch {}
+  const t = toMs(last[frequency]);
+  if (!isNaN(t)) return t;
+  return now - (WINDOW_DAYS[frequency] || 7) * 86400000;
+}
+// Keep stories published after `since` (stories with no published_at are always kept: legacy/hand-built issues).
+export function filterSince(issue, since, now = Date.now()) {
+  const sections = {};
+  for (const [k, arr] of Object.entries(issue.sections || {})) {
+    const kept = (arr || []).filter((s) => { const t = toMs(s.published_at); return isNaN(t) || (t > since && t <= now); });
+    if (kept.length) sections[k] = kept;
+  }
+  return { ...issue, sections };
+}
+
+export function buildIssue(env, issueIn, sub, opts = {}) {
+  const frequency = opts.frequency || issueIn.frequency || 'daily';
+  const condensed = frequency === 'weekly' || frequency === 'monthly';
+  let src = issueIn;
+  if (opts.since != null) src = filterSince(issueIn, opts.since, opts.now);
+  // Condensed editions keep the full pool for "More stories"; daily trims sections to 5.
+  const issue = condensed ? { ...src, sections: src.sections || {} } : checkSections(src).issue;
   const chosen = JSON.parse(sub.sections);
   const keys = Object.keys(SECTIONS).filter((k) => chosen.includes(k) && issue.sections?.[k]?.length);
   if (!keys.length) return null;
@@ -38,22 +67,32 @@ export function buildIssue(env, issueIn, sub) {
   const pref = `${env.PUBLIC_URL}/preferences?token=${sub.token}`, unsub = `${env.PUBLIC_URL}/unsubscribe?token=${sub.token}`;
   let html = `<div style="font-family:Georgia,serif;max-width:640px;margin:auto;color:#00102A"><h1 style="font-family:system-ui">${esc(issue.subject)}</h1>${issue.intro ? `<p>${esc(issue.intro)}</p>` : ''}`;
   let text = `${issue.subject}\n\n${issue.intro ? issue.intro + '\n\n' : ''}`;
+  const oneLine = (s) => { const t = String(s || '').replace(/\s+/g, ' ').trim(); const m = t.match(/^.{0,160}?[.!?](\s|$)/); return m ? m[0].trim() : t.length > 160 ? t.slice(0, 157).trimEnd() + '…' : t; };
   const item = (s) => {
-    html += `<p>${s.group ? `<span style="font-family:system-ui;font-size:11px;text-transform:uppercase;color:#666">${esc(s.group)}</span><br>` : ''}<a href="${esc(s.url)}"><strong>${esc(s.title)}</strong></a>${s.source ? ` <em>(${esc(s.source)})</em>` : ''}<br>${esc(s.summary || '')}</p>`;
-    text += `- ${s.group ? `[${s.group}] ` : ''}${s.title}${s.source ? ` (${s.source})` : ''}\n  ${s.url}\n${s.summary ? '  ' + s.summary + '\n' : ''}`;
+    const sum = condensed ? oneLine(s.summary) : (s.summary || '');
+    html += `<p>${s.group ? `<span style="font-family:system-ui;font-size:11px;text-transform:uppercase;color:#666">${esc(s.group)}</span><br>` : ''}<a href="${esc(s.url)}"><strong>${esc(s.title)}</strong></a>${s.source && !condensed ? ` <em>(${esc(s.source)})</em>` : ''}<br>${esc(sum)}</p>`;
+    text += `- ${s.group ? `[${s.group}] ` : ''}${s.title}${s.source && !condensed ? ` (${s.source})` : ''}\n  ${s.url}\n${sum ? '  ' + sum + '\n' : ''}`;
   };
+  const h2 = (title) => { html += `<h2 style="font-family:system-ui;border-bottom:2px solid #00102A">${esc(title)}</h2>`; text += `== ${title} ==\n`; };
+  const moneyNote = () => { html += `<p style="font-family:system-ui;font-size:12px;color:#666"><em>${esc(MONEY_NOTE)}</em></p>`; text += `  * ${MONEY_NOTE}\n`; };
   let top = [];
+  const more = [];
   for (const k of keys) {
     const title = k === 'local' ? 'Top Local Stories' : SECTIONS[k];
-    html += `<h2 style="font-family:system-ui;border-bottom:2px solid #00102A">${esc(title)}</h2>`;
-    text += `== ${title} ==\n`;
-    const items = k === 'local' ? (top = topLocal(issue.sections.local, sub)) : issue.sections[k];
+    h2(title);
+    let items;
+    if (k === 'local') items = top = topLocal(issue.sections.local, sub);
+    else if (condensed) { items = issue.sections[k].slice(0, CONDENSED.perSection); issue.sections[k].slice(CONDENSED.perSection).forEach((s) => more.push({ ...s, section: SECTIONS[k] })); }
+    else items = issue.sections[k];
     items.forEach(item);
+    if (k === 'money') moneyNote();
     text += '\n';
   }
   if (keys.includes('local')) {
     const around = aroundFlorida(issue.sections.local, top);
-    if (around.length) {
+    if (condensed) {
+      for (const g of around) for (const s of g.items) more.push({ ...s, section: `Around Florida · ${s.place}` });
+    } else if (around.length) {
       html += `<h2 style="font-family:system-ui;border-bottom:2px solid #00102A">Around Florida</h2><p style="font-family:system-ui;font-size:13px;color:#666">More local stories from this issue, by region.</p>`;
       text += '== Around Florida ==\n';
       for (const g of around) {
@@ -67,8 +106,16 @@ export function buildIssue(env, issueIn, sub) {
       text += '\n';
     }
   }
-  html += `<hr><p style="font-size:12px;color:#666">You're getting this because you subscribed at launchpaddigitalfl.com.<br>Launchpad Digital L.L.C. · ${esc(env.POSTAL_ADDRESS)}<br>Sponsorship and advertising: <a href="mailto:advertise@launchpaddigitalfl.com">advertise@launchpaddigitalfl.com</a><br><a href="${pref}">Manage preferences</a> · <a href="${pref}#county">${locs.length ? `Local news set to ${esc(locLabel)}. Change` : 'Add your ZIP for local news'}</a> · <a href="${unsub}">Unsubscribe</a></p></div>`;
-  text += `--\nLaunchpad Digital L.L.C. · ${env.POSTAL_ADDRESS}\nAdvertising: advertise@launchpaddigitalfl.com\nManage preferences: ${pref}\n${locs.length ? `Local news set to ${locLabel}. Change` : 'Add your ZIP for local news'}: ${pref}#county\nUnsubscribe: ${unsub}\n`;
+  if (condensed && more.length) {
+    const shown = more.slice(0, CONDENSED.moreMax), extra = more.length - shown.length;
+    h2('More stories');
+    html += '<ul style="font-family:system-ui;font-size:14px;padding-left:18px">' + shown.map((s) => `<li><span style="color:#666">${esc(s.section)}:</span> <a href="${esc(s.url)}">${esc(s.title)}</a></li>`).join('') + '</ul>';
+    text += shown.map((s) => `- ${s.section}: ${s.title}\n  ${s.url}\n`).join('');
+    if (extra > 0) { const allUrl = `${env.SITE_URL || 'https://launchpaddigitalfl.com'}/news/`; html += `<p style="font-family:system-ui;font-size:14px"><a href="${allUrl}">+ ${extra} more on the site</a></p>`; text += `+ ${extra} more on the site: ${allUrl}\n`; }
+    text += '\n';
+  }
+  html += `<hr><p style="font-size:12px;color:#666">You're getting this because you subscribed at launchpaddigitalfl.com.<br>Launchpad Digital L.L.C. · ${esc(env.POSTAL_ADDRESS)}<br>Sponsorship and advertising: <a href="mailto:advertise@launchpaddigitalfl.com">advertise@launchpaddigitalfl.com</a><br><a href="${pref}">Manage preferences</a> (change how often: daily, weekly or monthly) · <a href="${pref}#county">${locs.length ? `Local news set to ${esc(locLabel)}. Change` : 'Add your ZIP for local news'}</a> · <a href="${unsub}">Unsubscribe</a></p></div>`;
+  text += `--\nLaunchpad Digital L.L.C. · ${env.POSTAL_ADDRESS}\nAdvertising: advertise@launchpaddigitalfl.com\nManage preferences (daily, weekly or monthly): ${pref}\n${locs.length ? `Local news set to ${locLabel}. Change` : 'Add your ZIP for local news'}: ${pref}#county\nUnsubscribe: ${unsub}\n`;
   return { to: sub.email, subject: issue.subject, html, text,
     headers: { 'List-Unsubscribe': `<${unsub}>, <mailto:${env.REPLY_TO || env.FROM_EMAIL}?subject=unsubscribe>`, 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click' } };
 }
@@ -83,7 +130,8 @@ export async function sendIssue(env, issue) {
   const { results } = await env.DB.prepare(`SELECT s.* FROM subscribers s WHERE status='active' ${tierSql} AND EXISTS (SELECT 1 FROM json_each(s.frequencies) WHERE value=?) AND NOT EXISTS (SELECT 1 FROM sends x WHERE x.issue_id=? AND x.subscriber_id=s.id AND x.status='sent') ORDER BY county, id`).bind(issue.frequency, issue.id).all();
   const out = { ok: true, matched: results.length, sent: 0, skipped_no_content: 0, failed: 0, deferred_by_cap: 0, previews: [] };
   for (const sub of results) {
-    const msg = buildIssue(env, issue, sub);
+    const now = Date.now();
+    const msg = buildIssue(env, issue, sub, { frequency: issue.frequency, since: sinceFor(sub, issue.frequency, now), now });
     if (!msg) { out.skipped_no_content++; continue; }
     if (issue.dryRun) { if (out.previews.length < 3) out.previews.push({ to: msg.to, headers: msg.headers, text: msg.text }); continue; }
     if (budget <= 0) { out.deferred_by_cap++; continue; }
@@ -91,6 +139,8 @@ export async function sendIssue(env, issue) {
     budget--;
     await env.DB.prepare('INSERT INTO sends(issue_id,subscriber_id,provider,status,error) VALUES(?,?,?,?,?) ON CONFLICT(issue_id,subscriber_id) DO UPDATE SET status=excluded.status, error=excluded.error, sent_at=datetime(\'now\')')
       .bind(issue.id, sub.id, env.EMAIL_PROVIDER || 'log', r.ok ? 'sent' : 'failed', r.ok ? null : r.error).run();
+    if (r.ok) await env.DB.prepare("UPDATE subscribers SET last_sent=json_set(COALESCE(NULLIF(last_sent,''),'{}'), '$.' || ?, ?), last_sent_at=? WHERE id=?")
+      .bind(issue.frequency, sqlTime(now), sqlTime(now), sub.id).run();
     r.ok ? out.sent++ : out.failed++;
   }
   return out;
