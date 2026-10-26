@@ -15,7 +15,7 @@ ALLOWED_ORIGINS = "https://launchpaddigitalfl.com,https://www.launchpaddigitalfl
 FROM_EMAIL = "editor@launchpaddigitalfl.com"
 FROM_NAME = "Launchpad Digital"
 REPLY_TO = "editor@launchpaddigitalfl.com"
-POSTAL_ADDRESS = "[POSTAL ADDRESS REQUIRED BY CAN-SPAM — set before sending]"
+POSTAL_ADDRESS = "Launchpad Digital L.L.C., 2173 Tarrytown Ln, Palm Bay, FL 32905"
 EMAIL_PROVIDER = "log"          # log | brevo | ses
 DAILY_SEND_CAP = "300"          # Brevo free = 300/day
 ISSUE_FEED_URL = ""             # optional JSON feed of stories for cron-built issues
