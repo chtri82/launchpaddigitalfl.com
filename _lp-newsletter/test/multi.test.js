@@ -81,7 +81,7 @@ test('placeLabel: county, city + county, region, statewide', () => {
   assert.equal(placeLabel(POOL[0]), 'Statewide');
 });
 test('email: Around Florida block after sections, nothing dropped, multi-location footer', () => {
-  const m = buildIssue(env, { subject: 'S', sections: { local: POOL, weather: [{ title: 'W1', url: 'w1' }, { title: 'W2', url: 'w2' }] } }, row([{ zip: '32931', county: 'Brevard', cities: [] }, { county: 'Orange', cities: ['Orlando'] }], ['local', 'weather']));
+  const m = buildIssue(env, { subject: 'S', sections: { local: POOL, weather: [{ title: 'W1', url: 'w1' }, { title: 'W2', url: 'w2' }] } }, row([{ zip: '32931', county: 'Brevard', cities: [] }, { county: 'Orange', cities: ['Orlando'] }], ['local', 'weather']), { full: true });
   const h2 = [...m.html.matchAll(/<h2[^>]*>([^<]+)<\/h2>/g)].map((x) => x[1]);
   assert.deepEqual(h2, ['Top Local Stories', 'Weather', 'Around Florida']);
   for (const s of POOL) assert.equal(m.text.split(s.title).length - 1, 1, `${s.title} appears exactly once`);

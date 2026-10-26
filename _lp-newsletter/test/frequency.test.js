@@ -14,9 +14,9 @@ const ISSUE = { subject: 'S', frequency: 'weekly', sections: {
 
 test('sinceFor: last send for that frequency, else frequency window', () => {
   assert.equal(sinceFor(sub({ last_sent: '{"weekly":"2026-10-20 12:00:00"}' }), 'weekly', NOW), Date.parse('2026-10-20T12:00:00Z'));
-  assert.equal(sinceFor(sub({ last_sent: '{"daily":"2026-10-25 12:00:00"}' }), 'weekly', NOW), NOW - 7 * 86400000, 'daily clock does not affect weekly');
+  assert.equal(sinceFor(sub({ last_sent: '{"monthly":"2026-10-25 12:00:00"}' }), 'weekly', NOW), NOW - 7 * 86400000, 'monthly clock does not affect weekly');
   assert.equal(sinceFor(sub(), 'monthly', NOW), NOW - WINDOW_DAYS.monthly * 86400000);
-  assert.equal(sinceFor(sub({ last_sent: 'garbage' }), 'daily', NOW), NOW - 86400000);
+  assert.equal(sinceFor(sub({ last_sent: 'garbage' }), 'weekly', NOW), NOW - 7 * 86400000);
 });
 test('filterSince drops older stories, keeps undated ones', () => {
   const r = filterSince({ sections: { state: [{ title: 'old', published_at: ago(48) }, { title: 'new', published_at: ago(1) }, { title: 'undated' }], sports: [{ title: 'old', published_at: ago(48) }] } }, NOW - 24 * 3600000, NOW);
@@ -24,14 +24,14 @@ test('filterSince drops older stories, keeps undated ones', () => {
   assert.ok(!('sports' in r.sections));
 });
 test('per-recipient: a reader last sent 1h ago gets only newer stories', () => {
-  const iss = { ...ISSUE, frequency: 'daily', sections: { state: [{ title: 'Before', url: 'u1', published_at: ago(3) }, { title: 'After', url: 'u2', published_at: ago(0.5) }] } };
-  const s = sub({ sections: '["state"]', last_sent: JSON.stringify({ daily: new Date(NOW - 3600000).toISOString() }) });
-  const m = buildIssue(env, iss, s, { frequency: 'daily', since: sinceFor(s, 'daily', NOW), now: NOW });
+  const iss = { ...ISSUE, frequency: 'weekly', sections: { state: [{ title: 'Before', url: 'u1', published_at: ago(3) }, { title: 'After', url: 'u2', published_at: ago(0.5) }] } };
+  const s = sub({ sections: '["state"]', last_sent: JSON.stringify({ weekly: new Date(NOW - 3600000).toISOString() }) });
+  const m = buildIssue(env, iss, s, { frequency: 'weekly', since: sinceFor(s, 'weekly', NOW), now: NOW });
   assert.ok(m.text.includes('After') && !m.text.includes('Before'));
-  assert.equal(buildIssue(env, iss, s, { frequency: 'daily', since: NOW, now: NOW }), null, 'nothing new = no email');
+  assert.equal(buildIssue(env, iss, s, { frequency: 'weekly', since: NOW, now: NOW }), null, 'nothing new = no email');
 });
-test('daily: full format (sections up to 5, full summary, Around Florida)', () => {
-  const m = buildIssue(env, ISSUE, sub(), { frequency: 'daily' });
+test('legacy full layout (opts.full) still renders: sections up to 5, full summary, Around Florida', () => {
+  const m = buildIssue(env, ISSUE, sub(), { frequency: 'weekly', full: true });
   assert.ok(m.text.includes('ST5') && !m.text.includes('ST6'));
   assert.match(m.text, /Second sentence/);
   assert.match(m.text, /== Around Florida ==/);
@@ -57,7 +57,7 @@ test('condensed caps More stories and links to the site', () => {
   assert.match(m.text, /\+ 13 more on the site/);
 });
 test('Money note, CAN-SPAM address and unsubscribe in every frequency', () => {
-  for (const f of ['daily', 'weekly', 'monthly']) {
+  for (const f of ['weekly', 'monthly']) {
     const m = buildIssue(env, ISSUE, sub(), { frequency: f });
     assert.ok(m.text.includes(MONEY_NOTE) && m.html.includes(MONEY_NOTE));
     assert.ok(m.text.includes(env.POSTAL_ADDRESS));

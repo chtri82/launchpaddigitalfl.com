@@ -1,4 +1,5 @@
-import { SECTIONS, FREQUENCIES } from './config.js';
+import { SECTIONS, FREQUENCIES, SMS_KINDS } from './config.js';
+import { normalizeUsPhone, sendSms, parseInbound, SMS_CONSENT_TEXT, SMS_CONSENT_VERSION, SMS_HELP_TEXT, SMS_STOP_TEXT, SMS_START_TEXT } from './sms.js';
 import { sendEmail } from './providers.js';
 import { sendIssue, scheduledRun } from './sender.js';
 import { countiesForZip, placesIn, resolveLocations, subLocations, COUNTIES, GEO } from './counties.js';
@@ -77,6 +78,21 @@ async function readForm(req) {
   if (ct.includes('application/json')) { const j = await req.json(); return { get: (k) => j[k], all: (k) => [].concat(j[k] ?? []) }; }
   const f = await req.formData(); return { get: (k) => f.get(k), all: (k) => f.getAll(k) };
 }
+// SMS fields from a form. Returns {error} or {cols:[phone,breaking,daily,consent_at,consent_ip,version,status]|null (no SMS)}.
+// Phone is optional; texts need a valid US number, the separate consent box, and at least one text type.
+const truthy = (v) => v != null && v !== '' && v !== '0' && v !== 'false' && v !== false;
+export function smsFromForm(f, ip, existing = null) {
+  const rawPhone = String(f.get('phone') || '').trim();
+  const breaking = truthy(f.get('sms_breaking')) ? 1 : 0, daily = truthy(f.get('sms_daily')) ? 1 : 0, consent = truthy(f.get('sms_consent'));
+  if (!rawPhone && !consent && !breaking && !daily) return { cols: null };
+  const phone = normalizeUsPhone(rawPhone);
+  if (!phone) return { error: 'Please enter a valid US mobile number, or leave the phone field blank.' };
+  if (!consent) return { error: 'To get texts, check the box agreeing to receive Launchpad Digital text messages, or leave the phone field blank.' };
+  if (!breaking && !daily) return { error: 'Pick breaking news texts, the daily news text, or both.' };
+  const same = existing && existing.phone_e164 === phone && existing.sms_consent_at && existing.sms_status !== 'stopped';
+  return { cols: [phone, breaking, daily, same ? existing.sms_consent_at : new Date().toISOString().slice(0, 19).replace('T', ' '), same ? existing.sms_consent_ip : ip, same ? existing.sms_consent_version : SMS_CONSENT_VERSION, same ? existing.sms_status : 'pending'] };
+}
+const SMS_COLS = 'phone_e164=?, sms_breaking=?, sms_daily=?, sms_consent_at=?, sms_consent_ip=?, sms_consent_version=?, sms_status=?';
 const pick = (vals, allowed) => [...new Set(vals.map(String).filter((v) => v in allowed))];
 
 async function subscribe(req, env) {
@@ -95,6 +111,9 @@ async function subscribe(req, env) {
   let sections = pick(f.all('sections'), SECTIONS), freqs = pick(f.all('frequency'), FREQUENCIES);
   if (!sections.length) sections = Object.keys(SECTIONS);
   if (!freqs.length) freqs = ['weekly'];
+  const sms = smsFromForm(f, ip);
+  if (sms.error) return reply(false, sms.error, 400);
+  const smsCols = sms.cols || [null, 0, 0, null, null, null, null];
   const existing = await env.DB.prepare('SELECT * FROM subscribers WHERE email=?').bind(email).first();
   let tok;
   if (existing && existing.status === 'active') {
@@ -104,11 +123,11 @@ async function subscribe(req, env) {
   }
   tok = token();
   if (existing) {
-    await env.DB.prepare("UPDATE subscribers SET name=?, locations=?, zip=?, county=?, cities=?, sections=?, frequencies=?, status='pending', token=?, consent_ip=?, updated_at=datetime('now') WHERE id=?")
-      .bind(name, ...locCols(locs), JSON.stringify(sections), JSON.stringify(freqs), tok, ip, existing.id).run();
+    await env.DB.prepare(`UPDATE subscribers SET name=?, locations=?, zip=?, county=?, cities=?, sections=?, frequencies=?, status='pending', token=?, consent_ip=?, ${SMS_COLS}, updated_at=datetime('now') WHERE id=?`)
+      .bind(name, ...locCols(locs), JSON.stringify(sections), JSON.stringify(freqs), tok, ip, ...smsCols, existing.id).run();
   } else {
-    await env.DB.prepare('INSERT INTO subscribers(email,name,locations,zip,county,cities,sections,frequencies,token,source,consent_ip) VALUES(?,?,?,?,?,?,?,?,?,?,?)')
-      .bind(email, name, ...locCols(locs), JSON.stringify(sections), JSON.stringify(freqs), tok, String(f.get('source') || 'site').slice(0, 50), ip).run();
+    await env.DB.prepare('INSERT INTO subscribers(email,name,locations,zip,county,cities,sections,frequencies,token,source,consent_ip,phone_e164,sms_breaking,sms_daily,sms_consent_at,sms_consent_ip,sms_consent_version,sms_status) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)')
+      .bind(email, name, ...locCols(locs), JSON.stringify(sections), JSON.stringify(freqs), tok, String(f.get('source') || 'site').slice(0, 50), ip, ...smsCols).run();
   }
   const r = await sendEmail(confirmEmail(env, email, name, tok), env);
   if (!r.ok) { console.error(r.error); return reply(false, 'We could not send the confirmation email. Please try again later.', 502); }
@@ -139,7 +158,7 @@ async function byToken(env, url) {
 async function confirm(req, env, url) {
   const s = await byToken(env, url);
   if (!s) return page(env, 'Link not valid', '<p>This confirmation link is invalid or expired. Please sign up again.</p>');
-  if (s.status !== 'active') await env.DB.prepare("UPDATE subscribers SET status='active', confirmed_at=datetime('now'), unsubscribed_at=NULL, updated_at=datetime('now') WHERE id=?").bind(s.id).run();
+  if (s.status !== 'active') await env.DB.prepare("UPDATE subscribers SET status='active', sms_status=CASE WHEN sms_status='pending' THEN 'active' ELSE sms_status END, confirmed_at=datetime('now'), unsubscribed_at=NULL, updated_at=datetime('now') WHERE id=?").bind(s.id).run();
   return page(env, "You're subscribed", `<p>Thanks${s.name ? ', ' + esc(s.name) : ''}! Your subscription to Launchpad Digital is confirmed.</p><p><a href="${env.PUBLIC_URL}/preferences?token=${s.token}">Choose your sections and frequency</a></p>`);
 }
 
@@ -161,23 +180,53 @@ async function preferences(req, env, url) {
   let note = '';
   if (req.method === 'POST') {
     const f = await req.formData();
+    const ff = { get: (k) => f.get(k), all: (k) => f.getAll(k) };
+    const sms = f.get('sms_remove') ? { cols: [null, 0, 0, null, null, null, null] } : s.sms_status === 'stopped' && !truthy(f.get('sms_consent')) ? { keep: true } : smsFromForm(ff, req.headers.get('cf-connecting-ip') || 'local', s);
+    if (sms.error) note = `<p style="background:#fdecea;padding:.6rem;border-radius:6px">${esc(sms.error)} Your other choices were saved.</p>`;
+    else if (sms.cols && sms.cols[6] === 'pending' && s.status === 'active') sms.cols[6] = 'active'; // email already confirmed
     const sec = pick(f.getAll('sections'), SECTIONS), fr = pick(f.getAll('frequency'), FREQUENCIES);
     const name = String(f.get('name') || '').trim().slice(0, 100) || null;
     const locs = formLocations({ get: (k) => f.get(k), all: (k) => f.getAll(k) });
     await env.DB.prepare("UPDATE subscribers SET name=?, locations=?, zip=?, county=?, cities=?, sections=?, frequencies=?, status=CASE WHEN status='unsubscribed' THEN 'active' ELSE status END, updated_at=datetime('now') WHERE id=?")
       .bind(name, ...locCols(locs), JSON.stringify(sec.length ? sec : Object.keys(SECTIONS)), JSON.stringify(fr.length ? fr : ['weekly']), s.id).run();
+    if (!sms.error && !sms.keep) await env.DB.prepare(`UPDATE subscribers SET ${SMS_COLS} WHERE id=?`).bind(...(sms.cols || [null, 0, 0, null, null, null, null]), s.id).run();
     Object.assign(s, await env.DB.prepare('SELECT * FROM subscribers WHERE id=?').bind(s.id).first());
-    note = '<p style="background:#e7f7ec;padding:.6rem;border-radius:6px">Saved.</p>';
+    if (!note) note = '<p style="background:#e7f7ec;padding:.6rem;border-radius:6px">Saved.</p>';
   }
-  const sec = JSON.parse(s.sections), fr = JSON.parse(s.frequencies);
+  const sec = JSON.parse(s.sections), fr = JSON.parse(s.frequencies).filter((k) => k in FREQUENCIES);
   const boxes = (obj, name, chosen) => Object.entries(obj).map(([k, v]) => `<label><input type="checkbox" name="${name}" value="${k}"${chosen.includes(k) ? ' checked' : ''}> ${esc(v)}</label>`).join('');
   return page(env, 'Your preferences', `${note}<p>${esc(s.email)} · status: <strong>${esc(s.status)}</strong> · plan: ${esc(s.tier)}</p>
 <form method="post"><label>Name (optional) <input name="name" value="${esc(s.name || '')}"></label>
 ${locationFields(s)}
 <fieldset><legend>How often</legend>${boxes(FREQUENCIES, 'frequency', fr)}</fieldset>
 <fieldset><legend>Sections</legend>${boxes(SECTIONS, 'sections', sec)}</fieldset>
+${smsFields(s)}
 <button class="btn" type="submit">Save preferences</button></form>
 <p><a href="${env.PUBLIC_URL}/unsubscribe?token=${s.token}">Unsubscribe from everything</a></p>`);
+}
+
+function smsFields(s) {
+  const ph = s.phone_e164 ? `(${s.phone_e164.slice(2, 5)}) ${s.phone_e164.slice(5, 8)}-${s.phone_e164.slice(8)}` : '';
+  const chk = (n, on) => `<label><input type="checkbox" name="${n}" value="1"${on ? ' checked' : ''}> ${esc(SMS_KINDS[n.slice(4)])}</label>`;
+  return `<fieldset id="sms"><legend>News texts (optional)</legend>${s.sms_status === 'stopped' ? '<p><strong>You replied STOP, so texts are off.</strong> To restart, check the box below and save, or text START.</p>' : s.sms_status ? `<p>Text status: <strong>${esc(s.sms_status)}</strong></p>` : ''}
+<label>US mobile number <input name="phone" type="tel" inputmode="tel" autocomplete="tel-national" value="${esc(ph)}"></label>
+${chk('sms_breaking', s.sms_breaking)}${chk('sms_daily', s.sms_daily)}
+<label><input type="checkbox" name="sms_consent" value="1"${s.sms_consent_at && s.sms_status !== 'stopped' ? ' checked' : ''}> ${esc(SMS_CONSENT_TEXT)}</label>
+${s.phone_e164 ? '<label><input type="checkbox" name="sms_remove" value="1"> Remove my number and stop all texts</label>' : ''}</fieldset>`;
+}
+
+// Inbound SMS webhook (provider-agnostic stub): STOP/HELP/START keywords. Carriers/providers also handle STOP themselves;
+// this keeps our DB in sync. TODO before go-live: verify the provider signature (X-Twilio-Signature HMAC, etc.) via SMS_WEBHOOK_SECRET.
+async function smsInbound(req, env, url) {
+  if (env.SMS_WEBHOOK_SECRET && url.searchParams.get('key') !== env.SMS_WEBHOOK_SECRET) return new Response('Unauthorized', { status: 401 });
+  const f = await readForm(req);
+  const { from, type } = parseInbound(f);
+  let reply = '';
+  if (from && type === 'stop') { await env.DB.prepare("UPDATE subscribers SET sms_status='stopped', updated_at=datetime('now') WHERE phone_e164=?").bind(from).run(); reply = SMS_STOP_TEXT; }
+  else if (from && type === 'start') { await env.DB.prepare("UPDATE subscribers SET sms_status='active', updated_at=datetime('now') WHERE phone_e164=? AND sms_consent_at IS NOT NULL AND status='active'").bind(from).run(); reply = SMS_START_TEXT; }
+  else if (type === 'help') reply = SMS_HELP_TEXT;
+  if (reply && from && env.SMS_REPLY_VIA_API === '1') await sendSms({ to: from, body: reply }, env);
+  return json({ ok: true, type, reply });
 }
 
 function authed(req, env) {
@@ -188,8 +237,8 @@ const csvCell = (v) => { let s = String(v ?? ''); if (/^[=+\-@]/.test(s)) s = "'
 
 async function exportCsv(req, env) {
   if (!authed(req, env)) return new Response('Unauthorized', { status: 401 });
-  const { results } = await env.DB.prepare('SELECT id,email,name,locations,zip,county,cities,sections,frequencies,status,tier,source,created_at,confirmed_at,unsubscribed_at,last_sent_at,consent_ip FROM subscribers ORDER BY id').all();
-  const cols = ['id', 'email', 'name', 'locations', 'zip', 'county', 'cities', 'sections', 'frequencies', 'status', 'tier', 'source', 'created_at', 'confirmed_at', 'unsubscribed_at', 'last_sent_at', 'consent_ip'];
+  const { results } = await env.DB.prepare('SELECT id,email,name,locations,zip,county,cities,sections,frequencies,status,tier,source,created_at,confirmed_at,unsubscribed_at,last_sent_at,consent_ip,phone_e164,sms_breaking,sms_daily,sms_status,sms_consent_at,sms_consent_ip,sms_consent_version FROM subscribers ORDER BY id').all();
+  const cols = ['id', 'email', 'name', 'locations', 'zip', 'county', 'cities', 'sections', 'frequencies', 'status', 'tier', 'source', 'created_at', 'confirmed_at', 'unsubscribed_at', 'last_sent_at', 'consent_ip', 'phone_e164', 'sms_breaking', 'sms_daily', 'sms_status', 'sms_consent_at', 'sms_consent_ip', 'sms_consent_version'];
   const body = [cols.join(','), ...results.map((r) => cols.map((c) => csvCell(c === 'sections' || c === 'frequencies' ? JSON.parse(r[c]).join(';') : c === 'locations' ? subLocations(r).map((l) => `${l.county}${l.cities.length ? ':' + l.cities.join('|') : ''}`).join(';') : r[c])).join(','))].join('\n') + '\n';
   return new Response(body, { headers: { 'content-type': 'text/csv; charset=utf-8', 'content-disposition': `attachment; filename="launchpad-subscribers-${new Date().toISOString().slice(0, 10)}.csv"`, 'cache-control': 'no-store' } });
 }
@@ -216,6 +265,7 @@ export default {
         if (!authed(req, env)) return new Response('Unauthorized', { status: 401 });
         return json(await sendIssue(env, await req.json()));
       }
+      if (p === '/sms/inbound' && req.method === 'POST') return await smsInbound(req, env, url);
       if (p === '/stripe/webhook' && req.method === 'POST') return await stripeWebhook(req, env);
       if (p === '/health') return json({ ok: true });
       return new Response('Not found', { status: 404 });
