@@ -7,6 +7,8 @@ function get(k,d){try{return JSON.parse(localStorage.getItem(k)||'null')||d}catc
 function fmt(s){if(!s)return '';try{return new Date(s).toLocaleString('en-US',{timeZone:'America/New_York',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})+' ET'}catch(e){return s}}
 function mine(){return get('lp_news_locations',[]).map(function(l){return (l&&l.county||'').toLowerCase()}).filter(Boolean)}
 function hits(area,cs){area=(area||'').toLowerCase();return cs.some(function(c){return area.indexOf(c)>=0})}
+var OFF={MLB:1,MFL:1,TBW:1,JAX:1,TAE:1,KEY:1,MOB:1};
+function link(p){if(/Hurricane|Tropical|Storm Surge/i.test(p.event||''))return 'https://www.nhc.noaa.gov/';var a=(p.parameters&&p.parameters.AWIPSidentifier||[])[0]||'',o=a.slice(-3).toUpperCase();return OFF[o]?'https://www.weather.gov/'+o.toLowerCase()+'/':'https://www.weather.gov/'}
 var hosts=[];
 function setup(){var s=el('style');s.textContent=css;document.head.appendChild(s);
   var full=document.querySelectorAll('[data-lp-alerts]');
@@ -21,7 +23,7 @@ function render(){var dis=get(DKEY,{}),now=Date.now(),cs=mine(),groups={},order=
     if(!(p.severity==='Severe'||p.severity==='Extreme'||KW.test(p.event)))return;
     var ex=p.expires||p.ends;if(ex&&Date.parse(ex)<now)return;var id=p.id||f.id;if(dis[id])return;
     if(!groups[p.event]){groups[p.event]={event:p.event,items:[],ex:false,local:false};order.push(p.event)}
-    var g=groups[p.event];g.items.push({id:id,area:p.areaDesc,url:p['@id']||f.id,sent:p.sent||p.effective,ex:ex});if(p.severity==='Extreme')g.ex=true;if(hits(p.areaDesc,cs))g.local=true});
+    var g=groups[p.event];g.items.push({id:id,area:p.areaDesc,url:link(p),office:p.senderName||'National Weather Service',sent:p.sent||p.effective,ex:ex});if(p.severity==='Extreme')g.ex=true;if(hits(p.areaDesc,cs))g.local=true});
   var gs=order.map(function(k){return groups[k]});
   gs.sort(function(a,b){return (b.local-a.local)||(b.ex-a.ex)});
   gs.forEach(function(g){g.items.sort(function(a,b){return hits(b.area,cs)-hits(a.area,cs)})});
@@ -30,7 +32,7 @@ function render(){var dis=get(DKEY,{}),now=Date.now(),cs=mine(),groups={},order=
       c.appendChild(el('span',{'class':'lbl'},'Official alert from the National Weather Service'+(g.local?' · Your area':'')));
       c.appendChild(el('h3',null,g.event));
       var list=h.slim?g.items.slice(0,1):g.items,ul=el('ul');
-      list.forEach(function(it){var li=el('li');li.appendChild(el('span',null,it.area+' '));var a=el('a',{href:it.url,target:'_blank',rel:'noopener'},'Official alert');li.appendChild(a);
+      list.forEach(function(it){var li=el('li');li.appendChild(el('span',null,it.area+' '));var a=el('a',{href:it.url,target:'_blank',rel:'noopener'},(it.url.indexOf('nhc')>0?'National Hurricane Center':it.office));li.appendChild(a);
         li.appendChild(el('div',{'class':'t'},'Issued '+fmt(it.sent)+(it.ex?' · Expires '+fmt(it.ex):'')));ul.appendChild(li)});
       if(h.slim&&g.items.length>1){var mo=el('li');mo.appendChild(el('a',{href:'/news/'},'+'+(g.items.length-1)+' more areas'));ul.appendChild(mo)}
       c.appendChild(ul);
