@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-26T13:57:09Z",
+ "generated": "2026-10-26T19:42:26Z",
  "feeds": [
   {
    "id": "wusf",
@@ -113,7 +113,7 @@
     "Monroe"
    ],
    "status": "ok",
-   "items": 39
+   "items": 40
   },
   {
    "id": "wsvn",
@@ -274,7 +274,7 @@
     "Marion"
    ],
    "status": "ok",
-   "items": 19
+   "items": 20
   },
   {
    "id": "wftv",
@@ -335,7 +335,7 @@
     "Orange"
    ],
    "status": "ok",
-   "items": 2
+   "items": 1
   },
   {
    "id": "flaglerlive",
@@ -477,7 +477,7 @@
     "Polk"
    ],
    "status": "ok",
-   "items": 24
+   "items": 30
   },
   {
    "id": "wfla",
@@ -568,8 +568,8 @@
    "counties": [
     "Pinellas"
    ],
-   "status": "error: HTTPError",
-   "items": 0
+   "status": "ok",
+   "items": 10
   },
   {
    "id": "hernandosun",
@@ -757,7 +757,7 @@
     "Okaloosa"
    ],
    "status": "ok",
-   "items": 15
+   "items": 10
   },
   {
    "id": "wuwf",
@@ -878,7 +878,7 @@
     "wjhg"
    ],
    "dedicated": [],
-   "items": 28
+   "items": 25
   },
   "Bradford": {
    "slug": "bradford",
@@ -1137,7 +1137,7 @@
     "abcaction"
    ],
    "dedicated": [],
-   "items": 30
+   "items": 23
   },
   "Holmes": {
    "slug": "holmes",
@@ -1205,7 +1205,7 @@
    "dedicated": [
     "villages"
    ],
-   "items": 27
+   "items": 25
   },
   "Lee": {
    "slug": "lee",
@@ -1374,7 +1374,7 @@
     "orlandoweekly",
     "ocso"
    ],
-   "items": 31
+   "items": 30
   },
   "Osceola": {
    "slug": "osceola",
@@ -1403,7 +1403,7 @@
     "bocanewsnow",
     "bocatrib"
    ],
-   "items": 31
+   "items": 35
   },
   "Pasco": {
    "slug": "pasco",
@@ -1424,9 +1424,12 @@
     "wfla",
     "wtsp",
     "fox13",
-    "abcaction"
+    "abcaction",
+    "stpetecatalyst"
    ],
-   "dedicated": [],
+   "dedicated": [
+    "stpetecatalyst"
+   ],
    "items": 20
   },
   "Polk": {
@@ -1485,7 +1488,7 @@
     "wkrg",
     "northescambia"
    ],
-   "items": 35
+   "items": 30
   },
   "Sarasota": {
    "slug": "sarasota",
