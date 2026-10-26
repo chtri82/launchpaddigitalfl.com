@@ -14,7 +14,7 @@ async function brevo(m, env) {
     headers: { 'api-key': env.BREVO_API_KEY, 'content-type': 'application/json', accept: 'application/json' },
     body: JSON.stringify({
       sender: { email: env.FROM_EMAIL, name: env.FROM_NAME }, replyTo: { email: env.REPLY_TO || env.FROM_EMAIL },
-      to: [{ email: m.to }], subject: m.subject, htmlContent: m.html, textContent: m.text, headers: m.headers || {},
+      to: [{ email: m.to }], subject: m.subject, htmlContent: m.html, textContent: m.text, ...(m.headers && Object.keys(m.headers).length ? { headers: m.headers } : {}),
     }),
   });
   const body = await r.text();
