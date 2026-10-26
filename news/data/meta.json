@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-26T01:42:26Z",
+ "generated": "2026-10-26T06:59:27Z",
  "feeds": [
   {
    "id": "wusf",
@@ -112,8 +112,8 @@
     "Broward",
     "Monroe"
    ],
-   "status": "ok",
-   "items": 40
+   "status": "error: HTTPError",
+   "items": 0
   },
   {
    "id": "wsvn",
@@ -477,7 +477,7 @@
     "Polk"
    ],
    "status": "ok",
-   "items": 17
+   "items": 15
   },
   {
    "id": "wfla",
@@ -568,8 +568,8 @@
    "counties": [
     "Pinellas"
    ],
-   "status": "ok",
-   "items": 10
+   "status": "error: ReadTimeout",
+   "items": 0
   },
   {
    "id": "hernandosun",
@@ -878,7 +878,7 @@
     "wjhg"
    ],
    "dedicated": [],
-   "items": 28
+   "items": 30
   },
   "Bradford": {
    "slug": "bradford",
@@ -906,14 +906,12 @@
   "Broward": {
    "slug": "broward",
    "feeds": [
-    "local10",
     "wsvn"
    ],
    "dedicated": [
-    "local10",
     "wsvn"
    ],
-   "items": 40
+   "items": 10
   },
   "Calhoun": {
    "slug": "calhoun",
@@ -998,7 +996,7 @@
    "dedicated": [
     "jaxtoday"
    ],
-   "items": 29
+   "items": 30
   },
   "Escambia": {
    "slug": "escambia",
@@ -1137,7 +1135,7 @@
     "abcaction"
    ],
    "dedicated": [],
-   "items": 35
+   "items": 39
   },
   "Holmes": {
    "slug": "holmes",
@@ -1305,28 +1303,24 @@
   "Miami-Dade": {
    "slug": "miami-dade",
    "feeds": [
-    "local10",
     "wsvn",
     "miamitoday"
    ],
    "dedicated": [
-    "local10",
     "wsvn",
     "miamitoday"
    ],
-   "items": 40
+   "items": 20
   },
   "Monroe": {
    "slug": "monroe",
    "feeds": [
-    "local10",
     "keysweekly"
    ],
    "dedicated": [
-    "local10",
     "keysweekly"
    ],
-   "items": 40
+   "items": 37
   },
   "Nassau": {
    "slug": "nassau",
@@ -1374,7 +1368,7 @@
     "orlandoweekly",
     "ocso"
    ],
-   "items": 25
+   "items": 26
   },
   "Osceola": {
    "slug": "osceola",
@@ -1424,12 +1418,9 @@
     "wfla",
     "wtsp",
     "fox13",
-    "abcaction",
-    "stpetecatalyst"
+    "abcaction"
    ],
-   "dedicated": [
-    "stpetecatalyst"
-   ],
+   "dedicated": [],
    "items": 20
   },
   "Polk": {
@@ -1547,7 +1538,7 @@
    "dedicated": [
     "ecb"
    ],
-   "items": 27
+   "items": 28
   },
   "Union": {
    "slug": "union",
