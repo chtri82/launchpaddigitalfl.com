@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Newsletter Signup | Launchpad Digital</title>
-<meta name="description" content="Subscribe free to the Florida Condo & HOA Brief from Launchpad Digital.">
+<meta name="description" content="Subscribe free to the Launchpad Digital newsletter and the Florida Condo & HOA Brief.">
 <link rel="canonical" href="https://launchpaddigitalfl.com/subscribe/">
 <meta name="theme-color" content="#00102A">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Launchpad Digital">
 <meta property="og:title" content="Newsletter Signup | Launchpad Digital">
-<meta property="og:description" content="Subscribe free to the Florida Condo & HOA Brief from Launchpad Digital.">
+<meta property="og:description" content="Subscribe free to the Launchpad Digital newsletter and the Florida Condo & HOA Brief.">
 <meta property="og:url" content="https://launchpaddigitalfl.com/subscribe/">
 <meta property="og:image" content="https://launchpaddigitalfl.com/assets/img/og-image.jpg">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
@@ -18,7 +18,7 @@
 <meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Newsletter Signup | Launchpad Digital">
-<meta name="twitter:description" content="Subscribe free to the Florida Condo & HOA Brief from Launchpad Digital.">
+<meta name="twitter:description" content="Subscribe free to the Launchpad Digital newsletter and the Florida Condo & HOA Brief.">
 <meta name="twitter:image" content="https://launchpaddigitalfl.com/assets/img/og-image.jpg">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
@@ -38,14 +38,58 @@
     <button class="menu-toggle" aria-expanded="false" aria-controls="primary-nav" aria-label="Open menu">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
     </button>
-    <nav aria-label="Primary"><ul id="primary-nav" class="nav-links"><li><a href="/">Home</a></li><li><a href="/about/">About</a></li><li><a href="/publications/">Publications</a></li><li><a href="/articles/">Articles</a></li><li><a href="/archive/">Archive</a></li><li><a href="/news/">News</a></li><li><a href="/getaways/">Getaways</a></li><li><a href="/letter/">Letter</a></li><li><a href="/advertise/">Advertise</a></li><li><a href="/contact/">Contact</a></li><li><a class="btn btn-primary btn-sm" href="/subscribe/">Subscribe</a></li></ul></nav>
+    <nav aria-label="Primary"><ul id="primary-nav" class="nav-links"><li><a href="/">Home</a></li><li><a href="/about/">About</a></li><li><a href="/publications/">Publications</a></li><li><a href="/articles/">Articles</a></li><li><a href="/archive/">Archive</a></li><li><a href="/news/">News</a></li><li><a href="/getaways/">Getaways</a></li><li><a href="/letter/">Letter</a></li><li><a href="/advertise/">Advertise</a></li><li><a href="/contact/">Contact</a></li><li><a class="btn btn-primary btn-sm" href="/subscribe/" data-lp-subscribe>Subscribe</a></li></ul></nav>
   </div>
   <div class="sunset-bar" aria-hidden="true"></div>
 </header>
 <main id="main">
-<section class="page-hero"><div class="wrap"><span class="eyebrow">Newsletter</span><h1>Subscribe to the Florida Condo &amp; HOA Brief.</h1><p>Free, plain-language explainers for Florida condo and HOA owners, delivered by email.</p></div></section>
+<section class="page-hero"><div class="wrap"><span class="eyebrow">Newsletters</span><h1>Subscribe to Launchpad Digital.</h1><p>Two free newsletters: Launchpad Digital and the Florida Condo &amp; HOA Brief. Pick one or both.</p></div></section>
 
-<section class="block"><div class="wrap grid grid-2">
+<section class="block" id="launchpad"><div class="wrap grid grid-2">
+  <div class="reveal">
+    <h2>Launchpad Digital newsletter</h2>
+    <p>Sourced Florida news, money, weather, sports and more from Launchpad Digital. Pick your sections and how often you hear from us. Free, and you can unsubscribe from any email.</p>
+    <ul class="checklist">
+      <li>Original reporting with links to the sources</li>
+      <li>Only the sections you choose</li>
+      <li>Daily, weekly or monthly, plus optional breaking alerts</li>
+    </ul>
+    <p style="font-size:.9rem;color:var(--text-muted)">We'll email you a link to confirm. We never sell your email. See our <a href="/privacy/">privacy policy</a>.</p>
+  </div>
+  <form class="card reveal lp-form" id="lp-signup" method="post" action="" data-lp-newsletter-form novalidate>
+    <label for="lp-email"><strong>Email</strong></label>
+    <input id="lp-email" type="email" name="email" required autocomplete="email" placeholder="you@example.com" class="lp-input">
+    <label for="lp-name">Name <span style="color:var(--text-muted)">(optional)</span></label>
+    <input id="lp-name" type="text" name="name" autocomplete="given-name" class="lp-input">
+    <fieldset class="lp-fs" data-lp-loc><legend><strong>Local news area</strong> <span style="color:var(--text-muted)">(optional)</span></legend>
+    <label for="lp-zip">ZIP code</label>
+    <input id="lp-zip" name="zip" inputmode="numeric" pattern="\d{5}" maxlength="5" autocomplete="postal-code" class="lp-input" aria-describedby="lp-zip-note">
+    <p id="lp-zip-note" style="color:var(--text-muted);font-size:.9em;margin:.25rem 0 .75rem">We use your ZIP codes or counties only to put stories from your areas first in the Local section; every other local story is still in the issue. Skip it and you get statewide local news. You can change it from any email.</p>
+    <div data-lp-loc-county hidden><label for="lp-county">Your ZIP is in more than one county. Which one?</label><select id="lp-county" name="county" class="lp-input"></select></div>
+    <div data-lp-loc-cities hidden></div>
+    <div data-lp-loc-extra hidden><label for="lp-add-county">Or pick a county</label><select id="lp-add-county" class="lp-input" data-lp-add-county><option value="">(choose a county)</option></select>
+    <button type="button" class="lp-all" data-lp-add-loc>+ Add this location</button> <small style="color:var(--text-muted)">Add as many ZIP codes or counties as you like.</small>
+    <ul data-lp-loc-list style="margin:.5rem 0;padding-left:1.1rem"></ul></div>
+    </fieldset>
+    <div class="lp-hp" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+    <input type="hidden" name="source" value="site-subscribe">
+    <fieldset class="lp-fs"><legend><strong>How often</strong></legend><label class="lp-check"><input type="checkbox" name="frequency" value="daily" checked> Daily edition</label><label class="lp-check"><input type="checkbox" name="frequency" value="weekly"> Weekly roundup</label><label class="lp-check"><input type="checkbox" name="frequency" value="monthly"> Monthly digest</label><label class="lp-check"><input type="checkbox" name="frequency" value="breaking"> Breaking alerts</label></fieldset>
+    <fieldset class="lp-fs"><legend><strong>Sections</strong> <button type="button" class="lp-all" data-lp-all>Clear all</button></legend><div class="lp-grid"><label class="lp-check"><input type="checkbox" name="sections" value="local" checked> Breaking local news</label><label class="lp-check"><input type="checkbox" name="sections" value="state" checked> Florida (state) news</label><label class="lp-check"><input type="checkbox" name="sections" value="national" checked> National news</label><label class="lp-check"><input type="checkbox" name="sections" value="world" checked> World news</label><label class="lp-check"><input type="checkbox" name="sections" value="money" checked> Money: investing, budgeting, saving</label><label class="lp-check"><input type="checkbox" name="sections" value="weather" checked> Weather</label><label class="lp-check"><input type="checkbox" name="sections" value="sports" checked> Sports</label><label class="lp-check"><input type="checkbox" name="sections" value="entertainment" checked> Entertainment</label><label class="lp-check"><input type="checkbox" name="sections" value="style" checked> Style &amp; fashion</label><label class="lp-check"><input type="checkbox" name="sections" value="humanity" checked> Humanity</label><label class="lp-check"><input type="checkbox" name="sections" value="education" checked> Education &amp; DIY</label><label class="lp-check"><input type="checkbox" name="sections" value="crime" checked> Crime</label><label class="lp-check"><input type="checkbox" name="sections" value="seasonal" checked> Seasonal events</label></div></fieldset>
+    <button class="btn btn-primary" type="submit">Subscribe free →</button>
+    <p class="lp-msg" role="status" aria-live="polite"></p>
+  </form>
+</div></section>
+<style>
+.lp-input{width:100%;padding:.65rem .8rem;margin:.3rem 0 .9rem;border:1px solid #c9d2e3;border-radius:8px;font:inherit}
+.lp-fs{border:1px solid #dde3ee;border-radius:10px;padding:.6rem .9rem;margin:0 0 1rem}
+.lp-grid{display:grid;grid-template-columns:1fr 1fr;gap:.15rem .8rem}
+.lp-check{display:flex;gap:.45rem;align-items:flex-start;font-size:.95rem;margin:.2rem 0}
+.lp-hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.lp-all{font-size:.8rem;margin-left:.5rem;background:none;border:1px solid #c9d2e3;border-radius:6px;cursor:pointer}
+.lp-msg{margin:.8rem 0 0;font-weight:600}
+@media(max-width:600px){.lp-grid{grid-template-columns:1fr}}
+</style>
+<section class="block" id="brief"><div class="wrap"><h2>Florida Condo &amp; HOA Brief</h2></div><div class="wrap grid grid-2">
   <div class="reveal">
     <h2>What you'll get</h2>
     <ul class="checklist">
@@ -69,11 +113,11 @@
     <div class="foot-grid">
       <div class="foot-brand">
         <img src="/assets/img/logo-main-320.webp" width="120" height="120" alt="Launchpad Digital L.L.C. logo: Florida outline over a sunset skyline with a rocket launch">
-        <p><strong>Launchpad Digital L.L.C.</strong><br>A Florida media company based in Palm Bay, Florida.<br><em>Where Florida gets clear answers.</em></p>
+        <p><strong>Launchpad Digital L.L.C.</strong><br>A Florida media company based in Palm Bay, Florida.<br><em>Where Florida gets clear answers.</em></p><p><a class="btn btn-primary btn-sm" href="/subscribe/" data-lp-subscribe>Subscribe to Launchpad →</a></p>
       </div>
       <div>
         <h2>Read</h2>
-        <ul><li><a href="/publications/">Our Publications</a></li><li><a href="/articles/">Articles</a></li><li><a href="/archive/">Issues &amp; Archive</a></li><li><a href="/around-the-state/">Florida Around the State</a></li><li><a href="/news/">News</a></li><li><a href="/getaways/">Getaways</a></li><li><a href="/subscribe/">Newsletter Signup</a></li><li><a href="/letter/">Letter to Readers</a></li></ul>
+        <ul><li><a href="/publications/">Our Publications</a></li><li><a href="/articles/">Articles</a></li><li><a href="/archive/">Issues &amp; Archive</a></li><li><a href="/around-the-state/">Florida Around the State</a></li><li><a href="/news/">News</a></li><li><a href="/getaways/">Getaways</a></li><li><a href="/subscribe/" data-lp-subscribe>Subscribe to Launchpad</a></li><li><a href="/subscribe/#brief">Condo &amp; HOA Brief signup</a></li><li><a href="/letter/">Letter to Readers</a></li></ul>
       </div>
       <div>
         <h2>Company</h2>

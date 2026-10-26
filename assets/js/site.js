@@ -1,6 +1,71 @@
 // Launchpad Digital — small progressive enhancements. No tracking, no third-party scripts.
+// ONE PLACE TO CHANGE: Launchpad Digital's own newsletter signup URL.
+// Until it's set, every [data-lp-subscribe] link falls back to its /subscribe/ href.
+var LAUNCHPAD_SUBSCRIBE_URL = '/subscribe/#launchpad'; // our own signup form (self-hosted newsletter)
+// Self-owned newsletter backend (Cloudflare Worker in lp-newsletter). Set to the Worker's public URL at go-live.
+var LAUNCHPAD_NEWSLETTER_API = (location.hostname==='localhost'||location.hostname==='127.0.0.1') ? 'http://localhost:8787' : 'https://lp-newsletter.launchpaddigitalfl.workers.dev';
 (function(){
   document.documentElement.classList.remove('no-js');
+  if(LAUNCHPAD_SUBSCRIBE_URL){document.querySelectorAll('[data-lp-subscribe]').forEach(function(a){a.href=LAUNCHPAD_SUBSCRIBE_URL;});}
+  // Newsletter signup form
+  var nf=document.querySelector('[data-lp-newsletter-form]');
+  if(nf){
+    nf.action=LAUNCHPAD_NEWSLETTER_API+'/api/subscribe';
+    var msg=nf.querySelector('.lp-msg'), all=nf.querySelector('[data-lp-all]');
+    if(all)all.addEventListener('click',function(){var bs=nf.querySelectorAll('input[name=sections]'),on=[].some.call(bs,function(b){return !b.checked;});[].forEach.call(bs,function(b){b.checked=on;});all.textContent=on?'Clear all':'Select all';});
+    var st=new URLSearchParams(location.search).get('status');
+    if(st&&msg)msg.textContent=st==='check-email'?'Almost done! Check your email and click the link to confirm.':'Something went wrong. Please try again.';
+    nf.addEventListener('submit',function(e){
+      e.preventDefault();
+      if(!nf.email.value||!nf.email.checkValidity()){msg.textContent='Please enter a valid email address.';nf.email.focus();return;}
+      var b=nf.querySelector('[type=submit]');b.disabled=true;msg.textContent='Sending…';
+      var fd=new FormData(nf);if(nf.lpLocations){fd.set('locations',JSON.stringify(nf.lpLocations()));['zip','county','cities'].forEach(function(k){fd.delete(k);});}
+      fetch(nf.action,{method:'POST',body:fd,headers:{'Accept':'application/json'}})
+        .then(function(r){return r.json();})
+        .then(function(d){msg.textContent=d.message||(d.ok?'Check your email to confirm.':'Something went wrong.');if(d.ok){nf.reset();if(nf.lpLocReset)nf.lpLocReset();}})
+        .catch(function(){msg.textContent='Could not reach the signup service. Please try again later.';})
+        .then(function(){b.disabled=false;});
+    });
+  }
+  // ZIP -> county -> cities (Census 2020 data bundled at /assets/data/fl-geo.json)
+  var loc=document.querySelector('[data-lp-loc]');
+  if(loc){
+    var zip=loc.querySelector('[name=zip]'),cw=loc.querySelector('[data-lp-loc-county]'),cs=cw.querySelector('select'),cities=loc.querySelector('[data-lp-loc-cities]'),geo=null;
+    var esc=function(t){return String(t).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});};
+    var showCities=function(c){
+      if(!c){cities.hidden=true;cities.innerHTML='';return;}
+      cities.innerHTML='<label class="lp-check"><input type="checkbox" name="cities" value="all" checked> All of '+esc(c)+' County</label><p style="margin:.5rem 0 .25rem">Or only these cities and towns:</p><div class="lp-grid">'+(geo.places[c]||[]).map(function(p){return '<label class="lp-check"><input type="checkbox" name="cities" value="'+esc(p.name)+'"> '+esc(p.name)+(p.incorporated?'':' <small>(unincorporated)</small>')+'</label>';}).join('')+'</div>';
+      cities.hidden=false;
+      var all=cities.querySelector('[value=all]');
+      cities.addEventListener('change',function(e){if(e.target===all){if(all.checked)[].forEach.call(cities.querySelectorAll('[name=cities]:not([value=all])'),function(b){b.checked=false;});}else if(e.target.checked){all.checked=false;}else if(!cities.querySelector('[name=cities]:not([value=all]):checked')){all.checked=true;}});
+    };
+    var lookup=function(){
+      var z=zip.value.trim();
+      if(!/^\d{5}$/.test(z)){cw.hidden=true;cs.innerHTML='';showCities(null);return;}
+      var go=function(){var cs_=geo.zips[z]||[];
+        if(!cs_.length){cw.hidden=true;cs.innerHTML='';cities.innerHTML='<p>We couldn\'t find that ZIP in Florida. You\'ll get statewide local news.</p>';cities.hidden=false;return;}
+        cs.innerHTML=cs_.map(function(c){return '<option>'+esc(c)+'</option>';}).join('');cw.hidden=cs_.length<2;showCities(cs_[0]);};
+      if(geo)go();else fetch('/assets/data/fl-geo.json').then(function(r){return r.json();}).then(function(d){geo=d;go();});
+    };
+    zip.addEventListener('input',lookup);cs.addEventListener('change',function(){showCities(cs.value);});
+    // Multiple locations: "+ Add this location" saves the current ZIP (or a county picked from all 67) to a list.
+    var extra=loc.querySelector('[data-lp-loc-extra]'),addC=loc.querySelector('[data-lp-add-county]'),addB=loc.querySelector('[data-lp-add-loc]'),list=loc.querySelector('[data-lp-loc-list]'),saved=[];
+    var current=function(){
+      var c=null,z=zip.value.trim();
+      if(geo&&/^\d{5}$/.test(z)&&(geo.zips[z]||[]).length)c=cs.value||geo.zips[z][0];else{z=null;c=addC.value||null;}
+      if(!c)return null;
+      var ch=[].map.call(cities.querySelectorAll('[name=cities]:checked'),function(b){return b.value;});
+      return {zip:z,county:c,cities:ch.indexOf('all')>=0||!ch.length?[]:ch};
+    };
+    var draw=function(){list.innerHTML=saved.map(function(l,i){return '<li>'+(l.cities.length?esc(l.cities.join(', '))+' ('+esc(l.county)+' County)':'All of '+esc(l.county)+' County')+(l.zip?' · ZIP '+esc(l.zip):'')+' <button type="button" class="lp-all" data-rm="'+i+'">Remove</button></li>';}).join('');};
+    list.addEventListener('click',function(e){var i=e.target.getAttribute('data-rm');if(i!==null){saved.splice(+i,1);draw();}});
+    var clearCur=function(){zip.value='';addC.value='';cw.hidden=true;cs.innerHTML='';showCities(null);};
+    addB.addEventListener('click',function(){var c=current();if(!c)return;saved.push(c);draw();clearCur();zip.focus();});
+    addC.addEventListener('change',function(){if(addC.value){zip.value='';cw.hidden=true;cs.innerHTML='';showCities(addC.value);}else showCities(null);});
+    var init=function(){addC.innerHTML='<option value="">(choose a county)</option>'+Object.keys(geo.places).sort().map(function(c){return '<option>'+esc(c)+'</option>';}).join('');extra.hidden=false;};
+    if(geo)init();else fetch('/assets/data/fl-geo.json').then(function(r){return r.json();}).then(function(d){geo=geo||d;init();});
+    if(nf){nf.lpLocations=function(){var c=current();return saved.concat(c?[c]:[]);};nf.lpLocReset=function(){saved=[];draw();clearCur();};}
+  }
   // Mobile nav
   var t=document.querySelector('.menu-toggle'), m=document.getElementById('primary-nav');
   if(t&&m){
