@@ -81,6 +81,8 @@ async function readForm(req) {
 // SMS fields from a form. Returns {error} or {cols:[phone,breaking,daily,consent_at,consent_ip,version,status]|null (no SMS)}.
 // Phone is optional; texts need a valid US number, the separate consent box, and at least one text type.
 const truthy = (v) => v != null && v !== '' && v !== '0' && v !== 'false' && v !== false;
+export const smsEnabled = (env) => String(env && env.SMS_ENABLED || '').toLowerCase() === 'true';
+
 export function smsFromForm(f, ip, existing = null) {
   const rawPhone = String(f.get('phone') || '').trim();
   const breaking = truthy(f.get('sms_breaking')) ? 1 : 0, daily = truthy(f.get('sms_daily')) ? 1 : 0, consent = truthy(f.get('sms_consent'));
@@ -111,7 +113,7 @@ async function subscribe(req, env) {
   let sections = pick(f.all('sections'), SECTIONS), freqs = pick(f.all('frequency'), FREQUENCIES);
   if (!sections.length) sections = Object.keys(SECTIONS);
   if (!freqs.length) freqs = ['weekly'];
-  const sms = smsFromForm(f, ip);
+  const sms = smsEnabled(env) ? smsFromForm(f, ip) : { cols: null }; // SMS on hold: ignore phone/consent fields
   if (sms.error) return reply(false, sms.error, 400);
   const smsCols = sms.cols || [null, 0, 0, null, null, null, null];
   const existing = await env.DB.prepare('SELECT * FROM subscribers WHERE email=?').bind(email).first();
@@ -181,7 +183,7 @@ async function preferences(req, env, url) {
   if (req.method === 'POST') {
     const f = await req.formData();
     const ff = { get: (k) => f.get(k), all: (k) => f.getAll(k) };
-    const sms = f.get('sms_remove') ? { cols: [null, 0, 0, null, null, null, null] } : s.sms_status === 'stopped' && !truthy(f.get('sms_consent')) ? { keep: true } : smsFromForm(ff, req.headers.get('cf-connecting-ip') || 'local', s);
+    const sms = !smsEnabled(env) ? { keep: true } : f.get('sms_remove') ? { cols: [null, 0, 0, null, null, null, null] } : s.sms_status === 'stopped' && !truthy(f.get('sms_consent')) ? { keep: true } : smsFromForm(ff, req.headers.get('cf-connecting-ip') || 'local', s);
     if (sms.error) note = `<p style="background:#fdecea;padding:.6rem;border-radius:6px">${esc(sms.error)} Your other choices were saved.</p>`;
     else if (sms.cols && sms.cols[6] === 'pending' && s.status === 'active') sms.cols[6] = 'active'; // email already confirmed
     const sec = pick(f.getAll('sections'), SECTIONS), fr = pick(f.getAll('frequency'), FREQUENCIES);
@@ -200,7 +202,7 @@ async function preferences(req, env, url) {
 ${locationFields(s)}
 <fieldset><legend>How often</legend>${boxes(FREQUENCIES, 'frequency', fr)}</fieldset>
 <fieldset><legend>Sections</legend>${boxes(SECTIONS, 'sections', sec)}</fieldset>
-${smsFields(s)}
+${smsEnabled(env) ? smsFields(s) : ''}
 <button class="btn" type="submit">Save preferences</button></form>
 <p><a href="${env.PUBLIC_URL}/unsubscribe?token=${s.token}">Unsubscribe from everything</a></p>`);
 }

@@ -75,3 +75,15 @@ test('migration 0006 + subscribe form: no daily, phone optional, separate unchec
   assert.match(html, /name="sms_breaking"/); assert.match(html, /name="sms_daily"/);
   assert.ok(html.replace(/&amp;/g, '&').includes(SMS_CONSENT_TEXT));
 });
+
+test('SMS_ENABLED flag: off unless exactly "true"; wrangler ships "false"; subscribe box hidden', async () => {
+  const { smsEnabled } = await import('../src/index.js');
+  const fs = await import('node:fs');
+  assert.equal(smsEnabled({ SMS_ENABLED: 'false' }), false);
+  assert.equal(smsEnabled({}), false);
+  assert.equal(smsEnabled({ SMS_ENABLED: 'true' }), true);
+  assert.match(fs.readFileSync(new URL('../wrangler.toml', import.meta.url), 'utf8'), /SMS_ENABLED = "false"/);
+  const html = fs.readFileSync(new URL('../../subscribe/index.html', import.meta.url), 'utf8');
+  assert.match(html, /id="sms" hidden disabled/);
+  assert.doesNotMatch(html.replace(/<fieldset class="lp-fs" id="sms"[\s\S]*?<\/fieldset>/, ''), /\btexts\b|text messag/i);
+});

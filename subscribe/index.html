@@ -52,7 +52,7 @@
     <ul class="checklist">
       <li>Original reporting with links to the sources</li>
       <li>Only the sections you choose</li>
-      <li>Weekly or monthly email, plus optional breaking news and daily news texts</li>
+      <li>Weekly or monthly email</li>
     </ul>
     <p style="font-size:.9rem;color:var(--text-muted)">We'll email you a link to confirm. We never sell your email. See our <a href="/privacy/">privacy policy</a>.</p>
   </div>
@@ -75,7 +75,8 @@
     <input type="hidden" name="source" value="site-subscribe">
     <fieldset class="lp-fs"><legend><strong>How often (email)</strong></legend><label class="lp-check"><input type="checkbox" name="frequency" value="weekly" checked> Weekly roundup</label><label class="lp-check"><input type="checkbox" name="frequency" value="monthly"> Monthly digest</label></fieldset>
     <fieldset class="lp-fs"><legend><strong>Sections</strong> <button type="button" class="lp-all" data-lp-all>Clear all</button></legend><div class="lp-grid"><label class="lp-check"><input type="checkbox" name="sections" value="local" checked> Breaking local news</label><label class="lp-check"><input type="checkbox" name="sections" value="state" checked> Florida (state) news</label><label class="lp-check"><input type="checkbox" name="sections" value="national" checked> National news</label><label class="lp-check"><input type="checkbox" name="sections" value="world" checked> World news</label><label class="lp-check"><input type="checkbox" name="sections" value="money" checked> Money: investing, budgeting, saving</label><label class="lp-check"><input type="checkbox" name="sections" value="weather" checked> Weather</label><label class="lp-check"><input type="checkbox" name="sections" value="sports" checked> Sports</label><label class="lp-check"><input type="checkbox" name="sections" value="entertainment" checked> Entertainment</label><label class="lp-check"><input type="checkbox" name="sections" value="style" checked> Style &amp; fashion</label><label class="lp-check"><input type="checkbox" name="sections" value="humanity" checked> Humanity</label><label class="lp-check"><input type="checkbox" name="sections" value="education" checked> Education &amp; DIY</label><label class="lp-check"><input type="checkbox" name="sections" value="crime" checked> Crime</label><label class="lp-check"><input type="checkbox" name="sections" value="seasonal" checked> Seasonal events</label></div></fieldset>
-    <fieldset class="lp-fs" id="sms"><legend><strong>News texts</strong> <span style="color:var(--text-muted)">(optional)</span></legend>
+    <!-- SMS on hold (SMS_ENABLED="false" in wrangler.toml): remove hidden/disabled to re-enable -->
+    <fieldset class="lp-fs" id="sms" hidden disabled><legend><strong>News texts</strong> <span style="color:var(--text-muted)">(optional)</span></legend>
     <label for="lp-phone">US mobile number</label>
     <input id="lp-phone" type="tel" name="phone" inputmode="tel" autocomplete="tel-national" placeholder="(321) 555-0123" maxlength="20" class="lp-input">
     <label class="lp-check"><input type="checkbox" name="sms_breaking" value="1"> Breaking news texts</label>
