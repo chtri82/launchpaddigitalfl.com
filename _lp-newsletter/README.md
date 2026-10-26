@@ -25,3 +25,10 @@ Go live: `wrangler login`; `wrangler d1 create lp-newsletter` (paste id into wra
 - D1: `locations` JSON list `[{zip, county, cities}]` (migration 0004 migrates the old single zip/county/cities; those columns now mirror the first location). Everything is validated against `data/fl-geo.json` (`resolveLocations`; duplicate counties merge).
 - Top 3 Local Stories are picked across all locations: cities → counties → elsewhere in those counties → regions → statewide → rest.
 - After the regular sections, **Around Florida** lists every other local story (not in the reader's top 3) by region (Panhandle, North, Central, Space Coast, Tampa Bay, South), then Statewide: headline, one-line summary, county label, Read more. Nothing is dropped, only reordered.
+
+## Frequency and "since last newsletter" (migration 0005)
+- Readers pick daily / weekly / monthly (checkboxes on /subscribe/ and /preferences; default weekly).
+- Each story in the issue feed may carry `published_at` (ISO). Per reader, an email only includes stories published after that reader's last send of that frequency (`subscribers.last_sent` JSON, one clock per frequency; `last_sent_at` = latest send). Never sent: falls back to the frequency window (1 / 7 / 31 days). Undated stories are always included. Nothing new means no email.
+- Daily = full format. Weekly and monthly = condensed: top 3 local, top 2 per section (headline, one-line summary, link), then "More stories" (max 25 links + "N more on the site"). Money note, CAN-SPAM footer and unsubscribe in all.
+- Go-live: `npx wrangler d1 migrations apply lp-newsletter --remote` (applies 0005).
+- Local e2e: `npx wrangler dev --var EMAIL_PROVIDER:log` then `npm run test:e2e`.

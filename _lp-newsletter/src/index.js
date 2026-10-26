@@ -94,7 +94,7 @@ async function subscribe(req, env) {
   const locs = formLocations(f);
   let sections = pick(f.all('sections'), SECTIONS), freqs = pick(f.all('frequency'), FREQUENCIES);
   if (!sections.length) sections = Object.keys(SECTIONS);
-  if (!freqs.length) freqs = ['daily'];
+  if (!freqs.length) freqs = ['weekly'];
   const existing = await env.DB.prepare('SELECT * FROM subscribers WHERE email=?').bind(email).first();
   let tok;
   if (existing && existing.status === 'active') {
@@ -165,7 +165,7 @@ async function preferences(req, env, url) {
     const name = String(f.get('name') || '').trim().slice(0, 100) || null;
     const locs = formLocations({ get: (k) => f.get(k), all: (k) => f.getAll(k) });
     await env.DB.prepare("UPDATE subscribers SET name=?, locations=?, zip=?, county=?, cities=?, sections=?, frequencies=?, status=CASE WHEN status='unsubscribed' THEN 'active' ELSE status END, updated_at=datetime('now') WHERE id=?")
-      .bind(name, ...locCols(locs), JSON.stringify(sec.length ? sec : Object.keys(SECTIONS)), JSON.stringify(fr.length ? fr : ['daily']), s.id).run();
+      .bind(name, ...locCols(locs), JSON.stringify(sec.length ? sec : Object.keys(SECTIONS)), JSON.stringify(fr.length ? fr : ['weekly']), s.id).run();
     Object.assign(s, await env.DB.prepare('SELECT * FROM subscribers WHERE id=?').bind(s.id).first());
     note = '<p style="background:#e7f7ec;padding:.6rem;border-radius:6px">Saved.</p>';
   }
@@ -188,8 +188,8 @@ const csvCell = (v) => { let s = String(v ?? ''); if (/^[=+\-@]/.test(s)) s = "'
 
 async function exportCsv(req, env) {
   if (!authed(req, env)) return new Response('Unauthorized', { status: 401 });
-  const { results } = await env.DB.prepare('SELECT id,email,name,locations,zip,county,cities,sections,frequencies,status,tier,source,created_at,confirmed_at,unsubscribed_at,consent_ip FROM subscribers ORDER BY id').all();
-  const cols = ['id', 'email', 'name', 'locations', 'zip', 'county', 'cities', 'sections', 'frequencies', 'status', 'tier', 'source', 'created_at', 'confirmed_at', 'unsubscribed_at', 'consent_ip'];
+  const { results } = await env.DB.prepare('SELECT id,email,name,locations,zip,county,cities,sections,frequencies,status,tier,source,created_at,confirmed_at,unsubscribed_at,last_sent_at,consent_ip FROM subscribers ORDER BY id').all();
+  const cols = ['id', 'email', 'name', 'locations', 'zip', 'county', 'cities', 'sections', 'frequencies', 'status', 'tier', 'source', 'created_at', 'confirmed_at', 'unsubscribed_at', 'last_sent_at', 'consent_ip'];
   const body = [cols.join(','), ...results.map((r) => cols.map((c) => csvCell(c === 'sections' || c === 'frequencies' ? JSON.parse(r[c]).join(';') : c === 'locations' ? subLocations(r).map((l) => `${l.county}${l.cities.length ? ':' + l.cities.join('|') : ''}`).join(';') : r[c])).join(','))].join('\n') + '\n';
   return new Response(body, { headers: { 'content-type': 'text/csv; charset=utf-8', 'content-disposition': `attachment; filename="launchpad-subscribers-${new Date().toISOString().slice(0, 10)}.csv"`, 'cache-control': 'no-store' } });
 }
