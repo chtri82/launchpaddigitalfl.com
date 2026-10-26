@@ -21,7 +21,7 @@ export function checkSections(issue) {
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 /* Issue JSON:
- { "id": "2026-10-26-daily", "frequency": "daily|weekly|monthly|breaking", "subject": "...", "intro": "...",
+ { "id": "2026-10-26-daily", "frequency": "weekly|monthly", "subject": "...", "intro": "...",
    "tier": "free|paid" (optional; paid = only paid subscribers — Stripe hook),
    "sections": { "local": [{ "title": "...", "url": "https://...", "source": "...", "summary": "...", "published_at": "2026-10-26T14:00:00Z" (optional; filters per reader since last send),
                 "counties": ["Brevard"] | ["region:Central"] | ["statewide"] }], ... },
@@ -30,7 +30,8 @@ const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '
    After the sections, AROUND FLORIDA lists every other local story (not in the reader's top 3) by region, then Statewide.
    "dryRun": false, "limit": 300 } */
 // Frequency windows (fallback when a reader has never been sent this frequency).
-export const WINDOW_DAYS = { daily: 1, weekly: 7, monthly: 31, breaking: 1 };
+export const WINDOW_DAYS = { weekly: 7, monthly: 31 };
+export const EMAIL_FREQUENCIES = ['weekly', 'monthly'];
 export const CONDENSED = { perSection: 2, moreMax: 25 };
 export const MONEY_NOTE = 'We are not financial advisors; this is general information, not financial advice.';
 const toMs = (t) => { if (!t) return NaN; const v = String(t); return Date.parse(/[zZ]|[+-]\d\d:?\d\d$/.test(v) ? v : v.replace(' ', 'T') + 'Z'); };
@@ -54,11 +55,11 @@ export function filterSince(issue, since, now = Date.now()) {
 }
 
 export function buildIssue(env, issueIn, sub, opts = {}) {
-  const frequency = opts.frequency || issueIn.frequency || 'daily';
-  const condensed = frequency === 'weekly' || frequency === 'monthly';
+  const frequency = opts.frequency || issueIn.frequency || 'weekly';
+  const condensed = !opts.full; // all email editions are condensed digests; opts.full = legacy full layout
   let src = issueIn;
   if (opts.since != null) src = filterSince(issueIn, opts.since, opts.now);
-  // Condensed editions keep the full pool for "More stories"; daily trims sections to 5.
+  // Condensed editions keep the full pool for "More stories".
   const issue = condensed ? { ...src, sections: src.sections || {} } : checkSections(src).issue;
   const chosen = JSON.parse(sub.sections);
   const keys = Object.keys(SECTIONS).filter((k) => chosen.includes(k) && issue.sections?.[k]?.length);
@@ -114,14 +115,15 @@ export function buildIssue(env, issueIn, sub, opts = {}) {
     if (extra > 0) { const allUrl = `${env.SITE_URL || 'https://launchpaddigitalfl.com'}/news/`; html += `<p style="font-family:system-ui;font-size:14px"><a href="${allUrl}">+ ${extra} more on the site</a></p>`; text += `+ ${extra} more on the site: ${allUrl}\n`; }
     text += '\n';
   }
-  html += `<hr><p style="font-size:12px;color:#666">You're getting this because you subscribed at launchpaddigitalfl.com.<br>Launchpad Digital L.L.C. · ${esc(env.POSTAL_ADDRESS)}<br>Sponsorship and advertising: <a href="mailto:advertise@launchpaddigitalfl.com">advertise@launchpaddigitalfl.com</a><br><a href="${pref}">Manage preferences</a> (change how often: daily, weekly or monthly) · <a href="${pref}#county">${locs.length ? `Local news set to ${esc(locLabel)}. Change` : 'Add your ZIP for local news'}</a> · <a href="${unsub}">Unsubscribe</a></p></div>`;
-  text += `--\nLaunchpad Digital L.L.C. · ${env.POSTAL_ADDRESS}\nAdvertising: advertise@launchpaddigitalfl.com\nManage preferences (daily, weekly or monthly): ${pref}\n${locs.length ? `Local news set to ${locLabel}. Change` : 'Add your ZIP for local news'}: ${pref}#county\nUnsubscribe: ${unsub}\n`;
+  html += `<hr><p style="font-size:12px;color:#666">You're getting this because you subscribed at launchpaddigitalfl.com.<br>Launchpad Digital L.L.C. · ${esc(env.POSTAL_ADDRESS)}<br>Sponsorship and advertising: <a href="mailto:advertise@launchpaddigitalfl.com">advertise@launchpaddigitalfl.com</a><br><a href="${pref}">Manage preferences</a> (change how often: weekly or monthly, or add news texts) · <a href="${pref}#county">${locs.length ? `Local news set to ${esc(locLabel)}. Change` : 'Add your ZIP for local news'}</a> · <a href="${unsub}">Unsubscribe</a></p></div>`;
+  text += `--\nLaunchpad Digital L.L.C. · ${env.POSTAL_ADDRESS}\nAdvertising: advertise@launchpaddigitalfl.com\nManage preferences (weekly or monthly, news texts): ${pref}\n${locs.length ? `Local news set to ${locLabel}. Change` : 'Add your ZIP for local news'}: ${pref}#county\nUnsubscribe: ${unsub}\n`;
   return { to: sub.email, subject: issue.subject, html, text,
     headers: { 'List-Unsubscribe': `<${unsub}>, <mailto:${env.REPLY_TO || env.FROM_EMAIL}?subject=unsubscribe>`, 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click' } };
 }
 
 export async function sendIssue(env, issue) {
   if (!issue?.id || !issue?.subject || !issue?.frequency) return { ok: false, error: 'id, subject, frequency required' };
+  if (!EMAIL_FREQUENCIES.includes(issue.frequency)) return { ok: false, error: 'email frequency must be weekly or monthly (daily/breaking go by SMS)' };
   if (!issue.dryRun && /REQUIRED/.test(env.POSTAL_ADDRESS || '') && env.EMAIL_PROVIDER !== 'log') return { ok: false, error: 'Set POSTAL_ADDRESS (CAN-SPAM) before real sends' };
   const cap = Math.min(Number(issue.limit) || Infinity, Number(env.DAILY_SEND_CAP) || Infinity);
   const sentToday = (await env.DB.prepare("SELECT COUNT(*) n FROM sends WHERE status='sent' AND sent_at >= date('now')").first()).n;
@@ -146,11 +148,11 @@ export async function sendIssue(env, issue) {
   return out;
 }
 
-// Cron: daily always; weekly on Mondays; monthly on the 1st. Needs ISSUE_FEED_URL returning
-// { "daily": {issue...}, "weekly": {...}, "monthly": {...} } — only approved stories should be in it.
+// Cron: weekly on Mondays; monthly on the 1st (no daily email). Needs ISSUE_FEED_URL returning
+// { "weekly": {...}, "monthly": {...} } — only approved stories should be in it.
 export async function scheduledRun(env, when) {
   if (!env.ISSUE_FEED_URL) { console.log('cron: ISSUE_FEED_URL not set, nothing to send'); return; }
   const feed = await (await fetch(env.ISSUE_FEED_URL)).json();
-  const freqs = ['daily']; if (when.getUTCDay() === 1) freqs.push('weekly'); if (when.getUTCDate() === 1) freqs.push('monthly');
+  const freqs = []; if (when.getUTCDay() === 1) freqs.push('weekly'); if (when.getUTCDate() === 1) freqs.push('monthly');
   for (const f of freqs) if (feed[f]) console.log('cron', f, JSON.stringify(await sendIssue(env, { ...feed[f], frequency: f })));
 }

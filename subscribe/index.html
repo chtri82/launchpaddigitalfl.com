@@ -53,7 +53,7 @@
     <ul class="checklist">
       <li>Original reporting with links to the sources</li>
       <li>Only the sections you choose</li>
-      <li>Daily, weekly or monthly, plus optional breaking alerts</li>
+      <li>Weekly or monthly email</li>
     </ul>
     <p style="font-size:.9rem;color:var(--text-muted)">We'll email you a link to confirm. We never sell your email. See our <a href="/privacy/">privacy policy</a>.</p>
   </div>
@@ -74,8 +74,17 @@
     </fieldset>
     <div class="lp-hp" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
     <input type="hidden" name="source" value="site-subscribe">
-    <fieldset class="lp-fs"><legend><strong>How often</strong></legend><label class="lp-check"><input type="checkbox" name="frequency" value="daily"> Daily edition</label><label class="lp-check"><input type="checkbox" name="frequency" value="weekly" checked> Weekly roundup</label><label class="lp-check"><input type="checkbox" name="frequency" value="monthly"> Monthly digest</label><label class="lp-check"><input type="checkbox" name="frequency" value="breaking"> Breaking alerts</label></fieldset>
+    <fieldset class="lp-fs"><legend><strong>How often (email)</strong></legend><label class="lp-check"><input type="checkbox" name="frequency" value="weekly" checked> Weekly roundup</label><label class="lp-check"><input type="checkbox" name="frequency" value="monthly"> Monthly digest</label></fieldset>
     <fieldset class="lp-fs"><legend><strong>Sections</strong> <button type="button" class="lp-all" data-lp-all>Clear all</button></legend><div class="lp-grid"><label class="lp-check"><input type="checkbox" name="sections" value="local" checked> Breaking local news</label><label class="lp-check"><input type="checkbox" name="sections" value="state" checked> Florida (state) news</label><label class="lp-check"><input type="checkbox" name="sections" value="national" checked> National news</label><label class="lp-check"><input type="checkbox" name="sections" value="world" checked> World news</label><label class="lp-check"><input type="checkbox" name="sections" value="money" checked> Money: investing, budgeting, saving</label><label class="lp-check"><input type="checkbox" name="sections" value="weather" checked> Weather</label><label class="lp-check"><input type="checkbox" name="sections" value="sports" checked> Sports</label><label class="lp-check"><input type="checkbox" name="sections" value="entertainment" checked> Entertainment</label><label class="lp-check"><input type="checkbox" name="sections" value="style" checked> Style &amp; fashion</label><label class="lp-check"><input type="checkbox" name="sections" value="humanity" checked> Humanity</label><label class="lp-check"><input type="checkbox" name="sections" value="education" checked> Education &amp; DIY</label><label class="lp-check"><input type="checkbox" name="sections" value="crime" checked> Crime</label><label class="lp-check"><input type="checkbox" name="sections" value="seasonal" checked> Seasonal events</label></div></fieldset>
+    <!-- SMS on hold (SMS_ENABLED="false" in wrangler.toml): remove hidden/disabled to re-enable -->
+    <fieldset class="lp-fs" id="sms" hidden disabled><legend><strong>News texts</strong> <span style="color:var(--text-muted)">(optional)</span></legend>
+    <label for="lp-phone">US mobile number</label>
+    <input id="lp-phone" type="tel" name="phone" inputmode="tel" autocomplete="tel-national" placeholder="(321) 555-0123" maxlength="20" class="lp-input">
+    <label class="lp-check"><input type="checkbox" name="sms_breaking" value="1"> Breaking news texts</label>
+    <label class="lp-check"><input type="checkbox" name="sms_daily" value="1"> Daily news text (links to stories, the newsletter and site sections)</label>
+    <label class="lp-check lp-consent"><input type="checkbox" name="sms_consent" value="1"> <span>Yes, send me Launchpad Digital text messages (breaking news and/or a daily news text with links) at the number above. Msg frequency varies, up to about 3/day. Msg &amp; data rates may apply. Reply STOP to cancel, HELP for help. Consent is not a condition of signing up. See our <a href="/terms/">Terms</a> and <a href="/privacy/">Privacy Policy</a>.</span></label>
+    <input type="hidden" name="sms_consent_version" value="sms-v1-2026-10-25">
+    </fieldset>
     <button class="btn btn-primary" type="submit">Subscribe free →</button>
     <p class="lp-msg" role="status" aria-live="polite"></p>
   </form>
@@ -88,6 +97,7 @@
 .lp-hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
 .lp-all{font-size:.8rem;margin-left:.5rem;background:none;border:1px solid #c9d2e3;border-radius:6px;cursor:pointer}
 .lp-msg{margin:.8rem 0 0;font-weight:600}
+.lp-consent{font-size:.82rem;line-height:1.4;color:var(--text-muted)}
 @media(max-width:600px){.lp-grid{grid-template-columns:1fr}}
 </style>
 <section class="block" id="brief"><div class="wrap"><h2>Florida Condo &amp; HOA Brief</h2></div><div class="wrap grid grid-2">

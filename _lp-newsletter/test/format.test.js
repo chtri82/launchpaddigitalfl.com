@@ -53,7 +53,7 @@ test('checkSections warns when local pool has fewer than 3', () => {
   assert.ok(checkSections({ sections: { local: POOL.slice(0, 1) } }).warnings.some((w) => /local: 1/.test(w)));
 });
 test('rendered email: Top Local Stories first with exactly 3, then sections capped at 5, empty omitted', () => {
-  const m = buildIssue(env, { subject: 'S', sections: { local: POOL, state: n('ST', 6), weather: n('WX', 2), sports: [], crime: n('CR', 1) } }, sub('Brevard', ['Cocoa Beach']));
+  const m = buildIssue(env, { subject: 'S', sections: { local: POOL, state: n('ST', 6), weather: n('WX', 2), sports: [], crime: n('CR', 1) } }, sub('Brevard', ['Cocoa Beach']), { full: true });
   const h2 = [...m.html.matchAll(/<h2[^>]*>([^<]+)<\/h2>/g)].map((x) => x[1]);
   assert.equal(h2[0], 'Top Local Stories');
   assert.ok(!h2.some((x) => /Sports/.test(x)));
