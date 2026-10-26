@@ -22,7 +22,7 @@ var LAUNCHPAD_NEWSLETTER_API = (location.hostname==='localhost'||location.hostna
       var fd=new FormData(nf);if(nf.lpLocations){fd.set('locations',JSON.stringify(nf.lpLocations()));['zip','county','cities'].forEach(function(k){fd.delete(k);});}
       fetch(nf.action,{method:'POST',body:fd,headers:{'Accept':'application/json'}})
         .then(function(r){return r.json();})
-        .then(function(d){msg.textContent=d.message||(d.ok?'Check your email to confirm.':'Something went wrong.');if(d.ok){nf.reset();if(nf.lpLocReset)nf.lpLocReset();}})
+        .then(function(d){msg.textContent=d.message||(d.ok?'Check your email to confirm.':'Something went wrong.');if(d.ok){try{localStorage.setItem('lpSubscribed','1');}catch(e){}nf.reset();if(nf.lpLocReset)nf.lpLocReset();}})
         .catch(function(){msg.textContent='Could not reach the signup service. Please try again later.';})
         .then(function(){b.disabled=false;});
     });
@@ -102,4 +102,29 @@ var LAUNCHPAD_NEWSLETTER_API = (location.hostname==='localhost'||location.hostna
   });
   // Year
   document.querySelectorAll('[data-year]').forEach(function(y){y.textContent=new Date().getFullYear();});
+})();
+// lp-sticky: slim site-wide newsletter bar (dismiss = 14 days; hidden after signup)
+(function(){
+  try{
+    var ls=window.localStorage,K='lpStickyDismissed',S='lpSubscribed',now=Date.now();
+    if(ls.getItem(S)||document.getElementById('lp-sticky'))return;
+    var d=+ls.getItem(K)||0;if(d&&now-d<14*864e5)return;
+    if(/^\/subscribe\//.test(location.pathname)||document.querySelector('meta[http-equiv=refresh]'))return;
+  }catch(e){return;}
+  var bar=document.createElement('aside');bar.id='lp-sticky';bar.setAttribute('aria-label','Newsletter signup');
+  bar.innerHTML='<form class="lp-sticky-f" novalidate><span class="lp-sticky-t"><strong>Free Florida news, sourced.</strong> <span class="lp-sticky-sub">Get Launchpad by email.</span></span><input type="email" name="email" required placeholder="you@example.com" aria-label="Email address" autocomplete="email"><input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" class="lp-sticky-hp"><input type="hidden" name="source" value="sticky-bar"><button type="submit" class="btn btn-primary btn-sm">Subscribe</button><span class="lp-sticky-m" role="status" aria-live="polite"></span></form><button type="button" class="lp-sticky-x" aria-label="Dismiss">&times;</button>';
+  document.body.appendChild(bar);document.body.classList.add('has-lp-sticky');
+  var close=function(){bar.remove();document.body.classList.remove('has-lp-sticky');};
+  bar.querySelector('.lp-sticky-x').addEventListener('click',function(){try{localStorage.setItem('lpStickyDismissed',String(Date.now()));}catch(e){}close();});
+  var f=bar.querySelector('form'),m=bar.querySelector('.lp-sticky-m');
+  f.addEventListener('submit',function(e){
+    e.preventDefault();
+    if(!f.email.value||!f.email.checkValidity()){m.textContent='Enter a valid email.';f.email.focus();return;}
+    var b=f.querySelector('[type=submit]');b.disabled=true;m.textContent='Sending…';
+    fetch(LAUNCHPAD_NEWSLETTER_API+'/api/subscribe',{method:'POST',body:new FormData(f),headers:{'Accept':'application/json'}})
+      .then(function(r){return r.json();})
+      .then(function(j){m.textContent=j.message||(j.ok?'Check your email to confirm.':'Something went wrong.');if(j.ok){try{localStorage.setItem('lpSubscribed','1');}catch(e){}f.email.value='';setTimeout(close,6000);}})
+      .catch(function(){m.textContent='Could not reach the signup service.';})
+      .then(function(){b.disabled=false;});
+  });
 })();
