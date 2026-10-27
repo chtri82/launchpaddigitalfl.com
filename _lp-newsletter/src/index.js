@@ -1,6 +1,7 @@
 import { SECTIONS, FREQUENCIES, SMS_KINDS } from './config.js';
 import { normalizeUsPhone, sendSms, parseInbound, SMS_CONSENT_TEXT, SMS_CONSENT_VERSION, SMS_HELP_TEXT, SMS_STOP_TEXT, SMS_START_TEXT } from './sms.js';
 import { sendEmail } from './providers.js';
+import { briefSubscribe, briefCors } from './brief.js';
 import { sendIssue, scheduledRun } from './sender.js';
 import { countiesForZip, placesIn, resolveLocations, subLocations, COUNTIES, GEO } from './counties.js';
 
@@ -256,8 +257,9 @@ async function stripeWebhook(req, env) {
 export default {
   async fetch(req, env) {
     const url = new URL(req.url), p = url.pathname.replace(/\/+$/, '') || '/';
-    if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors(req, env) });
+    if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: p === '/api/subscribe-brief' ? briefCors(req, env) : cors(req, env) });
     try {
+      if (p === '/api/subscribe-brief' && req.method === 'POST') return await briefSubscribe(req, env, { rateLimited, readForm, json });
       if (p === '/api/subscribe' && req.method === 'POST') return await subscribe(req, env);
       if (p === '/confirm') return await confirm(req, env, url);
       if (p === '/unsubscribe') return await unsubscribe(req, env, url);
