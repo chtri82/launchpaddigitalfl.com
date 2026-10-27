@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-27T13:15:38Z",
+ "generated": "2026-10-27T14:15:59Z",
  "feeds": [
   {
    "id": "wusf",
@@ -99,7 +99,7 @@
    "home": "https://www.wusf.org",
    "counties": null,
    "status": "ok",
-   "items": 9
+   "items": 8
   },
   {
    "id": "local10",
@@ -112,8 +112,8 @@
     "Broward",
     "Monroe"
    ],
-   "status": "ok",
-   "items": 40
+   "status": "error: HTTPError",
+   "items": 0
   },
   {
    "id": "wsvn",
@@ -460,7 +460,7 @@
     "Duval"
    ],
    "status": "ok",
-   "items": 27
+   "items": 28
   },
   {
    "id": "tbt",
@@ -878,7 +878,7 @@
     "wjhg"
    ],
    "dedicated": [],
-   "items": 25
+   "items": 24
   },
   "Bradford": {
    "slug": "bradford",
@@ -906,14 +906,12 @@
   "Broward": {
    "slug": "broward",
    "feeds": [
-    "local10",
     "wsvn"
    ],
    "dedicated": [
-    "local10",
     "wsvn"
    ],
-   "items": 40
+   "items": 10
   },
   "Calhoun": {
    "slug": "calhoun",
@@ -998,7 +996,7 @@
    "dedicated": [
     "jaxtoday"
    ],
-   "items": 31
+   "items": 33
   },
   "Escambia": {
    "slug": "escambia",
@@ -1305,25 +1303,21 @@
   "Miami-Dade": {
    "slug": "miami-dade",
    "feeds": [
-    "local10",
     "wsvn",
     "miamitoday"
    ],
    "dedicated": [
-    "local10",
     "wsvn",
     "miamitoday"
    ],
-   "items": 40
+   "items": 20
   },
   "Monroe": {
    "slug": "monroe",
    "feeds": [
-    "local10",
     "keysweekly"
    ],
    "dedicated": [
-    "local10",
     "keysweekly"
    ],
    "items": 40
@@ -1374,7 +1368,7 @@
     "orlandoweekly",
     "ocso"
    ],
-   "items": 22
+   "items": 21
   },
   "Osceola": {
    "slug": "osceola",
@@ -1547,7 +1541,7 @@
    "dedicated": [
     "ecb"
    ],
-   "items": 32
+   "items": 31
   },
   "Union": {
    "slug": "union",
