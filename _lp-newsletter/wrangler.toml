@@ -21,7 +21,7 @@ SMS_ENABLED = "false"           # SMS on hold: hides texts box on preferences, s
 SMS_PROVIDER = "log"            # log | twilio | brevo (stubbed: nothing sends until SMS_LIVE="1" and live code is added)
 DAILY_SEND_CAP = "300"          # Brevo free = 300/day
 BRIEF_LIST_ID = "3"             # Brevo list "Condo & HOA Brief" (Florida Condo & HOA Brief signups, /api/subscribe-brief)
-BRIEF_DOI_TEMPLATE_ID = "2"     # Brevo double opt-in template "Brief - confirm subscription (DOI)"
+# Brief double opt-in is done in the worker (signed link, src/brief.js). Optional: BRIEF_FROM_EMAIL / BRIEF_FROM_NAME / BRIEF_REPLY_TO once condohoabrief.com is verified in Brevo.
 BRIEF_SITE_URL = "https://condohoabrief.com"
 ISSUE_FEED_URL = ""             # optional JSON feed of stories for cron-built issues
 

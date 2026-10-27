@@ -1,7 +1,7 @@
 import { SECTIONS, FREQUENCIES, SMS_KINDS } from './config.js';
 import { normalizeUsPhone, sendSms, parseInbound, SMS_CONSENT_TEXT, SMS_CONSENT_VERSION, SMS_HELP_TEXT, SMS_STOP_TEXT, SMS_START_TEXT } from './sms.js';
 import { sendEmail } from './providers.js';
-import { briefSubscribe, briefCors } from './brief.js';
+import { briefSubscribe, briefConfirm, briefCors } from './brief.js';
 import { sendIssue, scheduledRun } from './sender.js';
 import { countiesForZip, placesIn, resolveLocations, subLocations, COUNTIES, GEO } from './counties.js';
 
@@ -74,6 +74,9 @@ async function rateLimited(env, key, limit, windowSec) {
   return false;
 }
 
+// Give back one attempt when OUR side failed (e.g. email provider error), so a visitor's retries aren't locked out.
+async function refund(env, key) { await env.DB.prepare('UPDATE rate_limits SET count=MAX(count-1,0) WHERE key=?').bind(key).run(); }
+
 async function readForm(req) {
   const ct = req.headers.get('content-type') || '';
   if (ct.includes('application/json')) { const j = await req.json(); return { get: (k) => j[k], all: (k) => [].concat(j[k] ?? []) }; }
@@ -133,7 +136,7 @@ async function subscribe(req, env) {
       .bind(email, name, ...locCols(locs), JSON.stringify(sections), JSON.stringify(freqs), tok, String(f.get('source') || 'site').slice(0, 50), ip, ...smsCols).run();
   }
   const r = await sendEmail(confirmEmail(env, email, name, tok), env);
-  if (!r.ok) { console.error(r.error); return reply(false, 'We could not send the confirmation email. Please try again later.', 502); }
+  if (!r.ok) { console.error(r.error); await refund(env, 'sub:' + ip); await refund(env, 'email:' + email); return reply(false, 'We could not send the confirmation email. Please try again later.', 502); }
   return reply(true, 'Almost done! Check your email and click the link to confirm.');
 }
 
@@ -259,8 +262,9 @@ export default {
     const url = new URL(req.url), p = url.pathname.replace(/\/+$/, '') || '/';
     if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: p === '/api/subscribe-brief' ? briefCors(req, env) : cors(req, env) });
     try {
-      if (p === '/api/subscribe-brief' && req.method === 'POST') return await briefSubscribe(req, env, { rateLimited, readForm, json });
+      if (p === '/api/subscribe-brief' && req.method === 'POST') return await briefSubscribe(req, env, { rateLimited, refund, readForm, json });
       if (p === '/api/subscribe' && req.method === 'POST') return await subscribe(req, env);
+      if (p === '/brief/confirm') return await briefConfirm(env, url);
       if (p === '/confirm') return await confirm(req, env, url);
       if (p === '/unsubscribe') return await unsubscribe(req, env, url);
       if (p === '/preferences') return await preferences(req, env, url);

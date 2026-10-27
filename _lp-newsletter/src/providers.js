@@ -13,7 +13,7 @@ async function brevo(m, env) {
     method: 'POST',
     headers: { 'api-key': env.BREVO_API_KEY, 'content-type': 'application/json', accept: 'application/json' },
     body: JSON.stringify({
-      sender: { email: env.FROM_EMAIL, name: env.FROM_NAME }, replyTo: { email: env.REPLY_TO || env.FROM_EMAIL },
+      sender: { email: (m.from && m.from.email) || env.FROM_EMAIL, name: (m.from && m.from.name) || env.FROM_NAME }, replyTo: { email: m.replyTo || env.REPLY_TO || env.FROM_EMAIL },
       to: [{ email: m.to }], subject: m.subject, htmlContent: m.html, textContent: m.text, ...(m.headers && Object.keys(m.headers).length ? { headers: m.headers } : {}),
     }),
   });
