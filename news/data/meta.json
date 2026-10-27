@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-27T11:40:58Z",
+ "generated": "2026-10-27T11:41:41Z",
  "feeds": [
   {
    "id": "wusf",
@@ -78,8 +78,8 @@
    "url": "https://floridataxwatch.org/feed",
    "home": "https://floridataxwatch.org",
    "counties": null,
-   "status": "ok",
-   "items": 1
+   "status": "error: HTTPError",
+   "items": 0
   },
   {
    "id": "nhc",
