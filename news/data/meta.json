@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-27T21:13:09Z",
+ "generated": "2026-10-27T22:07:13Z",
  "feeds": [
   {
    "id": "wusf",
@@ -460,7 +460,7 @@
     "Duval"
    ],
    "status": "ok",
-   "items": 32
+   "items": 33
   },
   {
    "id": "tbt",
@@ -878,7 +878,7 @@
     "wjhg"
    ],
    "dedicated": [],
-   "items": 28
+   "items": 27
   },
   "Bradford": {
    "slug": "bradford",
@@ -1134,7 +1134,7 @@
     "abcaction"
    ],
    "dedicated": [],
-   "items": 35
+   "items": 37
   },
   "Holmes": {
    "slug": "holmes",
@@ -1168,7 +1168,7 @@
    "dedicated": [
     "wtvy"
    ],
-   "items": 21
+   "items": 22
   },
   "Jefferson": {
    "slug": "jefferson",
@@ -1485,7 +1485,7 @@
     "wkrg",
     "northescambia"
    ],
-   "items": 27
+   "items": 26
   },
   "Sarasota": {
    "slug": "sarasota",
