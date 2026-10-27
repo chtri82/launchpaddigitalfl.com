@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-27T18:15:41Z",
+ "generated": "2026-10-27T19:15:45Z",
  "feeds": [
   {
    "id": "wusf",
@@ -878,7 +878,7 @@
     "wjhg"
    ],
    "dedicated": [],
-   "items": 27
+   "items": 25
   },
   "Bradford": {
    "slug": "bradford",
@@ -1134,7 +1134,7 @@
     "abcaction"
    ],
    "dedicated": [],
-   "items": 36
+   "items": 38
   },
   "Holmes": {
    "slug": "holmes",
@@ -1371,7 +1371,7 @@
     "orlandoweekly",
     "ocso"
    ],
-   "items": 24
+   "items": 22
   },
   "Osceola": {
    "slug": "osceola",
@@ -1400,7 +1400,7 @@
     "bocanewsnow",
     "bocatrib"
    ],
-   "items": 36
+   "items": 35
   },
   "Pasco": {
    "slug": "pasco",
