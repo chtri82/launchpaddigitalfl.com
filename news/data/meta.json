@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-27T02:13:27Z",
+ "generated": "2026-10-27T07:51:53Z",
  "feeds": [
   {
    "id": "wusf",
@@ -878,7 +878,7 @@
     "wjhg"
    ],
    "dedicated": [],
-   "items": 24
+   "items": 25
   },
   "Bradford": {
    "slug": "bradford",
@@ -998,7 +998,7 @@
    "dedicated": [
     "jaxtoday"
    ],
-   "items": 33
+   "items": 31
   },
   "Escambia": {
    "slug": "escambia",
@@ -1137,7 +1137,7 @@
     "abcaction"
    ],
    "dedicated": [],
-   "items": 34
+   "items": 38
   },
   "Holmes": {
    "slug": "holmes",
@@ -1171,7 +1171,7 @@
    "dedicated": [
     "wtvy"
    ],
-   "items": 23
+   "items": 22
   },
   "Jefferson": {
    "slug": "jefferson",
@@ -1205,7 +1205,7 @@
    "dedicated": [
     "villages"
    ],
-   "items": 23
+   "items": 21
   },
   "Lee": {
    "slug": "lee",
@@ -1228,7 +1228,7 @@
    "dedicated": [
     "tallyreports"
    ],
-   "items": 22
+   "items": 20
   },
   "Levy": {
    "slug": "levy",
@@ -1374,7 +1374,7 @@
     "orlandoweekly",
     "ocso"
    ],
-   "items": 23
+   "items": 20
   },
   "Osceola": {
    "slug": "osceola",
@@ -1547,7 +1547,7 @@
    "dedicated": [
     "ecb"
    ],
-   "items": 31
+   "items": 33
   },
   "Union": {
    "slug": "union",
