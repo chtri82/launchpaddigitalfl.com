@@ -5,6 +5,8 @@ import json, re, os, sys, html, time, calendar, concurrent.futures as cf
 from datetime import datetime, timezone, timedelta
 from zoneinfo import ZoneInfo
 import feedparser, requests
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import ours
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, '..', 'news', 'data')
@@ -97,17 +99,19 @@ def fmt_et(iso):
 
 def render_live(items, gen):
     e = html.escape
-    arts = ''.join(
+    head = ('<h3 class="lp-grp" style="margin:1rem 0 0;font-size:.85rem;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted)">'
+            'From other Florida outlets</h3>')
+    arts = head + ''.join(
         '<article class="news-item reveal"><time datetime="%s">%s</time><h3><a href="%s" rel="noopener">%s</a></h3>%s'
-        '<p class="src">Source: <a href="%s" rel="noopener">%s</a></p></article>' % (
+        '<p class="src">From another outlet · Source: <a href="%s" rel="noopener">%s</a></p></article>' % (
             e(it['d']), e(fmt_et(it['d'])), e(it['u'], quote=True), e(it['t']),
             ('<p>' + e(it['x']) + '</p>') if it['x'] else '', e(it['u'], quote=True), e(it['s'])) for it in items)
     g = datetime.strptime(gen, '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=timezone.utc)
-    asof = ('<p class="asof"><span class="dot" aria-hidden="true"></span>Refreshed automatically from Florida news outlets. Last check <time datetime="%s">%s</time>. '
-            'Each headline links to the original reporting.</p>') % (gen, e(fmt_et(gen)))
+    asof = ('<p class="asof"><span class="dot" aria-hidden="true"></span>Launchpad stories come first; headlines from other Florida outlets follow, each marked and linked to the original reporting. Last check <time datetime="%s">%s</time>.</p>') % (gen, e(fmt_et(gen)))
     return arts, asof
 
 def write_pages(cfg, by, counties, gen):
+    ours.apply_ours(ROOT)
     for rel, limit in (('index.html', 8), ('around-the-state/index.html', 20)):
         p = os.path.join(ROOT, rel)
         if not os.path.exists(p): continue
