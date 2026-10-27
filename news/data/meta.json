@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-27T07:51:53Z",
+ "generated": "2026-10-27T11:40:58Z",
  "feeds": [
   {
    "id": "wusf",
@@ -78,8 +78,8 @@
    "url": "https://floridataxwatch.org/feed",
    "home": "https://floridataxwatch.org",
    "counties": null,
-   "status": "error: HTTPError",
-   "items": 0
+   "status": "ok",
+   "items": 1
   },
   {
    "id": "nhc",
@@ -477,7 +477,7 @@
     "Polk"
    ],
    "status": "ok",
-   "items": 32
+   "items": 39
   },
   {
    "id": "wfla",
@@ -998,7 +998,7 @@
    "dedicated": [
     "jaxtoday"
    ],
-   "items": 31
+   "items": 30
   },
   "Escambia": {
    "slug": "escambia",
@@ -1137,7 +1137,7 @@
     "abcaction"
    ],
    "dedicated": [],
-   "items": 38
+   "items": 40
   },
   "Holmes": {
    "slug": "holmes",
@@ -1205,7 +1205,7 @@
    "dedicated": [
     "villages"
    ],
-   "items": 21
+   "items": 22
   },
   "Lee": {
    "slug": "lee",
@@ -1228,7 +1228,7 @@
    "dedicated": [
     "tallyreports"
    ],
-   "items": 20
+   "items": 22
   },
   "Levy": {
    "slug": "levy",
@@ -1374,7 +1374,7 @@
     "orlandoweekly",
     "ocso"
    ],
-   "items": 20
+   "items": 24
   },
   "Osceola": {
    "slug": "osceola",

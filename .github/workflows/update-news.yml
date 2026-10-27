@@ -1,7 +1,11 @@
 name: Update news headlines
 on:
   schedule:
-    - cron: '*/15 * * * *'   # about every 2 hours (GitHub may delay scheduled runs)
+    # GitHub heavily throttles scheduled runs (observed gaps of 2-7 h with */15), so use several off-peak minutes per hour.
+    - cron: '11 * * * *'
+    - cron: '26 * * * *'
+    - cron: '41 * * * *'
+    - cron: '56 * * * *'
   workflow_dispatch: {}
 permissions:
   contents: write
@@ -22,6 +26,7 @@ jobs:
         run: |
           git config user.name "launchpad-news-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add news/data
+          git add news/data index.html around-the-state/index.html
           git diff --cached --quiet || git commit -m "Update news headlines"
+          git pull --rebase -X theirs || true
           git push

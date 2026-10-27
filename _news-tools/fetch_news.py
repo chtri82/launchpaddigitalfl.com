@@ -2,7 +2,8 @@
 """Fetch Florida RSS/Atom feeds and write static JSON for /news/.
 Stores only headline, source, date, a short excerpt and the original link."""
 import json, re, os, sys, html, time, calendar, concurrent.futures as cf
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
+from zoneinfo import ZoneInfo
 import feedparser, requests
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -59,6 +60,64 @@ def top(items, n):
 
 def slug(c): return re.sub(r'[^a-z]+', '-', c.lower()).strip('-')
 
+ROOT = os.path.join(HERE, '..')
+JUNK = re.compile(r"(no tropical cyclones|tropical weather outlook|e-edition|classifieds?|obituar|crossword|horoscope|sudoku|legal notices?|public notices?|podcast|newsletter signup)", re.I)
+FL_GROUPS = ('statewide', 'politics', 'budgeting', 'weather')   # outlets that are Florida-only by nature
+ET = ZoneInfo('America/New_York')
+
+def norm(t): return re.sub(r'[^a-z0-9]+', ' ', t.lower()).strip()[:70]
+
+def live_items(cfg, by, counties, limit, max_per=2):
+    """Fresh Florida headlines for the homepage. Only real feed items; every one keeps its original link."""
+    names = [c + ' County' for c in counties] + [x for v in counties.values() for x in v]
+    fl = re.compile(r"\b(Florida|Fla\.|Floridians?|" + '|'.join(re.escape(n) for n in names) + r")\b")
+    now = time.time(); cands = []
+    for g in cfg:
+        for feed in cfg[g]:
+            for it in by.get(feed['id'], []):
+                if not it['d'] or JUNK.search(it['t']) or 'crime' in it['c']: continue
+                if g not in FL_GROUPS and not fl.search(it['t'] + ' ' + it['x']): continue
+                age = now - calendar.timegm(time.strptime(it['d'], '%Y-%m-%dT%H:%M:%SZ'))
+                cands.append((age, it))
+    cands.sort(key=lambda a: a[0])
+    for horizon in (36, 72, 168):
+        pool = [it for age, it in cands if age <= horizon * 3600]
+        out, seen, per = [], set(), {}
+        for it in pool:
+            k = norm(it['t'])
+            if k in seen or per.get(it['sid'], 0) >= max_per: continue
+            seen.add(k); per[it['sid']] = per.get(it['sid'], 0) + 1; out.append(it)
+            if len(out) >= limit: break
+        if len(out) >= min(limit, 6): return out
+    return out
+
+def fmt_et(iso):
+    t = datetime.strptime(iso, '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=timezone.utc).astimezone(ET)
+    return t.strftime('%b. ') + str(t.day) + t.strftime(', %-I:%M %p ET')
+
+def render_live(items, gen):
+    e = html.escape
+    arts = ''.join(
+        '<article class="news-item reveal"><time datetime="%s">%s</time><h3><a href="%s" rel="noopener">%s</a></h3>%s'
+        '<p class="src">Source: <a href="%s" rel="noopener">%s</a></p></article>' % (
+            e(it['d']), e(fmt_et(it['d'])), e(it['u'], quote=True), e(it['t']),
+            ('<p>' + e(it['x']) + '</p>') if it['x'] else '', e(it['u'], quote=True), e(it['s'])) for it in items)
+    g = datetime.strptime(gen, '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=timezone.utc)
+    asof = ('<p class="asof"><span class="dot" aria-hidden="true"></span>Refreshed automatically from Florida news outlets. Last check <time datetime="%s">%s</time>. '
+            'Each headline links to the original reporting.</p>') % (gen, e(fmt_et(gen)))
+    return arts, asof
+
+def write_pages(cfg, by, counties, gen):
+    for rel, limit in (('index.html', 8), ('around-the-state/index.html', 20)):
+        p = os.path.join(ROOT, rel)
+        if not os.path.exists(p): continue
+        s = open(p, encoding='utf-8').read()
+        if '<!--lp-live-->' not in s: continue
+        arts, asof = render_live(live_items(cfg, by, counties, limit), gen)
+        s = re.sub(r'<!--lp-live-->.*?<!--/lp-live-->', lambda m: '<!--lp-live-->' + arts + '<!--/lp-live-->', s, count=1, flags=re.S)
+        s = re.sub(r'<!--lp-live-asof-->.*?<!--/lp-live-asof-->', lambda m: '<!--lp-live-asof-->' + asof + '<!--/lp-live-asof-->', s, count=1, flags=re.S)
+        open(p, 'w', encoding='utf-8').write(s)
+
 def main():
     cfg = json.load(open(os.path.join(HERE, 'feeds.json')))
     counties = {}
@@ -104,6 +163,7 @@ def main():
         json.dump({'county': cn, 'generated': gen, 'feeds': [{'name': f['name'], 'home': f['home']} for f in working],
                    'items': items}, open(os.path.join(OUT, 'county', slug(cn) + '.json'), 'w'), separators=(',', ':'))
     json.dump({'generated': gen, 'feeds': status, 'counties': cov}, open(os.path.join(OUT, 'meta.json'), 'w'), indent=1)
+    write_pages(cfg, by, counties, gen)
     bad = [s for s in status if s['status'] != 'ok']
     print(f"{len(status)} feeds, {len(bad)} not ok: {[b['id']+':'+b['status'] for b in bad]}")
     return 0
