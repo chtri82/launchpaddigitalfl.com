@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-27T15:18:56Z",
+ "generated": "2026-10-27T16:17:22Z",
  "feeds": [
   {
    "id": "wusf",
@@ -221,8 +221,8 @@
    "counties": [
     "Palm Beach"
    ],
-   "status": "ok",
-   "items": 10
+   "status": "error: HTTPError",
+   "items": 0
   },
   {
    "id": "spacecoastdaily",
@@ -460,7 +460,7 @@
     "Duval"
    ],
    "status": "ok",
-   "items": 28
+   "items": 29
   },
   {
    "id": "tbt",
@@ -878,7 +878,7 @@
     "wjhg"
    ],
    "dedicated": [],
-   "items": 26
+   "items": 24
   },
   "Bradford": {
    "slug": "bradford",
@@ -998,7 +998,7 @@
    "dedicated": [
     "jaxtoday"
    ],
-   "items": 36
+   "items": 34
   },
   "Escambia": {
    "slug": "escambia",
@@ -1371,7 +1371,7 @@
     "orlandoweekly",
     "ocso"
    ],
-   "items": 20
+   "items": 23
   },
   "Osceola": {
    "slug": "osceola",
@@ -1393,14 +1393,12 @@
     "wptv",
     "wpbf",
     "cbs12",
-    "bocanewsnow",
-    "bocatrib"
+    "bocanewsnow"
    ],
    "dedicated": [
-    "bocanewsnow",
-    "bocatrib"
+    "bocanewsnow"
    ],
-   "items": 37
+   "items": 27
   },
   "Pasco": {
    "slug": "pasco",
