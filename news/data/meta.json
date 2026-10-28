@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-28T21:19:24Z",
+ "generated": "2026-10-28T23:22:00Z",
  "feeds": [
   {
    "id": "wusf",
@@ -274,7 +274,7 @@
     "Marion"
    ],
    "status": "ok",
-   "items": 20
+   "items": 19
   },
   {
    "id": "wftv",
@@ -1145,7 +1145,7 @@
    "dedicated": [
     "wtvy"
    ],
-   "items": 20
+   "items": 21
   },
   "Indian River": {
    "slug": "indian-river",
@@ -1201,7 +1201,7 @@
    "dedicated": [
     "villages"
    ],
-   "items": 22
+   "items": 21
   },
   "Lee": {
    "slug": "lee",
@@ -1366,7 +1366,7 @@
     "orlandoweekly",
     "ocso"
    ],
-   "items": 21
+   "items": 22
   },
   "Osceola": {
    "slug": "osceola",
@@ -1395,7 +1395,7 @@
     "bocanewsnow",
     "bocatrib"
    ],
-   "items": 32
+   "items": 35
   },
   "Pasco": {
    "slug": "pasco",
@@ -1539,7 +1539,7 @@
    "dedicated": [
     "ecb"
    ],
-   "items": 20
+   "items": 23
   },
   "Union": {
    "slug": "union",
