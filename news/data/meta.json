@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-28T01:13:56Z",
+ "generated": "2026-10-28T01:29:10Z",
  "feeds": [
   {
    "id": "wusf",
@@ -112,8 +112,8 @@
     "Broward",
     "Monroe"
    ],
-   "status": "ok",
-   "items": 40
+   "status": "error: HTTPError",
+   "items": 0
   },
   {
    "id": "wsvn",
@@ -906,14 +906,12 @@
   "Broward": {
    "slug": "broward",
    "feeds": [
-    "local10",
     "wsvn"
    ],
    "dedicated": [
-    "local10",
     "wsvn"
    ],
-   "items": 40
+   "items": 10
   },
   "Calhoun": {
    "slug": "calhoun",
@@ -998,7 +996,7 @@
    "dedicated": [
     "jaxtoday"
    ],
-   "items": 37
+   "items": 36
   },
   "Escambia": {
    "slug": "escambia",
@@ -1305,25 +1303,21 @@
   "Miami-Dade": {
    "slug": "miami-dade",
    "feeds": [
-    "local10",
     "wsvn",
     "miamitoday"
    ],
    "dedicated": [
-    "local10",
     "wsvn",
     "miamitoday"
    ],
-   "items": 40
+   "items": 20
   },
   "Monroe": {
    "slug": "monroe",
    "feeds": [
-    "local10",
     "keysweekly"
    ],
    "dedicated": [
-    "local10",
     "keysweekly"
    ],
    "items": 40
@@ -1374,7 +1368,7 @@
     "orlandoweekly",
     "ocso"
    ],
-   "items": 21
+   "items": 20
   },
   "Osceola": {
    "slug": "osceola",
