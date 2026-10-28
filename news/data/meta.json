@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-28T19:12:20Z",
+ "generated": "2026-10-28T20:14:30Z",
  "feeds": [
   {
    "id": "wusf",
@@ -112,8 +112,8 @@
     "Broward",
     "Monroe"
    ],
-   "status": "ok",
-   "items": 40
+   "status": "error: HTTPError",
+   "items": 0
   },
   {
    "id": "wsvn",
@@ -274,7 +274,7 @@
     "Marion"
    ],
    "status": "ok",
-   "items": 19
+   "items": 20
   },
   {
    "id": "wftv",
@@ -460,7 +460,7 @@
     "Duval"
    ],
    "status": "ok",
-   "items": 37
+   "items": 38
   },
   {
    "id": "tbt",
@@ -637,7 +637,7 @@
     "DeSoto"
    ],
    "status": "ok",
-   "items": 19
+   "items": 20
   },
   {
    "id": "capecoralbreeze",
@@ -878,7 +878,7 @@
     "wjhg"
    ],
    "dedicated": [],
-   "items": 21
+   "items": 22
   },
   "Bradford": {
    "slug": "bradford",
@@ -906,14 +906,12 @@
   "Broward": {
    "slug": "broward",
    "feeds": [
-    "local10",
     "wsvn"
    ],
    "dedicated": [
-    "local10",
     "wsvn"
    ],
-   "items": 40
+   "items": 10
   },
   "Calhoun": {
    "slug": "calhoun",
@@ -960,7 +958,7 @@
     "gulfcoastnews"
    ],
    "dedicated": [],
-   "items": 19
+   "items": 20
   },
   "Columbia": {
    "slug": "columbia",
@@ -1065,7 +1063,7 @@
     "gulfcoastnews"
    ],
    "dedicated": [],
-   "items": 19
+   "items": 20
   },
   "Gulf": {
    "slug": "gulf",
@@ -1099,7 +1097,7 @@
     "gulfcoastnews"
    ],
    "dedicated": [],
-   "items": 19
+   "items": 20
   },
   "Hernando": {
    "slug": "hernando",
@@ -1203,7 +1201,7 @@
    "dedicated": [
     "villages"
    ],
-   "items": 23
+   "items": 21
   },
   "Lee": {
    "slug": "lee",
@@ -1303,25 +1301,21 @@
   "Miami-Dade": {
    "slug": "miami-dade",
    "feeds": [
-    "local10",
     "wsvn",
     "miamitoday"
    ],
    "dedicated": [
-    "local10",
     "wsvn",
     "miamitoday"
    ],
-   "items": 40
+   "items": 20
   },
   "Monroe": {
    "slug": "monroe",
    "feeds": [
-    "local10",
     "keysweekly"
    ],
    "dedicated": [
-    "local10",
     "keysweekly"
    ],
    "items": 40
@@ -1401,7 +1395,7 @@
     "bocanewsnow",
     "bocatrib"
    ],
-   "items": 30
+   "items": 29
   },
   "Pasco": {
    "slug": "pasco",
@@ -1486,7 +1480,7 @@
     "wkrg",
     "northescambia"
    ],
-   "items": 26
+   "items": 25
   },
   "Sarasota": {
    "slug": "sarasota",
