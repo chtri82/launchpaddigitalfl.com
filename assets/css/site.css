@@ -279,3 +279,7 @@ body.has-lp-sticky{padding-bottom:3.4rem}
 .lpf-count{margin:.6rem 0 0;font-size:.9rem;color:var(--rust);font-weight:600}
 .lpf-hide{display:none!important}
 @media(max-width:600px){.lpf-row label,.lpf-row select,.lpf-row input{width:100%}#lpf-custom{width:100%}#lpf-custom label{flex:1}}
+.lp-filters-in{margin:1.1rem 0 .9rem;padding:.9rem 1rem;border-left:4px solid var(--rust);background:var(--cream);border-radius:0 8px 8px 0}
+#lp-original .lp-loc{margin:.9rem 0 0;padding:0;box-shadow:none;border:0;background:none}
+#lp-original .lp-secs{margin-top:1rem}
+@media(min-width:900px){.lpf-row select,.lpf-row input{min-width:11rem}}
