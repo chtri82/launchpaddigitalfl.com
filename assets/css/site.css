@@ -286,3 +286,6 @@ body.has-lp-sticky{padding-bottom:3.4rem}
 .lpf-zipl input{min-width:0!important;width:6.5rem}
 .lpf-zipmsg{margin:.5rem 0 0;font-size:.85rem;color:var(--ink)}
 @media(max-width:600px){.lpf-row{display:grid;grid-template-columns:1fr 6.5rem}.lpf-row label{width:auto}.lpf-row>label:first-child,#lpf-custom{grid-column:1/-1}.lpf-zipl input{width:100%}.lpf-row .btn{justify-self:start}}
+.lp-story.lpf-match,.ga-card.lpf-match{box-shadow:inset 4px 0 0 var(--rust)}
+.lpf-h{grid-column:1/-1;margin:.6rem 0 -.2rem;font-size:1.15rem;color:var(--ink);border-bottom:2px solid var(--rust);padding-bottom:.35rem}
+p.lpf-h{border:0;font-size:.95rem;font-weight:400}
