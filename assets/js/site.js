@@ -70,7 +70,14 @@ var LAUNCHPAD_NEWSLETTER_API = (location.hostname==='localhost'||location.hostna
   var t=document.querySelector('.menu-toggle'), m=document.getElementById('primary-nav');
   if(t&&m){
     t.addEventListener('click',function(){var o=m.classList.toggle('open');t.setAttribute('aria-expanded',o);});
-    document.addEventListener('keydown',function(e){if(e.key==='Escape'&&m.classList.contains('open')){m.classList.remove('open');t.setAttribute('aria-expanded','false');t.focus();}});
+    var close=function(f){if(!m.classList.contains('open'))return;m.classList.remove('open');t.setAttribute('aria-expanded','false');if(f)t.focus();};
+    document.addEventListener('keydown',function(e){if(e.key==='Escape')close(true);});
+    document.addEventListener('click',function(e){if(!m.contains(e.target)&&!t.contains(e.target))close();});
+    m.addEventListener('click',function(e){if(e.target.closest('a'))close();});
+    var sy=null;document.addEventListener('touchstart',function(e){sy=e.touches[0].clientY;},{passive:true});
+    document.addEventListener('touchend',function(e){if(sy!==null&&sy-e.changedTouches[0].clientY>40)close();sy=null;},{passive:true});
+    window.addEventListener('scroll',function(){if(m.classList.contains('open')&&window.scrollY>(m._y||0)+60)close();},{passive:true});
+    t.addEventListener('click',function(){m._y=window.scrollY;});
   }
   // Header shadow + back-to-top
   var h=document.querySelector('.site-header'), top=document.querySelector('.to-top');

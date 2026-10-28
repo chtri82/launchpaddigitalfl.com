@@ -132,7 +132,7 @@ section.alt{background:var(--surface);border-top:1px solid var(--border);border-
 .cta{background:var(--sunset);color:#fff;border-radius:22px;padding:2.6rem;display:flex;flex-wrap:wrap;gap:1.5rem;align-items:center;justify-content:space-between;box-shadow:0 20px 50px rgba(98,43,132,.3)}
 .cta h2{margin:0 0 .3rem}
 .cta p{margin:0;color:#FBEDE6}
-.cta .btn{background:#fff;color:var(--navy-900)!important}
+.cta .btn:not(.btn-primary){background:#fff;color:var(--navy-900)!important}
 
 /* Letter */
 .letter{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:clamp(1.5rem,4vw,3.25rem);box-shadow:var(--shadow);font-family:var(--serif);font-size:1.15rem;line-height:1.75;max-width:46rem}

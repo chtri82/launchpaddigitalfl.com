@@ -23,7 +23,8 @@ function locationFields(s) {
   h += `<input type="hidden" name="loc_count" value="${locs.length}"><fieldset><legend>${locs.length ? 'Add another location' : 'Add a location'}</legend>`;
   h += `<label>ZIP code <input name="add_zip" inputmode="numeric" pattern="\\d{5}" maxlength="5"></label>`;
   h += `<label>or pick a county <select name="add_county"><option value="">(choose a county)</option>${COUNTIES.map((c) => `<option>${esc(c)}</option>`).join('')}</select></label>`;
-  h += '<small>Save to add it, then pick "All of" the county or specific cities.</small></fieldset>';
+  h += '<button class="btn" type="submit" name="add_now" value="1">Add location</button>';
+  h += '<small>Enter a ZIP or pick a county, then tap Add location. Then pick "All of" the county or specific cities.</small></fieldset>';
   return h + '</fieldset>';
 }
 // Locations from a submitted form: JSON "locations" (signup page JS), indexed loc{i}_* blocks (preferences),
