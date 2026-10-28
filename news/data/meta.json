@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-28T09:06:30Z",
+ "generated": "2026-10-28T10:15:18Z",
  "feeds": [
   {
    "id": "wusf",
@@ -998,7 +998,7 @@
    "dedicated": [
     "jaxtoday"
    ],
-   "items": 38
+   "items": 39
   },
   "Escambia": {
    "slug": "escambia",
