@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-28T16:17:15Z",
+ "generated": "2026-10-28T17:17:15Z",
  "feeds": [
   {
    "id": "wusf",
@@ -274,7 +274,7 @@
     "Marion"
    ],
    "status": "ok",
-   "items": 20
+   "items": 19
   },
   {
    "id": "wftv",
@@ -580,8 +580,8 @@
    "counties": [
     "Hernando"
    ],
-   "status": "ok",
-   "items": 10
+   "status": "error: HTTPError",
+   "items": 0
   },
   {
    "id": "lkldnow",
@@ -783,8 +783,8 @@
    "counties": [
     "Escambia"
    ],
-   "status": "ok",
-   "items": 20
+   "status": "error: HTTPError",
+   "items": 0
   },
   {
    "id": "northescambia",
@@ -878,7 +878,7 @@
     "wjhg"
    ],
    "dedicated": [],
-   "items": 21
+   "items": 20
   },
   "Bradford": {
    "slug": "bradford",
@@ -1006,12 +1006,10 @@
     "wear",
     "wkrg",
     "wuwf",
-    "ricksblog",
     "northescambia"
    ],
    "dedicated": [
     "wkrg",
-    "ricksblog",
     "northescambia"
    ],
    "items": 40
@@ -1110,12 +1108,9 @@
     "wfla",
     "wtsp",
     "fox13",
-    "abcaction",
-    "hernandosun"
+    "abcaction"
    ],
-   "dedicated": [
-    "hernandosun"
-   ],
+   "dedicated": [],
    "items": 20
   },
   "Highlands": {
@@ -1137,7 +1132,7 @@
     "abcaction"
    ],
    "dedicated": [],
-   "items": 39
+   "items": 35
   },
   "Holmes": {
    "slug": "holmes",
@@ -1205,7 +1200,7 @@
    "dedicated": [
     "villages"
    ],
-   "items": 21
+   "items": 22
   },
   "Lee": {
    "slug": "lee",
@@ -1403,7 +1398,7 @@
     "bocanewsnow",
     "bocatrib"
    ],
-   "items": 29
+   "items": 28
   },
   "Pasco": {
    "slug": "pasco",
@@ -1547,7 +1542,7 @@
    "dedicated": [
     "ecb"
    ],
-   "items": 23
+   "items": 22
   },
   "Union": {
    "slug": "union",
