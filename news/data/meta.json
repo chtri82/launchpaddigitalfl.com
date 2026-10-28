@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-28T18:13:35Z",
+ "generated": "2026-10-28T19:09:38Z",
  "feeds": [
   {
    "id": "wusf",
@@ -274,7 +274,7 @@
     "Marion"
    ],
    "status": "ok",
-   "items": 20
+   "items": 19
   },
   {
    "id": "wftv",
@@ -460,7 +460,7 @@
     "Duval"
    ],
    "status": "ok",
-   "items": 35
+   "items": 37
   },
   {
    "id": "tbt",
@@ -580,8 +580,8 @@
    "counties": [
     "Hernando"
    ],
-   "status": "error: HTTPError",
-   "items": 0
+   "status": "ok",
+   "items": 10
   },
   {
    "id": "lkldnow",
@@ -637,7 +637,7 @@
     "DeSoto"
    ],
    "status": "ok",
-   "items": 20
+   "items": 19
   },
   {
    "id": "capecoralbreeze",
@@ -878,7 +878,7 @@
     "wjhg"
    ],
    "dedicated": [],
-   "items": 20
+   "items": 21
   },
   "Bradford": {
    "slug": "bradford",
@@ -960,7 +960,7 @@
     "gulfcoastnews"
    ],
    "dedicated": [],
-   "items": 20
+   "items": 19
   },
   "Columbia": {
    "slug": "columbia",
@@ -1065,7 +1065,7 @@
     "gulfcoastnews"
    ],
    "dedicated": [],
-   "items": 20
+   "items": 19
   },
   "Gulf": {
    "slug": "gulf",
@@ -1099,7 +1099,7 @@
     "gulfcoastnews"
    ],
    "dedicated": [],
-   "items": 20
+   "items": 19
   },
   "Hernando": {
    "slug": "hernando",
@@ -1108,9 +1108,12 @@
     "wfla",
     "wtsp",
     "fox13",
-    "abcaction"
+    "abcaction",
+    "hernandosun"
    ],
-   "dedicated": [],
+   "dedicated": [
+    "hernandosun"
+   ],
    "items": 20
   },
   "Highlands": {
@@ -1132,7 +1135,7 @@
     "abcaction"
    ],
    "dedicated": [],
-   "items": 36
+   "items": 32
   },
   "Holmes": {
    "slug": "holmes",
@@ -1200,7 +1203,7 @@
    "dedicated": [
     "villages"
    ],
-   "items": 22
+   "items": 23
   },
   "Lee": {
    "slug": "lee",
@@ -1398,7 +1401,7 @@
     "bocanewsnow",
     "bocatrib"
    ],
-   "items": 29
+   "items": 30
   },
   "Pasco": {
    "slug": "pasco",
@@ -1542,7 +1545,7 @@
    "dedicated": [
     "ecb"
    ],
-   "items": 22
+   "items": 21
   },
   "Union": {
    "slug": "union",
