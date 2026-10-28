@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-28T14:18:47Z",
+ "generated": "2026-10-28T15:07:57Z",
  "feeds": [
   {
    "id": "wusf",
@@ -274,7 +274,7 @@
     "Marion"
    ],
    "status": "ok",
-   "items": 19
+   "items": 20
   },
   {
    "id": "wftv",
@@ -727,8 +727,8 @@
    "counties": [
     "Franklin"
    ],
-   "status": "error: ReadTimeout",
-   "items": 0
+   "status": "ok",
+   "items": 10
   },
   {
    "id": "wear",
@@ -1035,9 +1035,12 @@
    "feeds": [
     "wctv",
     "wtxl",
+    "apalachtimes",
     "wjhg"
    ],
-   "dedicated": [],
+   "dedicated": [
+    "apalachtimes"
+   ],
    "items": 20
   },
   "Gadsden": {
@@ -1400,7 +1403,7 @@
     "bocanewsnow",
     "bocatrib"
    ],
-   "items": 31
+   "items": 30
   },
   "Pasco": {
    "slug": "pasco",
@@ -1544,7 +1547,7 @@
    "dedicated": [
     "ecb"
    ],
-   "items": 23
+   "items": 24
   },
   "Union": {
    "slug": "union",
