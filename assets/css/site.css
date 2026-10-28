@@ -270,3 +270,12 @@ fieldset.ga-row{border:0;padding:0}.ga-row legend{font-weight:600;margin-bottom:
 body.has-lp-sticky{padding-bottom:3.4rem}
 @media (max-width:600px){#lp-sticky{font-size:.85rem;padding:.4rem 2.4rem .4rem .6rem}.lp-sticky-sub{display:none}.lp-sticky-t{flex-basis:100%;text-align:center}.lp-sticky-f input[type=email]{flex:1 1 150px}body.has-lp-sticky{padding-bottom:5.2rem}}
 @media print{#lp-sticky{display:none}}
+/* reader filters */
+.lp-filters{margin:1rem 0;padding:1rem 1.1rem;border-left:4px solid var(--rust);background:var(--cream)}
+.lpf-row{display:flex;flex-wrap:wrap;gap:.6rem 1rem;align-items:flex-end}
+.lpf-row label{display:flex;flex-direction:column;font-size:.85rem;font-weight:600;color:var(--ink);gap:.25rem}
+.lpf-row select,.lpf-row input{font:inherit;font-weight:400;padding:.45rem .55rem;border:1px solid #c9c2b8;border-radius:6px;background:#fff;color:var(--ink);min-width:9.5rem}
+#lpf-custom{display:flex;gap:.6rem 1rem;flex-wrap:wrap}#lpf-custom[hidden]{display:none}
+.lpf-count{margin:.6rem 0 0;font-size:.9rem;color:var(--rust);font-weight:600}
+.lpf-hide{display:none!important}
+@media(max-width:600px){.lpf-row label,.lpf-row select,.lpf-row input{width:100%}#lpf-custom{width:100%}#lpf-custom label{flex:1}}
