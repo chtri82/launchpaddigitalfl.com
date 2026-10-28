@@ -1,8 +1,9 @@
 /* Launchpad reader filters: never hide stories; matches (date/location/ZIP) move to the top, newest first. State in URL: ?range=|from=&to=|loc=|zip= */
 (function(){
-// Two windows from the builder: data-breaking-until (24h: badge + section pin), data-mainpin-until (6h: pin on /news/ and homepage). Expire both between rebuilds.
+// Two windows from the builder: data-breaking-until (24h: badge + section pin), data-mainpin-until (6h: pin on /news/ and homepage), data-label-until (2h: BREAKING->DEVELOPING). Expire both between rebuilds.
 var NOWT=Date.now();
-[].slice.call(document.querySelectorAll('[data-mainpin-until]')).forEach(function(el){if(new Date(el.getAttribute('data-mainpin-until')).getTime()<=NOWT){el.removeAttribute('data-mainpin');if(el.classList.contains('news-item'))el.remove();else [].slice.call(el.querySelectorAll('.lp-brk:not(.lp-dev)')).forEach(function(b){b.classList.add('lp-dev');b.style.background='#b26a00';b.textContent=b.textContent.replace('BREAKING','DEVELOPING');});}});
+[].slice.call(document.querySelectorAll('[data-mainpin-until]')).forEach(function(el){if(new Date(el.getAttribute('data-mainpin-until')).getTime()<=NOWT){el.removeAttribute('data-mainpin');if(el.classList.contains('news-item'))el.remove();}});
+[].slice.call(document.querySelectorAll('[data-label-until]')).forEach(function(el){if(new Date(el.getAttribute('data-label-until')).getTime()<=NOWT)[].slice.call(el.querySelectorAll('.lp-brk:not(.lp-dev)')).forEach(function(b){b.classList.add('lp-dev');b.style.background='#b26a00';b.textContent=b.textContent.replace('BREAKING','DEVELOPING');});});
 [].slice.call(document.querySelectorAll('[data-breaking-until]')).forEach(function(el){if(new Date(el.getAttribute('data-breaking-until')).getTime()<=NOWT){el.removeAttribute('data-breaking');[].slice.call(el.querySelectorAll('.lp-brk')).forEach(function(b){b.remove();});}});
 var MAINP=!!document.querySelector('#lp-filters.lp-filters-in');
 function isB(el){return el.getAttribute(MAINP?'data-mainpin':'data-breaking')==='1';}
