@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-28T11:09:05Z",
+ "generated": "2026-10-28T12:17:44Z",
  "feeds": [
   {
    "id": "wusf",
@@ -878,7 +878,7 @@
     "wjhg"
    ],
    "dedicated": [],
-   "items": 23
+   "items": 22
   },
   "Bradford": {
    "slug": "bradford",
@@ -998,7 +998,7 @@
    "dedicated": [
     "jaxtoday"
    ],
-   "items": 40
+   "items": 39
   },
   "Escambia": {
    "slug": "escambia",
@@ -1183,7 +1183,7 @@
    "dedicated": [
     "ecb"
    ],
-   "items": 20
+   "items": 21
   },
   "Lafayette": {
    "slug": "lafayette",
@@ -1403,7 +1403,7 @@
     "bocanewsnow",
     "bocatrib"
    ],
-   "items": 33
+   "items": 32
   },
   "Pasco": {
    "slug": "pasco",
@@ -1547,7 +1547,7 @@
    "dedicated": [
     "ecb"
    ],
-   "items": 24
+   "items": 23
   },
   "Union": {
    "slug": "union",
