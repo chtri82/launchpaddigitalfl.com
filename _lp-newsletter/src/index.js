@@ -268,6 +268,7 @@ export default {
       if (p === '/brief/confirm') return await briefConfirm(env, url);
       if (p === '/confirm') return await confirm(req, env, url);
       if (p === '/unsubscribe') return await unsubscribe(req, env, url);
+      if (req.method === 'GET' && (p === '/' || p === '/subscribe' || (p === '/preferences' && !url.searchParams.get('token')))) return Response.redirect(`${env.SITE_URL}/subscribe/`, 301);
       if (p === '/preferences') return await preferences(req, env, url);
       if (p === '/admin/export.csv') return await exportCsv(req, env);
       if (p === '/admin/send' && req.method === 'POST') {
