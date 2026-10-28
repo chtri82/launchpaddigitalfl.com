@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-28T03:11:01Z",
+ "generated": "2026-10-28T04:09:09Z",
  "feeds": [
   {
    "id": "wusf",
@@ -727,8 +727,8 @@
    "counties": [
     "Franklin"
    ],
-   "status": "ok",
-   "items": 10
+   "status": "error: ReadTimeout",
+   "items": 0
   },
   {
    "id": "wear",
@@ -878,7 +878,7 @@
     "wjhg"
    ],
    "dedicated": [],
-   "items": 24
+   "items": 23
   },
   "Bradford": {
    "slug": "bradford",
@@ -998,7 +998,7 @@
    "dedicated": [
     "jaxtoday"
    ],
-   "items": 39
+   "items": 40
   },
   "Escambia": {
    "slug": "escambia",
@@ -1035,12 +1035,9 @@
    "feeds": [
     "wctv",
     "wtxl",
-    "apalachtimes",
     "wjhg"
    ],
-   "dedicated": [
-    "apalachtimes"
-   ],
+   "dedicated": [],
    "items": 20
   },
   "Gadsden": {
