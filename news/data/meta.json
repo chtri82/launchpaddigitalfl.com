@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-28T04:09:09Z",
+ "generated": "2026-10-28T05:08:19Z",
  "feeds": [
   {
    "id": "wusf",
@@ -137,8 +137,8 @@
    "counties": [
     "Miami-Dade"
    ],
-   "status": "ok",
-   "items": 10
+   "status": "error: ConnectTimeout",
+   "items": 0
   },
   {
    "id": "keysweekly",
@@ -727,8 +727,8 @@
    "counties": [
     "Franklin"
    ],
-   "status": "error: ReadTimeout",
-   "items": 0
+   "status": "ok",
+   "items": 10
   },
   {
    "id": "wear",
@@ -1035,9 +1035,12 @@
    "feeds": [
     "wctv",
     "wtxl",
+    "apalachtimes",
     "wjhg"
    ],
-   "dedicated": [],
+   "dedicated": [
+    "apalachtimes"
+   ],
    "items": 20
   },
   "Gadsden": {
@@ -1303,13 +1306,11 @@
    "slug": "miami-dade",
    "feeds": [
     "local10",
-    "wsvn",
-    "miamitoday"
+    "wsvn"
    ],
    "dedicated": [
     "local10",
-    "wsvn",
-    "miamitoday"
+    "wsvn"
    ],
    "items": 40
   },
