@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-28T08:19:15Z",
+ "generated": "2026-10-28T08:43:39Z",
  "feeds": [
   {
    "id": "wusf",
@@ -112,8 +112,8 @@
     "Broward",
     "Monroe"
    ],
-   "status": "ok",
-   "items": 40
+   "status": "error: HTTPError",
+   "items": 0
   },
   {
    "id": "wsvn",
@@ -137,8 +137,8 @@
    "counties": [
     "Miami-Dade"
    ],
-   "status": "ok",
-   "items": 10
+   "status": "error: ReadTimeout",
+   "items": 0
   },
   {
    "id": "keysweekly",
@@ -906,14 +906,12 @@
   "Broward": {
    "slug": "broward",
    "feeds": [
-    "local10",
     "wsvn"
    ],
    "dedicated": [
-    "local10",
     "wsvn"
    ],
-   "items": 40
+   "items": 10
   },
   "Calhoun": {
    "slug": "calhoun",
@@ -1305,25 +1303,19 @@
   "Miami-Dade": {
    "slug": "miami-dade",
    "feeds": [
-    "local10",
-    "wsvn",
-    "miamitoday"
+    "wsvn"
    ],
    "dedicated": [
-    "local10",
-    "wsvn",
-    "miamitoday"
+    "wsvn"
    ],
-   "items": 40
+   "items": 10
   },
   "Monroe": {
    "slug": "monroe",
    "feeds": [
-    "local10",
     "keysweekly"
    ],
    "dedicated": [
-    "local10",
     "keysweekly"
    ],
    "items": 40
@@ -1403,7 +1395,7 @@
     "bocanewsnow",
     "bocatrib"
    ],
-   "items": 32
+   "items": 34
   },
   "Pasco": {
    "slug": "pasco",
