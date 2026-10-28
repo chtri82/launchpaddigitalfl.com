@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-28T08:43:39Z",
+ "generated": "2026-10-28T08:58:31Z",
  "feeds": [
   {
    "id": "wusf",
@@ -137,8 +137,8 @@
    "counties": [
     "Miami-Dade"
    ],
-   "status": "error: ReadTimeout",
-   "items": 0
+   "status": "ok",
+   "items": 10
   },
   {
    "id": "keysweekly",
@@ -1303,12 +1303,14 @@
   "Miami-Dade": {
    "slug": "miami-dade",
    "feeds": [
-    "wsvn"
+    "wsvn",
+    "miamitoday"
    ],
    "dedicated": [
-    "wsvn"
+    "wsvn",
+    "miamitoday"
    ],
-   "items": 10
+   "items": 20
   },
   "Monroe": {
    "slug": "monroe",
