@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-28T02:07:59Z",
+ "generated": "2026-10-28T03:11:01Z",
  "feeds": [
   {
    "id": "wusf",
@@ -137,8 +137,8 @@
    "counties": [
     "Miami-Dade"
    ],
-   "status": "error: ConnectTimeout",
-   "items": 0
+   "status": "ok",
+   "items": 10
   },
   {
    "id": "keysweekly",
@@ -998,7 +998,7 @@
    "dedicated": [
     "jaxtoday"
    ],
-   "items": 37
+   "items": 39
   },
   "Escambia": {
    "slug": "escambia",
@@ -1205,7 +1205,7 @@
    "dedicated": [
     "villages"
    ],
-   "items": 20
+   "items": 21
   },
   "Lee": {
    "slug": "lee",
@@ -1306,11 +1306,13 @@
    "slug": "miami-dade",
    "feeds": [
     "local10",
-    "wsvn"
+    "wsvn",
+    "miamitoday"
    ],
    "dedicated": [
     "local10",
-    "wsvn"
+    "wsvn",
+    "miamitoday"
    ],
    "items": 40
   },
@@ -1545,7 +1547,7 @@
    "dedicated": [
     "ecb"
    ],
-   "items": 25
+   "items": 24
   },
   "Union": {
    "slug": "union",
