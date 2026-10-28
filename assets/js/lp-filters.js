@@ -1,9 +1,11 @@
 /* Launchpad reader filters: never hide stories; matches (date/location/ZIP) move to the top, newest first. State in URL: ?range=|from=&to=|loc=|zip= */
 (function(){
-// Breaking lasts 6h from publish or last in-window update (data-breaking-until, set by the builder). Drop expired badges between rebuilds.
+// Two windows from the builder: data-breaking-until (24h: badge + section pin), data-mainpin-until (6h: pin on /news/ and homepage). Expire both between rebuilds.
 var NOWT=Date.now();
+[].slice.call(document.querySelectorAll('[data-mainpin-until]')).forEach(function(el){if(new Date(el.getAttribute('data-mainpin-until')).getTime()<=NOWT){el.removeAttribute('data-mainpin');if(el.classList.contains('news-item'))el.remove();}});
 [].slice.call(document.querySelectorAll('[data-breaking-until]')).forEach(function(el){if(new Date(el.getAttribute('data-breaking-until')).getTime()<=NOWT){el.removeAttribute('data-breaking');[].slice.call(el.querySelectorAll('.lp-brk')).forEach(function(b){b.remove();});}});
-function isB(el){return el.getAttribute('data-breaking')==='1';}
+var MAINP=!!document.querySelector('#lp-filters.lp-filters-in');
+function isB(el){return el.getAttribute(MAINP?'data-mainpin':'data-breaking')==='1';}
 function bsort(a){var b=a.filter(isB),r=a.filter(function(x){return !isB(x);});return b.concat(r.sort(function(x,y){return a.indexOf(x)-a.indexOf(y);}));}
 var box=document.getElementById('lp-filters'); if(!box) return;
 var grid=document.querySelector(box.getAttribute('data-target')); if(!grid) return;
