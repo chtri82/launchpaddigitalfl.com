@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-28T13:17:36Z",
+ "generated": "2026-10-28T13:36:34Z",
  "feeds": [
   {
    "id": "wusf",
@@ -137,8 +137,8 @@
    "counties": [
     "Miami-Dade"
    ],
-   "status": "error: ConnectTimeout",
-   "items": 0
+   "status": "ok",
+   "items": 10
   },
   {
    "id": "keysweekly",
@@ -878,7 +878,7 @@
     "wjhg"
    ],
    "dedicated": [],
-   "items": 22
+   "items": 23
   },
   "Bradford": {
    "slug": "bradford",
@@ -998,7 +998,7 @@
    "dedicated": [
     "jaxtoday"
    ],
-   "items": 39
+   "items": 40
   },
   "Escambia": {
    "slug": "escambia",
@@ -1306,11 +1306,13 @@
    "slug": "miami-dade",
    "feeds": [
     "local10",
-    "wsvn"
+    "wsvn",
+    "miamitoday"
    ],
    "dedicated": [
     "local10",
-    "wsvn"
+    "wsvn",
+    "miamitoday"
    ],
    "items": 40
   },
