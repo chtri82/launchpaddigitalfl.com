@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-28T16:11:31Z",
+ "generated": "2026-10-28T16:17:15Z",
  "feeds": [
   {
    "id": "wusf",
@@ -137,8 +137,8 @@
    "counties": [
     "Miami-Dade"
    ],
-   "status": "error: ConnectTimeout",
-   "items": 0
+   "status": "ok",
+   "items": 10
   },
   {
    "id": "keysweekly",
@@ -1137,7 +1137,7 @@
     "abcaction"
    ],
    "dedicated": [],
-   "items": 40
+   "items": 39
   },
   "Holmes": {
    "slug": "holmes",
@@ -1306,11 +1306,13 @@
    "slug": "miami-dade",
    "feeds": [
     "local10",
-    "wsvn"
+    "wsvn",
+    "miamitoday"
    ],
    "dedicated": [
     "local10",
-    "wsvn"
+    "wsvn",
+    "miamitoday"
    ],
    "items": 40
   },
