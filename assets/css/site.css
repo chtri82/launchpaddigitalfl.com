@@ -283,3 +283,6 @@ body.has-lp-sticky{padding-bottom:3.4rem}
 #lp-original .lp-loc{margin:.9rem 0 0;padding:0;box-shadow:none;border:0;background:none}
 #lp-original .lp-secs{margin-top:1rem}
 @media(min-width:900px){.lpf-row select,.lpf-row input{min-width:11rem}}
+.lpf-zipl input{min-width:0!important;width:6.5rem}
+.lpf-zipmsg{margin:.5rem 0 0;font-size:.85rem;color:var(--ink)}
+@media(max-width:600px){.lpf-row{display:grid;grid-template-columns:1fr 6.5rem}.lpf-row label{width:auto}.lpf-row>label:first-child,#lpf-custom{grid-column:1/-1}.lpf-zipl input{width:100%}.lpf-row .btn{justify-self:start}}
