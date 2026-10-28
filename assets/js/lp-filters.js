@@ -1,12 +1,17 @@
 /* Launchpad reader filters: never hide stories; matches (date/location/ZIP) move to the top, newest first. State in URL: ?range=|from=&to=|loc=|zip= */
 (function(){
+// Breaking lasts 24h from publish (data-breaking-until, set by the builder). Drop expired badges between rebuilds.
+var NOWT=Date.now();
+[].slice.call(document.querySelectorAll('[data-breaking-until]')).forEach(function(el){if(new Date(el.getAttribute('data-breaking-until')).getTime()<=NOWT){el.removeAttribute('data-breaking');[].slice.call(el.querySelectorAll('.lp-brk')).forEach(function(b){b.remove();});}});
+function isB(el){return el.getAttribute('data-breaking')==='1';}
+function bsort(a){var b=a.filter(isB),r=a.filter(function(x){return !isB(x);});return b.concat(r.sort(function(x,y){return a.indexOf(x)-a.indexOf(y);}));}
 var box=document.getElementById('lp-filters'); if(!box) return;
 var grid=document.querySelector(box.getAttribute('data-target')); if(!grid) return;
 var cats=box.getAttribute('data-cats'); cats=cats?JSON.parse(cats):null;
 var locs=box.getAttribute('data-locs'); locs=locs?JSON.parse(locs):null;
 var LN={'Central':'Central FL','South':'South FL','North':'North FL'};
 var cards=[].slice.call(grid.querySelectorAll('[data-date]'));
-var PS=[];cards.forEach(function(c){if(PS.indexOf(c.parentNode)<0)PS.push(c.parentNode);});var orig=PS.map(function(p){return [].slice.call(p.children);});
+var PS=[];cards.forEach(function(c){if(PS.indexOf(c.parentNode)<0)PS.push(c.parentNode);});var orig=PS.map(function(p){return bsort([].slice.call(p.children));});
 function ymd(d){return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
 var h='<div class="lpf-row"><label>Date <select id="lpf-range"><option value="all">All dates</option><option value="1">Today</option><option value="3">Last 3 days</option><option value="7">Last 7 days</option><option value="30">Last 30 days</option><option value="custom">Custom range…</option></select></label>'
 +'<span id="lpf-custom" hidden><label>From <input type="date" id="lpf-from"></label><label>To <input type="date" id="lpf-to"></label></span>';
@@ -25,7 +30,7 @@ if(C&&q.get('cat')) C.value=q.get('cat');
 if(L&&q.get('loc')) L.value=q.get('loc');
 if(Z&&q.get('zip')) Z.value=q.get('zip');
 var busy=false,last=false,mo=new MutationObserver(function(){if(busy)return;  // other scripts (e.g. Getaways sort) reordered: take their order as the normal order, then lift matches again
-  orig=PS.map(function(p){return [].slice.call(p.children).filter(function(x){return !x.classList.contains('lpf-h');});});apply(false);});
+  orig=PS.map(function(p){return bsort([].slice.call(p.children)).filter(function(x){return !x.classList.contains('lpf-h');});});apply(false);});
 PS.forEach(function(p){mo.observe(p,{childList:true});});
 function apply(push){
   CU.hidden=R.value!=='custom';
@@ -42,7 +47,7 @@ function apply(push){
     else if(loc&&('|'+(el.getAttribute('data-region')||'')+'|').indexOf('|'+loc+'|')<0) ok=false;
     var m=act&&ok; el.classList.toggle('lpf-match',m); if(m) M.push(el);
   });
-  M.sort(function(a,b){return new Date(b.getAttribute('data-date'))-new Date(a.getAttribute('data-date'));});
+  M.sort(function(a,b){if(isB(a)!==isB(b))return isB(a)?-1:1;return new Date(b.getAttribute('data-date'))-new Date(a.getAttribute('data-date'));});
   var h1='',h2='';
   if(zipRegs){h1='Your area: '+zipRegs.map(function(r){return LN[r]||r;}).join(', ');h2='All stories';}
   else if(loc){h1='Your area: '+(loc.indexOf('county:')===0?loc.slice(7)+' County':(LN[loc]||loc));h2='All stories';}
