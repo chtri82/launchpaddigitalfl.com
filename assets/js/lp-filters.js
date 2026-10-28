@@ -1,6 +1,6 @@
 /* Launchpad reader filters: never hide stories; matches (date/location/ZIP) move to the top, newest first. State in URL: ?range=|from=&to=|loc=|zip= */
 (function(){
-// Breaking lasts 24h from publish (data-breaking-until, set by the builder). Drop expired badges between rebuilds.
+// Breaking lasts 6h from publish or last in-window update (data-breaking-until, set by the builder). Drop expired badges between rebuilds.
 var NOWT=Date.now();
 [].slice.call(document.querySelectorAll('[data-breaking-until]')).forEach(function(el){if(new Date(el.getAttribute('data-breaking-until')).getTime()<=NOWT){el.removeAttribute('data-breaking');[].slice.call(el.querySelectorAll('.lp-brk')).forEach(function(b){b.remove();});}});
 function isB(el){return el.getAttribute('data-breaking')==='1';}
