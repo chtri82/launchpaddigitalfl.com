@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-29T11:20:10Z",
+ "generated": "2026-10-29T14:09:27Z",
  "feeds": [
   {
    "id": "wusf",
@@ -1201,7 +1201,7 @@
    "dedicated": [
     "villages"
    ],
-   "items": 21
+   "items": 22
   },
   "Lee": {
    "slug": "lee",
@@ -1422,7 +1422,7 @@
    "dedicated": [
     "stpetecatalyst"
    ],
-   "items": 20
+   "items": 23
   },
   "Polk": {
    "slug": "polk",
@@ -1539,7 +1539,7 @@
    "dedicated": [
     "ecb"
    ],
-   "items": 23
+   "items": 22
   },
   "Union": {
    "slug": "union",
