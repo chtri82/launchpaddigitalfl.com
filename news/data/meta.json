@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-28T23:39:34Z",
+ "generated": "2026-10-29T00:48:50Z",
  "feeds": [
   {
    "id": "wusf",
@@ -274,7 +274,7 @@
     "Marion"
    ],
    "status": "ok",
-   "items": 19
+   "items": 20
   },
   {
    "id": "wftv",
@@ -1133,7 +1133,7 @@
     "abcaction"
    ],
    "dedicated": [],
-   "items": 31
+   "items": 32
   },
   "Holmes": {
    "slug": "holmes",
@@ -1201,7 +1201,7 @@
    "dedicated": [
     "villages"
    ],
-   "items": 21
+   "items": 22
   },
   "Lee": {
    "slug": "lee",
