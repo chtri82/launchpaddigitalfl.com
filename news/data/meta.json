@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-29T02:27:57Z",
+ "generated": "2026-10-29T02:57:23Z",
  "feeds": [
   {
    "id": "wusf",
@@ -137,8 +137,8 @@
    "counties": [
     "Miami-Dade"
    ],
-   "status": "ok",
-   "items": 10
+   "status": "error: ConnectTimeout",
+   "items": 0
   },
   {
    "id": "keysweekly",
@@ -1201,7 +1201,7 @@
    "dedicated": [
     "villages"
    ],
-   "items": 22
+   "items": 23
   },
   "Lee": {
    "slug": "lee",
@@ -1301,14 +1301,12 @@
   "Miami-Dade": {
    "slug": "miami-dade",
    "feeds": [
-    "wsvn",
-    "miamitoday"
+    "wsvn"
    ],
    "dedicated": [
-    "wsvn",
-    "miamitoday"
+    "wsvn"
    ],
-   "items": 20
+   "items": 10
   },
   "Monroe": {
    "slug": "monroe",
@@ -1366,7 +1364,7 @@
     "orlandoweekly",
     "ocso"
    ],
-   "items": 21
+   "items": 22
   },
   "Osceola": {
    "slug": "osceola",
@@ -1395,7 +1393,7 @@
     "bocanewsnow",
     "bocatrib"
    ],
-   "items": 33
+   "items": 34
   },
   "Pasco": {
    "slug": "pasco",
