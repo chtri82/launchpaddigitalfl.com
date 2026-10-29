@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-29T00:48:50Z",
+ "generated": "2026-10-29T01:03:42Z",
  "feeds": [
   {
    "id": "wusf",
@@ -1179,7 +1179,7 @@
    "dedicated": [
     "ecb"
    ],
-   "items": 21
+   "items": 20
   },
   "Lafayette": {
    "slug": "lafayette",
@@ -1395,7 +1395,7 @@
     "bocanewsnow",
     "bocatrib"
    ],
-   "items": 35
+   "items": 34
   },
   "Pasco": {
    "slug": "pasco",
