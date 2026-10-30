@@ -55,3 +55,14 @@ def test_home_regroup_order_and_idempotent():
     assert order == sorted(order)
     assert h.index('BRK') < h.index('id="home-special-reports"') < h.index('plain')
     assert hl.regroup(h, data) == h
+
+
+def test_home_refresh_pulls_new_breaking_into_top_group():
+    data = {'publications': [{'key': 'launchpad', 'name': 'Launchpad Digital', 'url': '/'}],
+            'reports': [{'publication': 'launchpad', 'title': 'SR', 'url': '/sr/', 'summary': 's', 'date': '2026-10-29'}]}
+    h = hl.regroup(HOME, data)
+    h2 = h.replace('<article class="news-item">plain</article>', '<article class="news-item" data-homepin="1">PIN</article><article class="news-item">plain</article>')
+    out = hl.regroup(h2, data)
+    assert out.count('id="home-breaking"') == 1 and out.count('id="home-special-reports"') == 1
+    assert out.index('PIN') < out.index('id="home-special-reports"') < out.index('plain')
+    assert hl.regroup(out, data) == out
