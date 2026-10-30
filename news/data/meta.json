@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-30T18:50:20Z",
+ "generated": "2026-10-30T21:08:43Z",
  "feeds": [
   {
    "id": "wusf",
@@ -728,7 +728,7 @@
     "Franklin"
    ],
    "status": "ok",
-   "items": 10
+   "items": 7
   },
   {
    "id": "wear",
@@ -901,7 +901,7 @@
    "dedicated": [
     "spacecoastdaily"
    ],
-   "items": 20
+   "items": 22
   },
   "Broward": {
    "slug": "broward",
@@ -1132,7 +1132,7 @@
     "abcaction"
    ],
    "dedicated": [],
-   "items": 32
+   "items": 33
   },
   "Holmes": {
    "slug": "holmes",
@@ -1144,7 +1144,7 @@
    "dedicated": [
     "wtvy"
    ],
-   "items": 21
+   "items": 22
   },
   "Indian River": {
    "slug": "indian-river",
@@ -1166,7 +1166,7 @@
    "dedicated": [
     "wtvy"
    ],
-   "items": 23
+   "items": 22
   },
   "Jefferson": {
    "slug": "jefferson",
@@ -1369,7 +1369,7 @@
     "orlandoweekly",
     "ocso"
    ],
-   "items": 25
+   "items": 27
   },
   "Osceola": {
    "slug": "osceola",
@@ -1398,7 +1398,7 @@
     "bocanewsnow",
     "bocatrib"
    ],
-   "items": 39
+   "items": 36
   },
   "Pasco": {
    "slug": "pasco",
@@ -1483,7 +1483,7 @@
     "wkrg",
     "northescambia"
    ],
-   "items": 23
+   "items": 24
   },
   "Sarasota": {
    "slug": "sarasota",
@@ -1542,7 +1542,7 @@
    "dedicated": [
     "ecb"
    ],
-   "items": 20
+   "items": 21
   },
   "Union": {
    "slug": "union",
