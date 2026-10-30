@@ -30,6 +30,11 @@ def group(data):
             for p in data['publications']]
 
 
+def launchpad_only(groups):
+    """The Launchpad /special-reports/ page lists only Launchpad reports (the Condo & HOA Brief has its own site)."""
+    return [(p, r) for p, r in groups if p['key'] == 'launchpad']
+
+
 def add_nav(h):
     """Insert the Special Reports tab after News in #primary-nav (once). Pages without the nav are returned unchanged."""
     m = re.search(r'(<ul id="primary-nav"[^>]*>)(.*?)(</ul>)', h, flags=re.S)
@@ -61,12 +66,12 @@ def render_page(template, groups):
     """Reuse an existing page's header/footer so styling and nav match the rest of the site."""
     a, b = template.index('<main id="main">'), template.index('</main>')
     head = re.sub(r'<title>.*?</title>', '<title>Special Reports | Launchpad Digital</title>', template[:a], count=1, flags=re.S)
-    head = re.sub(r'<meta name="description" content="[^"]*">', '<meta name="description" content="Launchpad Digital and Florida Condo &amp; HOA Brief special reports.">', head, count=1)
+    head = re.sub(r'<meta name="description" content="[^"]*">', '<meta name="description" content="Special reports from Launchpad Digital.">', head, count=1)
     head = re.sub(r'<link rel="canonical" href="[^"]*">', '<link rel="canonical" href="https://launchpaddigitalfl.com/special-reports/">', head, count=1)
     head = head.replace(' aria-current="page"', '')
     head = head.replace(f'<a href="{NAV_HREF}">', f'<a href="{NAV_HREF}" aria-current="page">')
     main = ('<main id="main">\n<section class="page-hero"><div class="wrap"><span class="eyebrow">Special Reports</span>'
-            '<h1>Special Reports</h1><p>In-depth reports from our publications, newest first.</p></div></section>\n'
+            '<h1>Special Reports</h1><p>In-depth reports from Launchpad Digital, newest first.</p></div></section>\n'
             f'<section class="block"><div class="wrap">\n{render_cards(groups)}\n</div></section>\n')
     return head + main + template[b:]
 
@@ -87,7 +92,7 @@ def build(site):
             open(f, 'w', encoding='utf-8').write(n); changed += 1
     tpl = add_nav(open(os.path.join(site, 'archive', 'index.html'), encoding='utf-8').read())
     os.makedirs(os.path.join(site, 'special-reports'), exist_ok=True)
-    open(os.path.join(site, 'special-reports', 'index.html'), 'w', encoding='utf-8').write(render_page(tpl, group(load(site))))
+    open(os.path.join(site, 'special-reports', 'index.html'), 'w', encoding='utf-8').write(render_page(tpl, launchpad_only(group(load(site)))))
     return changed
 
 

@@ -60,7 +60,14 @@ def test_special_reports_tab_on_all_nav_pages(pages):
 
 def test_special_reports_page_lists_stewart(pages):
     h = pages[os.path.join('special-reports', 'index.html')]
-    assert 'Patrick Stewart' in h and 'Florida Condo &amp; HOA Brief' in h
+    assert 'Patrick Stewart' in h
+    main = h[h.index('<main'):h.index('</main>')]
+    assert 'Condo' not in main and 'condohoabrief.com' not in main
+
+
+def test_publications_tab_links_condo_brief(pages):
+    assert 'href="/publications/"' in pages['index.html']
+    assert 'href="https://condohoabrief.com' in pages[os.path.join('publications', 'index.html')]
 
 
 def test_home_grouping(pages):

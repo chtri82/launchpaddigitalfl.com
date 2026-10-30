@@ -93,3 +93,12 @@ def test_collapse_h2_groups():
     import collapsible as c
     out = c.collapse_h2_groups('<h2>A</h2><p>1</p><h2>B</h2><p>2</p>')
     assert out == '<details class="lp-collapse" open><summary><h2>A</h2></summary><p>1</p></details><details class="lp-collapse" open><summary><h2>B</h2></summary><p>2</p></details>'
+
+
+def test_special_reports_page_is_launchpad_only():
+    data = {'publications': [{'key': 'launchpad', 'name': 'Launchpad Digital', 'url': '/'}, {'key': 'condo-brief', 'name': 'Florida Condo & HOA Brief', 'url': 'https://condohoabrief.com/'}],
+            'reports': [{'publication': 'launchpad', 'title': 'LP', 'url': '/a/', 'summary': 's', 'byline': 'b', 'date': '2026-10-29'},
+                        {'publication': 'condo-brief', 'title': 'CB', 'url': 'https://condohoabrief.com/p/x/', 'summary': 's', 'byline': 'b', 'date': '2026-10-30'}]}
+    out = sr.render_cards(sr.launchpad_only(sr.group(data)))
+    assert 'LP' in out and 'CB' not in out and 'Condo' not in out
+    assert 'CB' not in hl.special_reports_section(data)

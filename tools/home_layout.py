@@ -1,7 +1,7 @@
 """Regroup the home page: 1) Breaking & Developing, 2) Special Reports, 3) Launchpad Digital sections,
 4) Florida Condo & HOA Brief, then the closing sections (about/how we work/signup). Idempotent."""
 import re
-from special_reports import e, fmt_date, group
+from special_reports import e, fmt_date, group, launchpad_only
 
 DONE = '<!--lp-home-grouped-->'
 STORY_RE = re.compile(r'<article class="news-item[^"]*"[^>]*data-(?:breaking|developing|mainpin|homepin)="1".*?</article>', re.S)
@@ -29,7 +29,7 @@ def group_header(eyebrow, title, anchor):
 
 
 def special_reports_section(data, limit=3):
-    reps = sorted([(p, r) for p, rs in group(data) for r in rs], key=lambda x: x[1]['date'], reverse=True)[:limit]
+    reps = sorted([(p, r) for p, rs in launchpad_only(group(data)) for r in rs], key=lambda x: x[1]['date'], reverse=True)[:limit]
     if not reps:
         return ''
     cards = ''.join(f'<article class="card"><span class="tag">Special Report · {e(p["name"])}</span>'
