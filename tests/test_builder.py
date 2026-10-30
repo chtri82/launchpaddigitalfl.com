@@ -66,3 +66,30 @@ def test_home_refresh_pulls_new_breaking_into_top_group():
     assert out.count('id="home-breaking"') == 1 and out.count('id="home-special-reports"') == 1
     assert out.index('PIN') < out.index('id="home-special-reports"') < out.index('plain')
     assert hl.regroup(out, data) == out
+
+
+def test_separate_ours_moves_block_out_of_outlet_section():
+    import separate_ours as so
+    h = ('<main id="main"><section class="block"><div class="wrap"><h2>What\'s happening around Florida.</h2><div class="news-list">'
+         '<!--lp-ours--><h3 class="lp-grp" style="x">From Launchpad: our own reporting</h3><article>OURS</article><!--/lp-ours-->'
+         '<!--lp-live--><article>OUTLET</article><!--/lp-live--></div></div></section></main>')
+    out = so.separate(h)
+    assert out.index('id="from-launchpad"') < out.index('OURS') < out.index("What's happening") < out.index('OUTLET')
+    assert out.count('From Launchpad: our own reporting') == 1 and so.separate(out) == out
+
+
+def test_collapsible_wraps_heading_in_summary_and_is_idempotent():
+    import collapsible as c
+    h = ('<main id="main"><section class="hero"><div class="wrap"><h1>x</h1></div></section>'
+         '<section class="block"><div class="wrap"><span class="eyebrow">E</span><h2>Title</h2><p>Body</p></div></section>'
+         '<section class="block"><div class="wrap"><h2>Label only</h2></div></section></main>')
+    out = c.apply_page(h, 'index.html')
+    assert '<details class="lp-collapse" open><summary><span class="eyebrow">E</span><h2>Title</h2></summary><p>Body</p></details>' in out
+    assert out.count('<details') == 1 and c.apply_page(out, 'index.html') == out
+    assert c.apply_page(h, os.path.join('articles', 'x', 'index.html')) == h
+
+
+def test_collapse_h2_groups():
+    import collapsible as c
+    out = c.collapse_h2_groups('<h2>A</h2><p>1</p><h2>B</h2><p>2</p>')
+    assert out == '<details class="lp-collapse" open><summary><h2>A</h2></summary><p>1</p></details><details class="lp-collapse" open><summary><h2>B</h2></summary><p>2</p></details>'

@@ -61,8 +61,7 @@ def ours_items(root, limit, exclude=(), now=None):
 def render_ours(items):
     if not items: return ''
     e = lambda s: html.escape(s, quote=True)
-    head = ('<h3 class="lp-grp" style="margin:.2rem 0 0;font-size:.85rem;letter-spacing:.08em;text-transform:uppercase;color:var(--link)">'
-            'From Launchpad: our own reporting</h3>')
+    head = ''  # the 'From Launchpad' section header lives outside this block (tools/separate_ours.py)
     arts = ''.join(
         '<article class="news-item reveal" style="border-left-color:var(--orange)"><span class="tag">From Launchpad</span> '
         '<time datetime="%s">%s</time><h3><a href="%s">%s</a></h3>%s<p class="src">%s · %s</p></article>' % (

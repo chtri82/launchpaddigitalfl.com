@@ -107,7 +107,7 @@ def render_live(items, gen):
             e(it['d']), e(fmt_et(it['d'])), e(it['u'], quote=True), e(it['t']),
             ('<p>' + e(it['x']) + '</p>') if it['x'] else '', e(it['u'], quote=True), e(it['s'])) for it in items)
     g = datetime.strptime(gen, '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=timezone.utc)
-    asof = ('<p class="asof"><span class="dot" aria-hidden="true"></span>Launchpad stories come first; headlines from other Florida outlets follow, each marked and linked to the original reporting. Last check <time datetime="%s">%s</time>.</p>') % (gen, e(fmt_et(gen)))
+    asof = ('<p class="asof"><span class="dot" aria-hidden="true"></span>Headlines from other Florida outlets, each credited and linked to the original reporting. Last check <time datetime="%s">%s</time>.</p>') % (gen, e(fmt_et(gen)))
     return arts, asof
 
 def write_pages(cfg, by, counties, gen):

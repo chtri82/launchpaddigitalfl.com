@@ -97,3 +97,56 @@ def test_no_unreadable_inline_grays(site, pages):
             if not (covered and (tag.startswith('<figcaption') or 'lp-credit' in tag)):
                 offenders.append(rel); break
     assert not offenders, offenders
+
+
+LIVE_RE = re.compile(r'<!--lp-live-->(.*?)<!--/lp-live-->', re.S)
+
+
+def test_outlet_headlines_kept_separate_from_launchpad_stories(pages):
+    """'What's happening around Florida' holds only other outlets' credited, linked headlines; ours sit in 'From Launchpad'."""
+    checked = 0
+    for rel, h in pages.items():
+        m = LIVE_RE.search(h)
+        if not m:
+            continue
+        checked += 1
+        live = m.group(1)
+        assert 'From Launchpad' not in live and '<!--lp-ours-->' not in live, rel
+        for art in re.findall(r'<article.*?</article>', live, re.S):
+            link = re.search(r'<h3><a href="([^"]+)"', art).group(1)
+            assert link.startswith('http') and 'launchpaddigitalfl.com' not in link, (rel, link)
+            assert re.search(r'Source: <a href="https?://[^"]+"[^>]*>[^<]+</a>', art), (rel, art[:120])
+        live_sec = h[h.rfind('<section', 0, m.start()):m.start()]
+        assert 'from-launchpad' not in live_sec and '<!--lp-ours-->' not in live_sec, rel
+        if '<!--lp-ours-->' in h:
+            o = h.index('<!--lp-ours-->')
+            assert h.rfind('id="from-launchpad"', 0, o) > h.rfind('<section', 0, h.rfind('id="from-launchpad"', 0, o) + 1) - 1, rel
+            assert h.rfind('<section', 0, o) == h.rfind('<section', 0, h.index('id="from-launchpad"')), rel
+    assert checked >= 2
+
+
+def test_collapsible_sections(pages):
+    import collapsible
+    home = pages['index.html']
+    main = home[home.index('<main id="main">'):home.index('</main>')]
+    secs = re.split(r'(?=<section )', main)[1:]
+    for s in secs:
+        if s.startswith('<section class="hero"') or not re.sub(r'<[^>]+>|\s', '', re.sub(r'<h2.*?</h2>|<span class="eyebrow">.*?</span>', '', s, flags=re.S)):
+            continue  # hero and header-only group labels
+        assert 'class="lp-collapse" open' in s, s[:160]
+    for rel, h in pages.items():
+        assert h.count('<details') == h.count('</details>') and h.count('<summary>') == h.count('</summary>'), rel
+        for d in re.findall(r'<details class="lp-collapse"[^>]*>\s*<summary>(.*?)</summary>', h, re.S):
+            assert '<h2' in d or '<h3' in d, (rel, d[:80])  # tappable, named heading
+        assert all('open' in t for t in re.findall(r'<details class="lp-collapse"[^>]*>', h)), rel
+        if rel.startswith('articles' + os.sep):
+            assert 'lp-collapse' not in h, rel
+    for rel in ('special-reports/index.html', 'archive/index.html', 'news/briefs/2026-10-30-midday/index.html', 'breaking/index.html', 'around-the-state/index.html'):
+        assert 'class="lp-collapse" open' in pages[rel.replace('/', os.sep)], rel
+
+
+def test_collapsible_css_indicator_and_focus(site):
+    css = open(os.path.join(site, 'assets', 'css', 'site.css')).read()
+    assert 'details.lp-collapse>summary::after{content:"−"' in css
+    assert 'details.lp-collapse:not([open])>summary::after{content:"+"}' in css
+    assert 'details.lp-collapse>summary:focus-visible' in css
