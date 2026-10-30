@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-30T02:19:29Z",
+ "generated": "2026-10-30T05:35:59Z",
  "feeds": [
   {
    "id": "wusf",
@@ -431,7 +431,7 @@
     "Flagler"
    ],
    "status": "ok",
-   "items": 19
+   "items": 20
   },
   {
    "id": "firstcoast",
@@ -757,7 +757,7 @@
     "Okaloosa"
    ],
    "status": "ok",
-   "items": 9
+   "items": 10
   },
   {
    "id": "wuwf",
@@ -878,7 +878,7 @@
     "wjhg"
    ],
    "dedicated": [],
-   "items": 20
+   "items": 21
   },
   "Bradford": {
    "slug": "bradford",
@@ -1135,7 +1135,7 @@
     "abcaction"
    ],
    "dedicated": [],
-   "items": 30
+   "items": 31
   },
   "Holmes": {
    "slug": "holmes",
@@ -1428,7 +1428,7 @@
    "dedicated": [
     "stpetecatalyst"
    ],
-   "items": 20
+   "items": 22
   },
   "Polk": {
    "slug": "polk",
@@ -1486,7 +1486,7 @@
     "wkrg",
     "northescambia"
    ],
-   "items": 23
+   "items": 24
   },
   "Sarasota": {
    "slug": "sarasota",
@@ -1545,7 +1545,7 @@
    "dedicated": [
     "ecb"
    ],
-   "items": 21
+   "items": 22
   },
   "Union": {
    "slug": "union",
