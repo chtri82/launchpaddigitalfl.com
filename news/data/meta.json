@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-30T21:08:43Z",
+ "generated": "2026-10-30T22:55:44Z",
  "feeds": [
   {
    "id": "wusf",
@@ -113,7 +113,7 @@
     "Monroe"
    ],
    "status": "ok",
-   "items": 39
+   "items": 40
   },
   {
    "id": "wsvn",
@@ -901,7 +901,7 @@
    "dedicated": [
     "spacecoastdaily"
    ],
-   "items": 22
+   "items": 20
   },
   "Broward": {
    "slug": "broward",
@@ -1132,7 +1132,7 @@
     "abcaction"
    ],
    "dedicated": [],
-   "items": 33
+   "items": 37
   },
   "Holmes": {
    "slug": "holmes",
@@ -1200,7 +1200,7 @@
    "dedicated": [
     "villages"
    ],
-   "items": 20
+   "items": 22
   },
   "Lee": {
    "slug": "lee",
@@ -1223,7 +1223,7 @@
    "dedicated": [
     "tallyreports"
    ],
-   "items": 20
+   "items": 21
   },
   "Levy": {
    "slug": "levy",
@@ -1369,7 +1369,7 @@
     "orlandoweekly",
     "ocso"
    ],
-   "items": 27
+   "items": 23
   },
   "Osceola": {
    "slug": "osceola",
@@ -1398,7 +1398,7 @@
     "bocanewsnow",
     "bocatrib"
    ],
-   "items": 36
+   "items": 38
   },
   "Pasco": {
    "slug": "pasco",
@@ -1542,7 +1542,7 @@
    "dedicated": [
     "ecb"
    ],
-   "items": 21
+   "items": 22
   },
   "Union": {
    "slug": "union",
