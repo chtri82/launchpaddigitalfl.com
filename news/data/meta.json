@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-30T11:19:45Z",
+ "generated": "2026-10-30T12:43:08Z",
  "feeds": [
   {
    "id": "wusf",
@@ -112,8 +112,8 @@
     "Broward",
     "Monroe"
    ],
-   "status": "ok",
-   "items": 38
+   "status": "error: HTTPError",
+   "items": 0
   },
   {
    "id": "wsvn",
@@ -477,7 +477,7 @@
     "Polk"
    ],
    "status": "ok",
-   "items": 38
+   "items": 40
   },
   {
    "id": "wfla",
@@ -727,8 +727,8 @@
    "counties": [
     "Franklin"
    ],
-   "status": "error: HTTPError",
-   "items": 0
+   "status": "ok",
+   "items": 10
   },
   {
    "id": "wear",
@@ -906,14 +906,12 @@
   "Broward": {
    "slug": "broward",
    "feeds": [
-    "local10",
     "wsvn"
    ],
    "dedicated": [
-    "local10",
     "wsvn"
    ],
-   "items": 40
+   "items": 10
   },
   "Calhoun": {
    "slug": "calhoun",
@@ -1033,9 +1031,12 @@
    "feeds": [
     "wctv",
     "wtxl",
+    "apalachtimes",
     "wjhg"
    ],
-   "dedicated": [],
+   "dedicated": [
+    "apalachtimes"
+   ],
    "items": 20
   },
   "Gadsden": {
@@ -1300,25 +1301,21 @@
   "Miami-Dade": {
    "slug": "miami-dade",
    "feeds": [
-    "local10",
     "wsvn",
     "miamitoday"
    ],
    "dedicated": [
-    "local10",
     "wsvn",
     "miamitoday"
    ],
-   "items": 40
+   "items": 20
   },
   "Monroe": {
    "slug": "monroe",
    "feeds": [
-    "local10",
     "keysweekly"
    ],
    "dedicated": [
-    "local10",
     "keysweekly"
    ],
    "items": 40
@@ -1369,7 +1366,7 @@
     "orlandoweekly",
     "ocso"
    ],
-   "items": 20
+   "items": 22
   },
   "Osceola": {
    "slug": "osceola",
@@ -1398,7 +1395,7 @@
     "bocanewsnow",
     "bocatrib"
    ],
-   "items": 39
+   "items": 40
   },
   "Pasco": {
    "slug": "pasco",
