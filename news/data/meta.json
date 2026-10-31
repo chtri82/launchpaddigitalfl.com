@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-31T09:57:12Z",
+ "generated": "2026-10-31T13:55:38Z",
  "feeds": [
   {
    "id": "wusf",
@@ -431,7 +431,7 @@
     "Flagler"
    ],
    "status": "ok",
-   "items": 19
+   "items": 20
   },
   {
    "id": "firstcoast",
@@ -477,7 +477,7 @@
     "Polk"
    ],
    "status": "ok",
-   "items": 38
+   "items": 37
   },
   {
    "id": "wfla",
@@ -1132,7 +1132,7 @@
     "abcaction"
    ],
    "dedicated": [],
-   "items": 36
+   "items": 34
   },
   "Holmes": {
    "slug": "holmes",
@@ -1223,7 +1223,7 @@
    "dedicated": [
     "tallyreports"
    ],
-   "items": 21
+   "items": 20
   },
   "Levy": {
    "slug": "levy",
@@ -1369,7 +1369,7 @@
     "orlandoweekly",
     "ocso"
    ],
-   "items": 22
+   "items": 20
   },
   "Osceola": {
    "slug": "osceola",
@@ -1542,7 +1542,7 @@
    "dedicated": [
     "ecb"
    ],
-   "items": 21
+   "items": 20
   },
   "Union": {
    "slug": "union",
