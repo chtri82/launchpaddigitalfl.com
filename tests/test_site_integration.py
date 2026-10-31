@@ -187,3 +187,9 @@ def test_collapsible_css_resets_generic_details_and_is_compact(site):
     assert 'transform:none' in after and 'color:var(--link)' in after
     assert 'details.lp-collapse p{' in css and 'color:inherit' in css
     assert 'section.block:has(details.lp-collapse){padding:1.5rem 0}' in css
+
+
+def test_every_page_cache_busts_site_css(pages):
+    for rel, h in pages.items():
+        if 'assets/css/site.css' in h:
+            assert re.search(r'/assets/css/site\.css\?v=[0-9a-f]{10}"', h), rel
