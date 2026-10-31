@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-31T01:07:48Z",
+ "generated": "2026-10-31T02:16:23Z",
  "feeds": [
   {
    "id": "wusf",
@@ -38,8 +38,8 @@
    "url": "https://floridapolitics.com/feed/",
    "home": "https://floridapolitics.com",
    "counties": null,
-   "status": "ok",
-   "items": 10
+   "status": "error: HTTPError",
+   "items": 0
   },
   {
    "id": "capitolist",
@@ -757,7 +757,7 @@
     "Okaloosa"
    ],
    "status": "ok",
-   "items": 9
+   "items": 10
   },
   {
    "id": "wuwf",
@@ -1132,7 +1132,7 @@
     "abcaction"
    ],
    "dedicated": [],
-   "items": 39
+   "items": 38
   },
   "Holmes": {
    "slug": "holmes",
@@ -1398,7 +1398,7 @@
     "bocanewsnow",
     "bocatrib"
    ],
-   "items": 38
+   "items": 39
   },
   "Pasco": {
    "slug": "pasco",
@@ -1483,7 +1483,7 @@
     "wkrg",
     "northescambia"
    ],
-   "items": 23
+   "items": 24
   },
   "Sarasota": {
    "slug": "sarasota",
