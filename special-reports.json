@@ -1,14 +1,32 @@
 {
  "publications": [
-  {"key": "launchpad", "name": "Launchpad Digital", "url": "/"},
-  {"key": "condo-brief", "name": "Florida Condo & HOA Brief", "url": "https://condohoabrief.com/"}
+  {
+   "key": "launchpad",
+   "name": "Launchpad Digital",
+   "url": "/"
+  },
+  {
+   "key": "condo-brief",
+   "name": "Florida Condo & HOA Brief",
+   "url": "https://condohoabrief.com/"
+  }
  ],
  "reports": [
-  {"publication": "launchpad",
+  {
+   "publication": "launchpad",
    "title": "Special Report: Sir Patrick Stewart, From Mirfield to the Royal Shakespeare Company to the Starship Enterprise",
    "url": "/articles/entertainment-special-report-patrick-stewart-life-and-career-oct-29-2026/",
    "date": "2026-10-29",
    "byline": "Grant Holloway",
-   "summary": "A look back at the life and career of the actor who died Wednesday, drawn from his family's memorial notice, the Royal Shakespeare Company and the official U.K. honours record."}
+   "summary": "A look back at the life and career of the actor who died Wednesday, drawn from his family's memorial notice, the Royal Shakespeare Company and the official U.K. honours record."
+  },
+  {
+   "publication": "launchpad",
+   "title": "Special Report: After Surfside, Florida Rewrote Condo Law. Owners Are Now Paying the Bill",
+   "url": "/articles/state-special-report-florida-condo-safety-laws-after-surfside-oct-31-2026/",
+   "date": "2026-10-31",
+   "byline": "Ryan Castillo",
+   "summary": "What the post-Surfside condo laws say and the assessment fights they've set off, with the full report from the Florida Condo & HOA Brief."
+  }
  ]
 }
