@@ -13,16 +13,31 @@ def details(summary, body):
     return f'<details class="{CLS}" open><summary>{summary}</summary>{body}</details>'
 
 
+UNWRAP_RE = re.compile(r'<details class="lp-collapse"[^>]*><summary>(.*?)</summary>(.*?)</details>', re.S)
+
+
+def strip_cta(html):
+    """Signup/call-to-action boxes are never collapsible (a collapsed CTA hides the signup, and the generic
+    details background made CTA text white-on-white). Unwrap any lp-collapse added by earlier builds."""
+    while UNWRAP_RE.search(html):
+        html = UNWRAP_RE.sub(r'\1\2', html)
+    return html
+
+
 def collapse_sections(main):
     """Each <section class="block"> whose .wrap has an h2 becomes one collapsible group (heading = summary)."""
     def fix(m):
         inner = m.group(2)
-        if CLS in inner or '<section' in inner:
+        if '<section' in inner:
+            return m.group(0)
+        if 'class="cta' in inner:
+            return m.group(1) + strip_cta(inner) + m.group(3)
+        if CLS in inner:
             return m.group(0)
         hm = HEAD_RE.search(inner)
         if not hm:
             return m.group(0)
-        if len(re.findall(r'<h2[ >]', inner)) > 1 or 'class="cta' in inner or not m.group(1).endswith('<div class="wrap">'):
+        if len(re.findall(r'<h2[ >]', inner)) > 1 or not m.group(1).endswith('<div class="wrap">'):
             # grids / call-to-action boxes: make each innermost block with a heading collapsible
             return m.group(1) + LEAF_RE.sub(lambda d: d.group(1) + collapse_h2_groups(d.group(2)) + d.group(3), inner) + m.group(3)
         body = inner[:hm.start()] + inner[hm.end():]

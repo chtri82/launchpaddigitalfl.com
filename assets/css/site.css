@@ -290,13 +290,19 @@ body.has-lp-sticky{padding-bottom:3.4rem}
 .lpf-h{grid-column:1/-1;margin:.6rem 0 -.2rem;font-size:1.15rem;color:var(--ink);border-bottom:2px solid var(--rust);padding-bottom:.35rem}
 p.lpf-h{border:0;font-size:.95rem;font-weight:400}
 .lp-media figcaption,.lp-media figcaption .lp-credit{color:var(--text-muted)!important}
-/* Collapsible sections (native details/summary; open by default; works without JS) */
-details.lp-collapse>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;border-radius:8px;padding:.25rem 0;margin-bottom:.8rem}
+/* Collapsible sections: ONE shared rule set for every page (home, Around the State, Breaking, briefs, Special Reports, archive, news).
+   Resets the FAQ-style generic details/summary rules so nothing (white background, muted text, rotated indicator) bleeds in. */
+details.lp-collapse{border:0;border-radius:0;background:transparent;padding:0;margin:0 0 1.1rem;color:inherit}
+details.lp-collapse:last-child{margin-bottom:0}
+details.lp-collapse p{margin:revert;color:inherit}
+details.lp-collapse>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:.75rem;flex-wrap:wrap;font-family:var(--font);font-weight:750;color:var(--text);border-bottom:1px solid var(--border);border-radius:0;padding:.35rem 0;margin:0 0 .75rem}
 details.lp-collapse>summary::-webkit-details-marker{display:none}
 details.lp-collapse>summary>*{margin:0}
-details.lp-collapse>summary .eyebrow{flex-basis:100%;margin-bottom:-.6rem}
-details.lp-collapse>summary h2{flex:1}
-details.lp-collapse>summary::after{content:"−";flex:none;display:inline-flex;align-items:center;justify-content:center;width:2rem;height:2rem;border:2px solid currentColor;border-radius:50%;font-size:1.25rem;font-weight:700;line-height:1;font-family:Arial,Helvetica,"DejaVu Sans",sans-serif;color:var(--text-muted)}
+details.lp-collapse>summary .eyebrow{flex-basis:100%;margin:0 0 -.4rem}
+details.lp-collapse>summary h2{flex:1;font-family:var(--font);font-size:clamp(1.35rem,2.4vw,1.75rem);font-weight:750;line-height:1.2;color:var(--text)}
+details.lp-collapse>summary::after{content:"−";transform:none;transition:none;flex:none;display:inline-flex;align-items:center;justify-content:center;width:1.9rem;height:1.9rem;border:2px solid var(--link);border-radius:50%;font-size:1.2rem;font-weight:700;line-height:1;font-family:Arial,Helvetica,"DejaVu Sans",sans-serif;color:var(--link);background:var(--surface)}
 details.lp-collapse:not([open])>summary::after{content:"+"}
 details.lp-collapse>summary:focus-visible{outline:3px solid var(--orange);outline-offset:4px}
 details.lp-collapse:not([open])>summary{margin-bottom:0}
+section.block:has(details.lp-collapse){padding:1.5rem 0}
+section.block:has(details.lp-collapse)+section.block:has(details.lp-collapse){padding-top:.25rem}

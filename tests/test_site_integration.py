@@ -138,8 +138,8 @@ def test_collapsible_sections(pages):
     main = home[home.index('<main id="main">'):home.index('</main>')]
     secs = re.split(r'(?=<section )', main)[1:]
     for s in secs:
-        if s.startswith('<section class="hero"') or not re.sub(r'<[^>]+>|\s', '', re.sub(r'<h2.*?</h2>|<span class="eyebrow">.*?</span>', '', s, flags=re.S)):
-            continue  # hero and header-only group labels
+        if s.startswith('<section class="hero"') or 'class="cta' in s or not re.sub(r'<[^>]+>|\s', '', re.sub(r'<h2.*?</h2>|<span class="eyebrow">.*?</span>', '', s, flags=re.S)):
+            continue  # hero, CTA signup boxes and header-only group labels
         assert 'class="lp-collapse" open' in s, s[:160]
     for rel, h in pages.items():
         assert h.count('<details') == h.count('</details>') and h.count('<summary>') == h.count('</summary>'), rel
@@ -157,3 +157,24 @@ def test_collapsible_css_indicator_and_focus(site):
     assert 'details.lp-collapse>summary::after{content:"−"' in css
     assert 'details.lp-collapse:not([open])>summary::after{content:"+"}' in css
     assert 'details.lp-collapse>summary:focus-visible' in css
+
+
+def test_collapsible_uniform_shared_css_no_inline_overrides(pages):
+    """Every collapsible uses the one shared class, with no inline styles on details/summary, and never inside CTA boxes."""
+    for rel, h in pages.items():
+        for tag in re.findall(r'<details[^>]*class="lp-collapse"[^>]*>|<details class="lp-collapse"[^>]*>\s*<summary[^>]*>', h):
+            assert 'style=' not in tag, rel
+        assert not re.search(r'<details(?![^>]*class="lp-collapse")[^>]*open[^>]*>\s*<summary>\s*<h2', h), rel
+        for cta in re.findall(r'<div class="cta[^"]*">(.*?)</section>', h, re.S):
+            assert 'lp-collapse' not in cta, rel
+
+
+def test_collapsible_css_resets_generic_details_and_is_compact(site):
+    css = open(os.path.join(site, 'assets', 'css', 'site.css')).read()
+    assert css.count('/* Collapsible sections') == 1
+    rule = re.search(r'details\.lp-collapse\{([^}]*)\}', css).group(1)
+    assert 'background:transparent' in rule and 'padding:0' in rule and 'border:0' in rule
+    after = re.search(r'details\.lp-collapse>summary::after\{([^}]*)\}', css).group(1)
+    assert 'transform:none' in after and 'color:var(--link)' in after
+    assert 'details.lp-collapse p{' in css and 'color:inherit' in css
+    assert 'section.block:has(details.lp-collapse){padding:1.5rem 0}' in css
