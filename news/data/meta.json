@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-31T15:53:06Z",
+ "generated": "2026-10-31T18:05:41Z",
  "feeds": [
   {
    "id": "wusf",
@@ -112,8 +112,8 @@
     "Broward",
     "Monroe"
    ],
-   "status": "ok",
-   "items": 40
+   "status": "error: HTTPError",
+   "items": 0
   },
   {
    "id": "wsvn",
@@ -619,8 +619,8 @@
    "counties": [
     "Manatee"
    ],
-   "status": "error: HTTPError",
-   "items": 0
+   "status": "ok",
+   "items": 10
   },
   {
    "id": "gulfcoastnews",
@@ -906,14 +906,12 @@
   "Broward": {
    "slug": "broward",
    "feeds": [
-    "local10",
     "wsvn"
    ],
    "dedicated": [
-    "local10",
     "wsvn"
    ],
-   "items": 40
+   "items": 10
   },
   "Calhoun": {
    "slug": "calhoun",
@@ -1132,7 +1130,7 @@
     "abcaction"
    ],
    "dedicated": [],
-   "items": 30
+   "items": 31
   },
   "Holmes": {
    "slug": "holmes",
@@ -1263,9 +1261,12 @@
     "wtsp",
     "fox13",
     "abcaction",
-    "mysuncoast"
+    "mysuncoast",
+    "islander"
    ],
-   "dedicated": [],
+   "dedicated": [
+    "islander"
+   ],
    "items": 20
   },
   "Marion": {
@@ -1297,25 +1298,21 @@
   "Miami-Dade": {
    "slug": "miami-dade",
    "feeds": [
-    "local10",
     "wsvn",
     "miamitoday"
    ],
    "dedicated": [
-    "local10",
     "wsvn",
     "miamitoday"
    ],
-   "items": 40
+   "items": 20
   },
   "Monroe": {
    "slug": "monroe",
    "feeds": [
-    "local10",
     "keysweekly"
    ],
    "dedicated": [
-    "local10",
     "keysweekly"
    ],
    "items": 40
@@ -1395,7 +1392,7 @@
     "bocanewsnow",
     "bocatrib"
    ],
-   "items": 39
+   "items": 40
   },
   "Pasco": {
    "slug": "pasco",
