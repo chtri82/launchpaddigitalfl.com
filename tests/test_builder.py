@@ -102,3 +102,13 @@ def test_special_reports_page_is_launchpad_only():
     out = sr.render_cards(sr.launchpad_only(sr.group(data)))
     assert 'LP' in out and 'CB' not in out and 'Condo' not in out
     assert 'CB' not in hl.special_reports_section(data)
+
+
+def test_cachebust_versions_local_assets_idempotently(tmp_path):
+    import cachebust as c
+    (tmp_path / 'assets' / 'css').mkdir(parents=True)
+    (tmp_path / 'assets' / 'css' / 'site.css').write_text('a{}')
+    h = '<link rel="stylesheet" href="/assets/css/site.css"><link href="https://x.com/a.css">'
+    out = c.apply(h, str(tmp_path), {})
+    assert '/assets/css/site.css?v=' in out and 'https://x.com/a.css"' in out
+    assert c.apply(out, str(tmp_path), {}) == out

@@ -1,7 +1,7 @@
 """Run after the site builder: python3 tools/postbuild.py <site_dir>. Adds the Special Reports page/nav and regroups the home page."""
 import json, os, sys
 sys.path.insert(0, os.path.dirname(__file__))
-import special_reports, home_layout, separate_ours, collapsible
+import special_reports, home_layout, separate_ours, collapsible, cachebust
 
 if __name__ == '__main__':
     site = sys.argv[1]
@@ -14,4 +14,5 @@ if __name__ == '__main__':
             t = open(q, encoding='utf-8').read(); u = separate_ours.separate(t)
             if u != t: open(q, 'w', encoding='utf-8').write(u)
     print('collapsible pages:', collapsible.build(site))
+    print('cache-busted pages:', cachebust.build(site))
     print('postbuild ok')
