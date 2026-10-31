@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-30T23:12:34Z",
+ "generated": "2026-10-31T01:07:48Z",
  "feeds": [
   {
    "id": "wusf",
@@ -292,7 +292,7 @@
     "Flagler"
    ],
    "status": "ok",
-   "items": 14
+   "items": 15
   },
   {
    "id": "fox35",
@@ -1132,7 +1132,7 @@
     "abcaction"
    ],
    "dedicated": [],
-   "items": 38
+   "items": 39
   },
   "Holmes": {
    "slug": "holmes",
@@ -1200,7 +1200,7 @@
    "dedicated": [
     "villages"
    ],
-   "items": 22
+   "items": 21
   },
   "Lee": {
    "slug": "lee",
@@ -1369,7 +1369,7 @@
     "orlandoweekly",
     "ocso"
    ],
-   "items": 23
+   "items": 22
   },
   "Osceola": {
    "slug": "osceola",
@@ -1483,7 +1483,7 @@
     "wkrg",
     "northescambia"
    ],
-   "items": 24
+   "items": 23
   },
   "Sarasota": {
    "slug": "sarasota",
