@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-31T02:42:52Z",
+ "generated": "2026-10-31T07:34:56Z",
  "feeds": [
   {
    "id": "wusf",
@@ -431,7 +431,7 @@
     "Flagler"
    ],
    "status": "ok",
-   "items": 20
+   "items": 18
   },
   {
    "id": "firstcoast",
@@ -878,7 +878,7 @@
     "wjhg"
    ],
    "dedicated": [],
-   "items": 20
+   "items": 22
   },
   "Bradford": {
    "slug": "bradford",
@@ -1132,7 +1132,7 @@
     "abcaction"
    ],
    "dedicated": [],
-   "items": 38
+   "items": 36
   },
   "Holmes": {
    "slug": "holmes",
@@ -1200,7 +1200,7 @@
    "dedicated": [
     "villages"
    ],
-   "items": 21
+   "items": 22
   },
   "Lee": {
    "slug": "lee",
@@ -1223,7 +1223,7 @@
    "dedicated": [
     "tallyreports"
    ],
-   "items": 21
+   "items": 20
   },
   "Levy": {
    "slug": "levy",
@@ -1369,7 +1369,7 @@
     "orlandoweekly",
     "ocso"
    ],
-   "items": 24
+   "items": 22
   },
   "Osceola": {
    "slug": "osceola",
@@ -1398,7 +1398,7 @@
     "bocanewsnow",
     "bocatrib"
    ],
-   "items": 38
+   "items": 37
   },
   "Pasco": {
    "slug": "pasco",
@@ -1542,7 +1542,7 @@
    "dedicated": [
     "ecb"
    ],
-   "items": 22
+   "items": 21
   },
   "Union": {
    "slug": "union",
