@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-31T02:31:01Z",
+ "generated": "2026-10-31T02:42:52Z",
  "feeds": [
   {
    "id": "wusf",
@@ -137,8 +137,8 @@
    "counties": [
     "Miami-Dade"
    ],
-   "status": "error: ConnectTimeout",
-   "items": 0
+   "status": "ok",
+   "items": 10
   },
   {
    "id": "keysweekly",
@@ -1301,11 +1301,13 @@
    "slug": "miami-dade",
    "feeds": [
     "local10",
-    "wsvn"
+    "wsvn",
+    "miamitoday"
    ],
    "dedicated": [
     "local10",
-    "wsvn"
+    "wsvn",
+    "miamitoday"
    ],
    "items": 40
   },
@@ -1367,7 +1369,7 @@
     "orlandoweekly",
     "ocso"
    ],
-   "items": 23
+   "items": 24
   },
   "Osceola": {
    "slug": "osceola",
