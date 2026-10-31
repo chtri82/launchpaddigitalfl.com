@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-31T02:16:23Z",
+ "generated": "2026-10-31T02:31:01Z",
  "feeds": [
   {
    "id": "wusf",
@@ -38,8 +38,8 @@
    "url": "https://floridapolitics.com/feed/",
    "home": "https://floridapolitics.com",
    "counties": null,
-   "status": "error: HTTPError",
-   "items": 0
+   "status": "ok",
+   "items": 10
   },
   {
    "id": "capitolist",
@@ -137,8 +137,8 @@
    "counties": [
     "Miami-Dade"
    ],
-   "status": "ok",
-   "items": 10
+   "status": "error: ConnectTimeout",
+   "items": 0
   },
   {
    "id": "keysweekly",
@@ -1301,13 +1301,11 @@
    "slug": "miami-dade",
    "feeds": [
     "local10",
-    "wsvn",
-    "miamitoday"
+    "wsvn"
    ],
    "dedicated": [
     "local10",
-    "wsvn",
-    "miamitoday"
+    "wsvn"
    ],
    "items": 40
   },
@@ -1369,7 +1367,7 @@
     "orlandoweekly",
     "ocso"
    ],
-   "items": 22
+   "items": 23
   },
   "Osceola": {
    "slug": "osceola",
@@ -1398,7 +1396,7 @@
     "bocanewsnow",
     "bocatrib"
    ],
-   "items": 39
+   "items": 38
   },
   "Pasco": {
    "slug": "pasco",
