@@ -62,7 +62,16 @@ def test_special_reports_page_lists_stewart(pages):
     h = pages[os.path.join('special-reports', 'index.html')]
     assert 'Patrick Stewart' in h
     main = h[h.index('<main'):h.index('</main>')]
-    assert 'Condo' not in main and 'condohoabrief.com' not in main
+    # Only one condo item is allowed: the Launchpad post-Surfside special report.
+    assert main.count('/articles/state-special-report-florida-condo-safety-laws-after-surfside-oct-31-2026/') >= 1
+    assert 'condohoabrief.com' not in main
+
+
+def test_condo_special_report_credits_brief(pages):
+    h = pages[os.path.join('articles', 'state-special-report-florida-condo-safety-laws-after-surfside-oct-31-2026', 'index.html')]
+    assert 'Ryan Castillo' in h
+    assert 'https://condohoabrief.com/special-reports/florida-condo-safety-laws-after-surfside/' in h
+    assert h.count('<figure') >= 3 and 'Wikimedia Commons' in h
 
 
 def test_publications_tab_links_condo_brief(pages):
